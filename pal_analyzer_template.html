@@ -291,8 +291,7 @@
 </main>
 
 <footer>
-  Pal reference data from <a href="https://palworld.wiki.gg" target="_blank" rel="noopener">palworld.wiki.gg</a>
-  (CC BY-SA 4.0). Trust friendship stats from the
+  Pal species and passive data extracted from the game's own data tables. Save-file ID maps from the
   <a href="https://github.com/oMaN-Rod/palworld-save-pal" target="_blank" rel="noopener">palworld-save-pal project</a>
   (MIT). Combat-score model per <code>docs/FORMULAS.md</code>. Your entered Pals stay in this browser only.
 </footer>
@@ -323,16 +322,18 @@ function statDefense(defStat, level, iv, passivePct, soulRank, stars){
 }
 function combatScore(hp, atk, def){ return Math.cbrt(hp*atk*def); }
 
-// Sum signed Attack/Defense percent bonuses across a Pal's passives -> decimals.
+// Sum signed HP/Attack/Defense percent bonuses across a Pal's passives -> decimals.
+// Max-HP passives are rare but real (the World Tree set) -- see FORMULAS.md.
 function passiveBonuses(passiveNames){
-  let atk = 0, def = 0;
+  let hp = 0, atk = 0, def = 0;
   for(const nm of passiveNames){
     const p = PASSIVES_DB[nm];
     if(!p) continue;
+    hp  += (p.hp_pct || 0);
     atk += (p.attack_pct || 0);
     def += (p.defense_pct || 0);
   }
-  return { atk: atk/100, def: def/100, hp: 0 }; // hp passive never exists -> 0
+  return { atk: atk/100, def: def/100, hp: hp/100 };
 }
 
 function actualAug(e){

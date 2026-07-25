@@ -4,3 +4,10 @@ __pycache__/
 # Real player save data and generated Pal rosters -- never commit.
 saves/
 out/
+
+# Game-data extraction workspace (tools/gamedata) -- all regenerable, and the raw
+# exports plus the vendored SDK/DLL are the user's own game/tool files, not ours.
+tools/gamedata/vendor/
+tools/gamedata/export/
+tools/gamedata/PalDataExport/bin/
+tools/gamedata/PalDataExport/obj/

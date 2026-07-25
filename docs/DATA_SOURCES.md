@@ -1,14 +1,31 @@
 # Data Sources — Reference
 
-## Species stats and passive skills: palworld.wiki.gg Cargo API
+## Species stats and passive skills: the game's own DataTables
 
-### Decision
+### Decision (current, since 2026-07-25)
 
-Use **palworld.wiki.gg's public Cargo query API**. Do not use community GitHub datasets, and do not self-extract from the local game install.
+`data/pals.json` and `data/passives.json` are extracted from **Palworld's own cooked
+DataTables** in `Pal-Windows.pak` — `DT_PalMonsterParameter` and `DT_PassiveSkill_Main`,
+the same tables the wiki and the save editors both derive from. How to run the extraction
+is in **`tools/gamedata/README.md`**; why and how the approach was chosen and verified is
+in **`docs/GAMEDATA_EXTRACTION.md`**.
 
-Three candidate GitHub datasets were evaluated and rejected: `blaynem/paldex`, `jhideki/palworld-api`, `mlg404/palworld-paldex-api`. All three are stale (last updated ~February 2024, predating the Feybreak DLC), and none clearly exposes structured per-stat passive-skill percentages.
+This replaced the palworld.wiki.gg Cargo API (documented below, still the code path in
+`data/build_data.py`). The wiki had fallen well behind the live game: the switch added 20
+species and 19 passives it never documented, corrected 10 species' base stats, and made
+the hand-maintained `SPECIES_OVERRIDES` / `PASSIVE_OVERRIDES` patches unnecessary.
 
-Self-extracting from the local game install was also investigated and rejected. `E:\SteamLibrary\steamapps\common\Palworld\Pal\Content\Paks\Pal-Windows.pak` is one monolithic ~40GB pak file with no bundled `.usmap`. This machine has no pak-extraction tooling installed (checked PATH and pip — nothing found). Doing it properly would require installing new third-party software (FModel + a community-maintained `.usmap`, or repak + UAssetAPI) plus manual GUI steps that can't be scripted/automated. The user was asked and chose the wiki-API route instead.
+Cross-checked against `oMaN-Rod/palworld-save-pal`'s independent datamine: **407 species
+rows agreed exactly** on base stats, Trust friendship coefficients, and element types.
+
+### Superseded: the palworld.wiki.gg Cargo API
+
+Everything from here to the licensing note describes the earlier wiki pipeline. It is
+kept as the documented fallback for a machine with no Palworld install, and because
+`data/build_data.py` still implements it. Community GitHub datasets were and remain
+rejected: `blaynem/paldex`, `jhideki/palworld-api`, `mlg404/palworld-paldex-api` are all
+stale (last updated ~February 2024, predating the Feybreak DLC), and none clearly exposes
+structured per-stat passive-skill percentages.
 
 ### The API
 
@@ -83,49 +100,17 @@ Not required for scoring, but cheap to grab alongside the others and useful for 
 
 ### License
 
-palworld.wiki.gg content is CC BY-SA 4.0 (confirmed from the page footer). The compiled `data/pals.json` / `data/passives.json` files should include a comment/attribution noting the source URL.
+palworld.wiki.gg content is CC BY-SA 4.0 (confirmed from the page footer), and anything
+built from it must carry that attribution. **The current `data/pals.json` /
+`data/passives.json` are no longer wiki-derived**, so CC BY-SA does not apply to them;
+their `_attribution` / `_source` fields instead name the game build they were extracted
+from. If `data/build_data.py` is ever run again, its output *is* wiki content and the
+CC BY-SA attribution comes back with it. The palworld-save-pal attribution on
+`data/id_maps.json` is unaffected — that file is still sourced from that project.
 
 ## Save file location and format
 
-> **SUPERSEDED (2026-07-18) — this entire section is historical, not a build target.** The project pivoted away from reading save files: the user plays on a multiplayer server they do not host, so their owned-Pal data (levels/IVs/passives) is not on this machine (see "SHOW-STOPPER" finding below for the full investigation). The tool now takes its Pal data from **manual user entry via a Pal Picker UI** instead — see the current plan file. Nothing below is needed to build the current tool; it is kept only as the record of why the save-reading approach was abandoned. The Oodle-decompression finding may be useful if save-reading is ever revived. **The wiki Cargo API section above is still fully current and IS the reference the tool uses.**
-
-### Confirmed path on this machine
-
-```
-C:\Users\adria\AppData\Local\Pal\Saved\SaveGames\76561198000759941\95922E27B18043E69A68B12720E931B6\LocalData.sav
-```
-
-Confirmed by directly listing the filesystem, not from documentation. This is the currently-active world (most recently modified, with ongoing ~30-minute autosave backups at the time of this research). Two other, older/inactive world folders exist under the same Steam ID — the tool's `--save` flag should accept a **folder** path (the world GUID folder) and look for `LocalData.sav` inside it, defaulting to the path above if omitted, but must not hardcode it as the only option.
-
-### Important correction to common assumptions
-
-Community documentation of Palworld saves generally describes a `Level.sav` file plus a separate `Players/<id>.sav` per player. **That is not what this machine's actual save contains.** This save format instead uses a single `LocalData.sav` per world folder — no `Level.sav` and no `Players/` subfolder were found anywhere under this world. This is presumably a newer/consolidated single-player save format. **Do not assume the `Level.sav` / `CharacterSaveParameterMap` structure described in older palworld-save-tools documentation still applies without checking directly against a real loaded save.**
-
-### Parsing library
-
-PyPI package `palworld-save-tools`, version `0.24.0`. **NOTE: 0.24.0 cannot decompress this machine's saves** — see the format finding below. Its `GvasFile.read` / GVAS property parser is still usable *after* the file has been Oodle-decompressed out-of-band, but its `decompress_sav_to_gvas` rejects the `PlM` magic.
-
-### RESOLVED (2026-07-18): save format + the show-stopping content finding
-
-**The save-file discovery task was run against the real `LocalData.sav`. Two things were found.**
-
-**(1) Compression format is Oodle (`PlM`), not zlib (`PlZ`).** Since Palworld v0.6 the client writes saves with Oodle compression. The 12-byte header is unchanged from the classic format:
-```
-[0:4]  uncompressed_len (uint32 LE)   e.g. 5,272,039
-[4:8]  compressed_len   (uint32 LE)   e.g. 61,044  (== filesize - 12)
-[8:11] magic  = b"PlM"   (was b"PlZ")
-[11]   save_type = 0x31
-[12:]  Oodle-compressed GVAS body
-```
-`palworld-save-tools==0.24.0` only handles `PlZ`. To decompress: call `OodleLZ_Decompress` from an `oo2core_9_win64.dll` via `ctypes` (Palworld statically links Oodle — no DLL ships with it; a compatible `oo2core_9_win64.dll` was found at `C:\Program Files (x86)\Steam\steamapps\common\ELDEN RING NIGHTREIGN\Game\oo2core_9_win64.dll`). Decompression of the real file succeeded and produced a valid `GVAS\x03...` stream. A working ctypes wrapper lives in the scratchpad (`oodle_decomp.py`).
-
-**(2) SHOW-STOPPER: `LocalData.sav` contains NO owned-Pal instance data.** The save's class is `/Script/Pal.PalLocalWorldSaveGame`. Its complete top-level contents are:
-- `PalLocalSaveData.Local_ActivateOtomoCount` — a `MapProperty` of `EPalTribeID` → count
-- `PalLocalSaveData.Local_PalEncountFlag` — a `MapProperty` of `EPalTribeID` → bool (the Paldeck: which species have been *encountered*)
-- `SaveData.WorldMapUISaveDataMap` — client-side map-exploration UI reveal state
-
-Confirmed searches over the fully decompressed 5.27 MB GVAS returned **zero** occurrences of `CharacterSaveParameterMap`, `Talent_HP`, `Talent_Melee`, `Talent_Shot`, `Talent_Defense`, `PassiveSkillList`, `CharacterID`, `Level`, `IndividualId`, or `PalContainerId`. **There are no per-Pal instances, levels, IVs/Talents, or passives anywhere in this file.**
-
-**Why:** the user plays on a multiplayer server they do **not** host. Owned-Pal instance records are stored server-side (in the server's `Level.sav` `CharacterSaveParameterMap` + `Players/<playerGUID>.sav`), which do not exist on this machine. Every world folder under this Steam ID contains only `LocalData.sav` (this same client-local, Paldeck+map format) — there is no local `Level.sav` and no full-world save anywhere on this PC.
-
-**Implication:** `save_reader.py` as originally specified cannot be built from any file on this machine. Building the intended combat-score tool requires obtaining the **server's** save files (`Level.sav` + the relevant `Players/*.sav`) from whoever hosts the server. Those server saves may themselves be `PlM`/Oodle-compressed (use the decompressor above) but *will* contain the classic `CharacterSaveParameterMap` structure the original plan's `save_reader.py` steps were written for.
+Moved. Save ingestion (the server `Level.sav` → import JSON pipeline, container format,
+and Oodle decompression) is documented in **`docs/SAVE_INGEST.md`**. The earlier
+"owned-Pal data isn't on this machine" finding here was specific to the client-local
+`LocalData.sav` and no longer holds once the server save was obtained.

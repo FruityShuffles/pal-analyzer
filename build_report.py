@@ -2,8 +2,9 @@
 """Bake data/pals.json + data/passives.json into pal_analyzer_template.html,
 producing the self-contained deliverable pal_analyzer.html.
 
-Per-species Trust friendship stats from data/id_maps.json are merged into the
-species records at bake time; source files remain separate for attribution.
+Per-species Trust friendship stats from data/id_maps.json are merged into any species
+record that doesn't already carry them (import_gamedata.py sources them from the game
+files directly); source files remain separate for attribution.
 
 The template contains two placeholder tokens:
     const PALS_DB = /*__PALS_JSON__*/ {};
@@ -46,6 +47,10 @@ def main():
         sys.exit("ERROR: data/id_maps.json has no 'friendship' map -- rerun data/build_id_maps.py first.")
     missing = []
     for name, rec in pals.items():
+        # import_gamedata.py already carries friendship straight from the game's own
+        # DataTable row, including for species data/id_maps.json hasn't caught up on.
+        if "friendship_hp" in rec:
+            continue
         friend = friendship.get(name)
         rec["friendship_hp"] = friend["hp"] if friend else 0
         rec["friendship_attack"] = friend["atk"] if friend else 0

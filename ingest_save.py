@@ -10,7 +10,7 @@ data/id_maps.json, and writes:
     out/pals-all.json        the primary import: every player's Pals plus base-assigned
                              Pals, each entry tagged with an "owner" (player nickname,
                              or the owning guild's name for base workers)
-    out/ingest_review.md     species/passives in the save that are missing from the wiki
+    out/ingest_review.md     species/passives in the save that are missing from the app's
                              reference data -- combat-relevant ones flagged first
 
 Ownership: party/palbox Pals carry OwnerPlayerUId; Pals assigned to a base do NOT --
@@ -462,10 +462,11 @@ def write_review(out_dir, sp_seen, pv_seen, id_maps, app_pals, app_pass, pass_ef
     L = ["# Save ingestion review\n",
          f"Parsed **{counted}** owned Pals ({counted - base_counted} player-owned, "
          f"{base_counted} assigned to guild bases; skipped {skipped_human} humans/NPCs).\n",
-         "Everything below is present in the save but **missing from the wiki reference "
+         "Everything below is present in the save but **missing from the app's reference "
          "data** (`data/pals.json` / `data/passives.json`). Combat-relevant passives are "
-         "listed first — those silently score as 0 until added to `PASSIVE_OVERRIDES` in "
-         "`data/build_data.py`.\n"]
+         "listed first — those silently score as 0. The fix is to re-run the game-data "
+         "extraction (`tools/gamedata/README.md`) then `import_gamedata.py`; a non-empty "
+         "report usually just means the export predates a game patch.\n"]
 
     # --- passives ---
     rows = []
@@ -480,7 +481,7 @@ def write_review(out_dir, sp_seen, pv_seen, id_maps, app_pals, app_pass, pass_ef
     rows.sort(key=lambda r: (not r[0], -r[1]))
     L.append("\n## Passives needing review\n")
     if not rows:
-        L.append("_None — every passive in the save maps to a known wiki passive._\n")
+        L.append("_None — every passive in the save maps to a known passive._\n")
     else:
         L.append("| Combat? | Pals | Internal ID | Display name | Save-pal effect |")
         L.append("|---|---:|---|---|---|")
@@ -499,12 +500,12 @@ def write_review(out_dir, sp_seen, pv_seen, id_maps, app_pals, app_pass, pass_ef
     srows.sort(key=lambda r: -r[0])
     L.append("\n## Species needing review\n")
     if not srows:
-        L.append("_None — every owned species maps to a known wiki species._\n")
+        L.append("_None — every owned species maps to a known species._\n")
     else:
         L.append("| Pals | Internal ID | Display name | Note |")
         L.append("|---:|---|---|---|")
         for cnt, sid, name in srows:
-            note = "no name mapping" if not name else "not in wiki pals.json (new DLC Pal / variant?)"
+            note = "no name mapping" if not name else "not in data/pals.json (export predates a patch?)"
             L.append(f"| {cnt} | `{sid}` | {name or '—'} | {note} |")
 
     open(os.path.join(out_dir, "ingest_review.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")

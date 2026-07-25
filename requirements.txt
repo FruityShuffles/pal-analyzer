@@ -1,0 +1,2 @@
+# build_data.py and build_report.py use the Python standard library only
+# (urllib, json) -- no third-party packages required. Python 3.8+.

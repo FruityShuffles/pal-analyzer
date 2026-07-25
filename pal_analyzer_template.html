@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Palworld Combat-Score Analyzer</title>
+<style>
+  :root{
+    --bg:#0f1216; --panel:#171c23; --panel2:#1e252e; --line:#2a323d;
+    --ink:#e7edf3; --muted:#93a1b0; --accent:#4ea1ff; --accent2:#38d39f;
+    --warn:#ffb020; --danger:#ff6b6b; --chip:#232b35;
+    --good:#38d39f; --current:#62b5ff; --target:#c78cff; --cost:#f2c05f;
+    --shadow:0 2px 10px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  h1{font-size:20px;margin:0}
+  h2{font-size:15px;margin:0 0 10px;color:var(--ink);letter-spacing:.02em}
+  a{color:var(--accent)}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+    padding:16px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+  header .sub{color:var(--muted);font-size:12px}
+  main{max-width:1800px;margin:0 auto;padding:18px 20px 60px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:16px;box-shadow:var(--shadow)}
+  label{display:block;font-size:12px;color:var(--muted);margin:0 0 4px}
+  input,select,button{font:inherit;color:var(--ink)}
+  input[type=text],input[type=number],select{
+    width:100%;background:var(--panel2);border:1px solid var(--line);
+    border-radius:7px;padding:8px 10px;outline:none}
+  input:focus,select:focus{border-color:var(--accent)}
+  .row{display:flex;gap:10px}
+  .row>div{flex:1}
+  .ivs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .field{margin-bottom:12px}
+  .passgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  button{cursor:pointer;background:var(--panel2);border:1px solid var(--line);
+    border-radius:7px;padding:8px 12px}
+  button:hover{border-color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#04121f;font-weight:600}
+  button.primary:hover{filter:brightness(1.08)}
+  button.ghost{background:transparent}
+  button.sm{padding:4px 8px;font-size:12px}
+  button.danger{color:var(--danger)}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .hint{font-size:11px;color:var(--muted);margin-top:4px}
+  .err{color:var(--danger);font-size:12px;margin-top:6px;min-height:16px}
+  .toolbar{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin-bottom:14px}
+  .toolbar .field{margin:0}
+  .toolbar label{margin-bottom:2px}
+  .tl-input{width:90px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{background:var(--chip);border:1px solid var(--line);border-radius:999px;
+    padding:4px 11px;font-size:12px;cursor:pointer;user-select:none;color:var(--muted)}
+  .chip.on{background:var(--accent);border-color:var(--accent);color:#04121f;font-weight:600}
+  .chip:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  #assumeChips .chip.on{background:var(--target);border-color:var(--target);color:#160a20}
+  [data-element="Neutral"]{--el:#b4bdc9;--el-rgb:180,189,201;--el-ink:#111820}
+  [data-element="Fire"]{--el:#ff7659;--el-rgb:255,118,89;--el-ink:#250904}
+  [data-element="Water"]{--el:#57aeff;--el-rgb:87,174,255;--el-ink:#041727}
+  [data-element="Electric"]{--el:#f5d453;--el-rgb:245,212,83;--el-ink:#201900}
+  [data-element="Grass"]{--el:#69d477;--el-rgb:105,212,119;--el-ink:#071b0a}
+  [data-element="Ice"]{--el:#87dfeb;--el-rgb:135,223,235;--el-ink:#061b1e}
+  [data-element="Ground"]{--el:#d5a062;--el-rgb:213,160,98;--el-ink:#211105}
+  [data-element="Dark"]{--el:#9d86ff;--el-rgb:157,134,255;--el-ink:#100921}
+  [data-element="Dragon"]{--el:#ee7bd3;--el-rgb:238,123,211;--el-ink:#21071b}
+  [data-element-secondary="Neutral"]{--el2:#b4bdc9;--el2-rgb:180,189,201}
+  [data-element-secondary="Fire"]{--el2:#ff7659;--el2-rgb:255,118,89}
+  [data-element-secondary="Water"]{--el2:#57aeff;--el2-rgb:87,174,255}
+  [data-element-secondary="Electric"]{--el2:#f5d453;--el2-rgb:245,212,83}
+  [data-element-secondary="Grass"]{--el2:#69d477;--el2-rgb:105,212,119}
+  [data-element-secondary="Ice"]{--el2:#87dfeb;--el2-rgb:135,223,235}
+  [data-element-secondary="Ground"]{--el2:#d5a062;--el2-rgb:213,160,98}
+  [data-element-secondary="Dark"]{--el2:#9d86ff;--el2-rgb:157,134,255}
+  [data-element-secondary="Dragon"]{--el2:#ee7bd3;--el2-rgb:238,123,211}
+  .element-chip{color:var(--el);border-color:rgba(var(--el-rgb),.42);
+    background:rgba(var(--el-rgb),.08);line-height:1.4}
+  .element-chip:hover{border-color:var(--el);background:rgba(var(--el-rgb),.15)}
+  .element-chip.on{color:var(--el-ink);background:var(--el);border-color:var(--el);
+    box-shadow:0 0 0 2px rgba(var(--el-rgb),.13)}
+  .el{display:inline-block;padding:1px 7px;border-radius:5px;font-size:11px;
+    color:var(--el);background:rgba(var(--el-rgb),.10);
+    border:1px solid rgba(var(--el-rgb),.42);margin:1px;font-weight:600}
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{padding:8px 10px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line)}
+  thead th{background:var(--panel2);position:sticky;top:0;cursor:pointer;user-select:none;
+    font-size:12px;color:var(--muted);z-index:1}
+  thead th:hover{color:var(--ink)}
+  th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
+  tbody tr:hover{background:var(--panel2)}
+  .sortarrow{font-size:10px;color:var(--accent);margin-left:3px}
+  .score{font-weight:700}
+  th[data-col="currentScore"],.cell-currentScore .score{color:var(--current)}
+  th[data-col="targetScore"],.cell-targetScore .score{color:var(--target)}
+  th[data-col="headroom"]{color:var(--good)}
+  th[data-col="cost"],.cost-remaining{color:var(--cost)}
+  .head-pos{color:var(--good)}
+  .head-neg{color:var(--muted)}
+  .muted{color:var(--muted)}
+  .pill{font-size:11px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:5px;padding:1px 6px;margin:1px;display:inline-block}
+  .pill.combat-positive{color:#7ce3b3;background:rgba(56,211,159,.08);border-color:rgba(56,211,159,.35)}
+  .pill.combat-negative{color:#ff8a8a;background:rgba(255,107,107,.08);border-color:rgba(255,107,107,.35)}
+  .augment{color:#d9a9ff}
+  .empty{padding:34px;text-align:center;color:var(--muted)}
+  .party{display:grid;gap:10px}
+  @media(min-width:700px){.party{grid-template-columns:repeat(5,1fr)}}
+  .pcard{position:relative;overflow:hidden;background:var(--panel2);border:1px solid var(--line);
+    border-radius:9px;padding:11px}
+  .pcard[data-element]{border-color:rgba(var(--el-rgb),.36);
+    background:linear-gradient(150deg,rgba(var(--el-rgb),.13),var(--panel2) 58%)}
+  .pcard[data-element-secondary]{
+    background:linear-gradient(145deg,rgba(var(--el-rgb),.14),transparent 48%),
+      linear-gradient(325deg,rgba(var(--el2-rgb),.13),transparent 50%),var(--panel2)}
+  .pcard[data-element]::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:var(--el)}
+  .pcard[data-element-secondary]::before{background:linear-gradient(90deg,var(--el),var(--el2))}
+  .pcard .nm{font-weight:600;margin-bottom:3px}
+  .pcard .sc{font-size:20px;font-weight:700;margin-top:8px}
+  .party-details{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 8px;
+    align-items:start;font-size:11px;line-height:1.45}
+  .party-details .detail-label{color:var(--muted)}
+  .party-details .detail-value{min-width:0;white-space:normal}
+  .party-details .pill{white-space:normal}
+  .party.mode-current .sc{color:var(--current)}
+  .party.mode-target .sc{color:var(--target)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+  .seg button{border:none;border-radius:0;background:var(--panel2);padding:6px 12px;font-size:12px}
+  .seg button.on{background:var(--accent);color:#04121f;font-weight:600}
+  .seg button[data-opt="target"].on{background:var(--target);color:#160a20}
+  .seg button[data-opt="current"].on{background:var(--current);color:#041727}
+  .roster-tools{margin-top:18px}
+  .roster-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .roster-actions .btnrow{margin:0}
+  .manual-entry{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+  .manual-entry summary{width:max-content;cursor:pointer;color:var(--muted);font-size:12px;
+    border:1px solid var(--line);border-radius:7px;padding:6px 10px;user-select:none}
+  .manual-entry summary:hover,.manual-entry summary:focus-visible{color:var(--ink);border-color:var(--accent)}
+  .manual-entry[open] summary{margin-bottom:16px}
+  .manual-form{max-width:720px}
+  footer{color:var(--muted);font-size:11px;text-align:center;padding:24px 20px;border-top:1px solid var(--line)}
+  .count{color:var(--muted);font-size:12px;font-weight:400}
+  datalist{color:#000}
+</style>
+</head>
+<body>
+<header>
+  <h1>🐑 Palworld Combat-Score Analyzer</h1>
+  <span class="sub">Leveling-priority planner &middot; save import or manual entry &middot; runs fully offline in your browser</span>
+</header>
+
+<main>
+  <!-- ============ PARTY OF 5 ============ -->
+  <section class="card">
+    <div class="toolbar" style="justify-content:space-between">
+      <h2 style="margin:0">Suggested Party of 5 <span class="count">— each Pal adds a new element</span></h2>
+      <div class="seg" id="optSeg">
+        <button data-opt="target" class="on">Optimize: Target level</button>
+        <button data-opt="current">Current level</button>
+      </div>
+    </div>
+    <div class="party mode-target" id="partyGrid"></div>
+    <div class="empty" id="partyEmpty" style="display:none">Import a roster or add a Pal manually to see a suggested party.</div>
+  </section>
+
+  <div>
+    <!-- ============ PAL PICKER ============ -->
+    <section class="card roster-tools" id="pickerCard">
+      <div class="roster-actions">
+        <div>
+          <h2 style="margin:0">Roster</h2>
+          <div class="hint">Import JSON generated from your server save. Your list auto-saves in this browser.</div>
+        </div>
+        <div class="btnrow">
+          <button type="button" id="importBtn" class="primary">⬆ Import JSON</button>
+          <button type="button" id="exportBtn" class="ghost">⬇ Export JSON</button>
+          <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+        </div>
+      </div>
+      <details class="manual-entry" id="manualEntry">
+        <summary>Add a Pal manually</summary>
+        <div class="manual-form">
+          <h2 id="pickerTitle">Add a Pal</h2>
+          <form id="palForm" autocomplete="off">
+        <input type="hidden" id="editId">
+        <div class="field">
+          <label for="species">Species *</label>
+          <input type="text" id="species" list="speciesList" placeholder="Start typing… e.g. Anubis" required>
+          <datalist id="speciesList"></datalist>
+          <div class="hint" id="speciesInfo"></div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="nickname">Nickname</label>
+            <input type="text" id="nickname" placeholder="optional">
+          </div>
+          <div class="field" style="max-width:120px">
+            <label for="level">Level *</label>
+            <input type="number" id="level" min="1" max="80" value="50" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="owner">Owner</label>
+          <input type="text" id="owner" list="ownerList" placeholder="optional — player or guild">
+          <datalist id="ownerList"></datalist>
+        </div>
+        <div class="field">
+          <label>IVs / Talents (0–100, all required)</label>
+          <div class="ivs">
+            <input type="number" id="ivHp"  min="0" max="100" placeholder="HP"  required>
+            <input type="number" id="ivAtk" min="0" max="100" placeholder="Atk" required>
+            <input type="number" id="ivDef" min="0" max="100" placeholder="Def" required>
+          </div>
+          <div class="hint">In-game Talent values. HP · Attack · Defense.</div>
+        </div>
+        <div class="field">
+          <label>Condensing / Trust</label>
+          <div class="row">
+            <div><input type="number" id="condense" min="0" max="4" value="0" placeholder="Stars"></div>
+            <div><input type="number" id="trust" min="0" max="10" value="0" placeholder="Trust"></div>
+          </div>
+          <div class="hint">Condense stars (0–4) · Trust rank (0–10).</div>
+        </div>
+        <div class="field">
+          <label>Soul ranks (0–20)</label>
+          <div class="ivs">
+            <input type="number" id="soulHp" min="0" max="20" value="0" placeholder="HP">
+            <input type="number" id="soulAtk" min="0" max="20" value="0" placeholder="Atk">
+            <input type="number" id="soulDef" min="0" max="20" value="0" placeholder="Def">
+          </div>
+          <div class="hint">HP · Attack · Defense.</div>
+        </div>
+        <div class="field">
+          <label>Passive skills (up to 4, optional)</label>
+          <div class="passgrid">
+            <input type="text" id="p0" list="passiveList" placeholder="Passive 1">
+            <input type="text" id="p1" list="passiveList" placeholder="Passive 2">
+            <input type="text" id="p2" list="passiveList" placeholder="Passive 3">
+            <input type="text" id="p3" list="passiveList" placeholder="Passive 4">
+          </div>
+          <datalist id="passiveList"></datalist>
+          <div class="hint" id="passiveInfo"></div>
+        </div>
+        <div class="err" id="formErr"></div>
+        <div class="btnrow">
+          <button type="submit" class="primary" id="saveBtn">Add Pal</button>
+          <button type="button" class="ghost" id="cancelBtn" style="display:none">Cancel</button>
+        </div>
+          </form>
+        </div>
+      </details>
+    </section>
+
+    <!-- ============ RANKED TABLE ============ -->
+    <section class="card" style="margin-top:18px">
+      <div class="toolbar">
+        <div class="field">
+          <label for="targetLevel">Target level</label>
+          <input type="number" id="targetLevel" class="tl-input" min="1" max="80" value="80">
+        </div>
+        <div class="field" style="flex:1;min-width:160px">
+          <label for="textFilter">Filter</label>
+          <input type="text" id="textFilter" placeholder="species, nickname, passive…">
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:12px">
+        <label>Elements <span class="count" id="elClear" style="cursor:pointer">(clear)</span></label>
+        <div class="chips" id="elementChips"></div>
+      </div>
+      <div class="field" style="margin-bottom:12px">
+        <label>Target assumes</label>
+        <div class="chips" id="assumeChips"></div>
+        <div class="hint">Applied to TargetScore, Headroom, party (Target mode), and the cost column.</div>
+      </div>
+      <div class="field" style="margin-bottom:12px;display:none" id="ownerField">
+        <label>Owners <span class="count">— scopes the table and the party</span> <span class="count" id="ownClear" style="cursor:pointer">(clear)</span></label>
+        <div class="chips" id="ownerChips"></div>
+      </div>
+      <h2>Ranked Pals <span class="count" id="tableCount"></span></h2>
+      <div class="tblwrap">
+        <table id="palTable">
+          <thead><tr id="headRow"></tr></thead>
+          <tbody id="palBody"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="emptyMsg" style="display:none">No Pals yet — import JSON or add one manually to get started.</div>
+    </section>
+  </div>
+
+</main>
+
+<footer>
+  Pal reference data from <a href="https://palworld.wiki.gg" target="_blank" rel="noopener">palworld.wiki.gg</a>
+  (CC BY-SA 4.0). Trust friendship stats from the
+  <a href="https://github.com/oMaN-Rod/palworld-save-pal" target="_blank" rel="noopener">palworld-save-pal project</a>
+  (MIT). Combat-score model per <code>docs/FORMULAS.md</code>. Your entered Pals stay in this browser only.
+</footer>
+
+<script>
+/* ============================================================
+   Reference data — baked in at build time by build_report.py.
+   ============================================================ */
+const PALS_DB = /*__PALS_JSON__*/ {};
+const PASSIVES_DB = /*__PASSIVES_JSON__*/ {};
+
+/* ============================================================
+   Combat-score math — faithful port of scoring_check.py / FORMULAS.md
+   ============================================================ */
+function ivPct(t){ return t * 0.3 / 100; }
+function statHp(hpStat, level, iv, passivePct, soulRank, stars){
+  const inner = Math.floor(500 + 5*level + hpStat*0.5*level*(1+ivPct(iv)));
+  return Math.floor(inner * (1 + passivePct) * (1 + 0.03*(soulRank||0)) * (1 + 0.05*(stars||0)));
+}
+function statAttack(atkStat, level, iv, passivePct, soulRank, stars){
+  const inner = Math.floor(100 + atkStat*0.075*level*(1+ivPct(iv)));
+  return Math.floor(inner * (1 + passivePct) * (1 + 0.03*(soulRank||0)) * (1 + 0.05*(stars||0)));
+}
+function statDefense(defStat, level, iv, passivePct, soulRank, stars){
+  // base 50, not 100 (source typo trap — see FORMULAS.md)
+  const inner = Math.floor(50 + defStat*0.075*level*(1+ivPct(iv)));
+  return Math.floor(inner * (1 + passivePct) * (1 + 0.03*(soulRank||0)) * (1 + 0.05*(stars||0)));
+}
+function combatScore(hp, atk, def){ return Math.cbrt(hp*atk*def); }
+
+// Sum signed Attack/Defense percent bonuses across a Pal's passives -> decimals.
+function passiveBonuses(passiveNames){
+  let atk = 0, def = 0;
+  for(const nm of passiveNames){
+    const p = PASSIVES_DB[nm];
+    if(!p) continue;
+    atk += (p.attack_pct || 0);
+    def += (p.defense_pct || 0);
+  }
+  return { atk: atk/100, def: def/100, hp: 0 }; // hp passive never exists -> 0
+}
+
+function actualAug(e){
+  return {stars:e.condense||0, soulHp:e.soulHp||0, soulAtk:e.soulAtk||0,
+    soulDef:e.soulDef||0, trust:e.trust||0};
+}
+function assumedAug(e){
+  const a=state.assume, x=actualAug(e);
+  return {stars:a.condense?4:x.stars, soulHp:a.souls?20:x.soulHp,
+    soulAtk:a.souls?20:x.soulAtk, soulDef:a.souls?20:x.soulDef,
+    trust:a.trust?10:x.trust};
+}
+
+// Full derived stats + score for a Pal entry at a given level. Omitting aug
+// uses the Pal's actual augments, which keeps every Current-score call actual.
+function computeAt(entry, level, aug){
+  const base = PALS_DB[entry.species];
+  if(!base) return null;
+  const g=aug||actualAug(entry), b=passiveBonuses(entry.passives||[]);
+  const hp=statHp(base.hp_stat+(base.friendship_hp||0)*g.trust, level, entry.ivHp, b.hp, g.soulHp, g.stars);
+  const atk=statAttack(base.attack_stat+(base.friendship_attack||0)*g.trust, level, entry.ivAtk, b.atk, g.soulAtk, g.stars);
+  const def=statDefense(base.defense_stat+(base.friendship_defense||0)*g.trust, level, entry.ivDef, b.def, g.soulDef, g.stars);
+  return { hp, atk, def, score: combatScore(hp, atk, def) };
+}
+
+/* ============================================================
+   In-page self-test — locks JS port against known crossover.
+   ============================================================ */
+(function selfTest(){
+  const mk = (h,a,d)=>({species:'_t',passives:[],ivHp:0,ivAtk:0,ivDef:0,_b:{hp_stat:h,attack_stat:a,defense_stat:d}});
+  const at = (b,lvl)=>{
+    const hp=statHp(b.hp_stat,lvl,0,0), atk=statAttack(b.attack_stat,lvl,0,0), def=statDefense(b.defense_stat,lvl,0,0);
+    return combatScore(hp,atk,def);
+  };
+  const mam={hp_stat:150,attack_stat:85,defense_stat:90};
+  const kit={hp_stat:100,attack_stat:115,defense_stat:100};
+  const near=(x,y)=>Math.abs(x-y)<0.1;
+  console.assert(near(at(mam,1),151.0),  'self-test Mammorest L1', at(mam,1));
+  console.assert(near(at(mam,50),899.6), 'self-test Mammorest L50', at(mam,50));
+  console.assert(near(at(kit,1),150.6),  'self-test Kitsun L1', at(kit,1));
+  console.assert(near(at(kit,50),901.8), 'self-test Kitsun L50', at(kit,50));
+  console.assert(at(mam,1) > at(kit,1),  'self-test: Mammorest leads @ L1');
+  console.assert(at(kit,50) > at(mam,50),'self-test: Kitsun overtakes @ L50');
+  const mamMax={
+    hp:statHp(150,50,0,0,20,4), atk:statAttack(85,50,0,0,20,4),
+    def:statDefense(90,50,0,0,20,4)
+  };
+  const kitTrust={
+    hp:statHp(100+4.5*10,50,0,0,0,0), atk:statAttack(115+3.5*10,50,0,0,0,0),
+    def:statDefense(100+2.9*10,50,0,0,0,0)
+  };
+  const ordering={
+    hp:statHp(150+4.5*10,50,0,0,0,4), atk:statAttack(85+3.5*10,50,0,.20,20,4),
+    def:statDefense(90+2.9*10,50,0,0,0,4)
+  };
+  const checkVector=(name,v,expectedScore,hp,atk,def)=>{
+    const score=combatScore(v.hp,v.atk,v.def);
+    console.assert(v.hp===hp && v.atk===atk && v.def===def, `self-test ${name} stats`, v);
+    console.assert(Math.abs(score-expectedScore)<1e-6, `self-test ${name} score`, score);
+    return score;
+  };
+  const mamMaxScore=checkVector('max souls + stars',mamMax,1726.734799,8640,802,743);
+  checkVector('synthetic trust',kitTrust,1155.724763,4375,662,533);
+  checkVector('multiplier ordering',ordering,1720.015859,6750,1267,595);
+  console.assert(mamMaxScore>at(mam,50),'self-test: augmented score is monotonic');
+  console.log('Combat-score self-test complete (see assertions above; no failures = OK).');
+})();
+
+/* ============================================================
+   State + persistence
+   ============================================================ */
+const LS_KEY = 'palAnalyzer.v1';
+let state = { version:1, targetLevel:80, assume:{condense:true,souls:true,trust:true}, pals:[] };
+let sortCol = 'targetScore', sortDir = -1;
+let activeElements = new Set();
+let activeOwners = new Set();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      if(d && Array.isArray(d.pals)){
+        state.pals = d.pals.map(normalizeEntry).filter(Boolean);
+        if(d.targetLevel) state.targetLevel = d.targetLevel;
+        if(d.assume && typeof d.assume==='object') state.assume = {
+          condense:d.assume.condense!==false,
+          souls:d.assume.souls!==false,
+          trust:d.assume.trust!==false
+        };
+      }
+    }
+  }catch(e){ console.warn('load failed', e); }
+}
+function save(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+  catch(e){ console.warn('save failed', e); }
+}
+function normalizeEntry(e){
+  if(!e || typeof e!=='object' || !e.species) return null;
+  const clampIV = v => Math.max(0, Math.min(100, Math.round(Number(v)||0)));
+  const clampInt = (v,hi) => Math.max(0, Math.min(hi, Math.round(Number(v)||0)));
+  return {
+    id: e.id || uid(),
+    species: String(e.species),
+    nickname: e.nickname ? String(e.nickname) : '',
+    owner: e.owner ? String(e.owner) : '',
+    level: Math.max(1, Math.min(80, Math.round(Number(e.level)||1))),
+    ivHp: clampIV(e.ivHp), ivAtk: clampIV(e.ivAtk), ivDef: clampIV(e.ivDef),
+    condense: clampInt(e.condense,4),
+    soulHp: clampInt(e.soulHp,20), soulAtk: clampInt(e.soulAtk,20), soulDef: clampInt(e.soulDef,20),
+    trust: clampInt(e.trust,10),
+    passives: Array.isArray(e.passives) ? e.passives.filter(x=>x).slice(0,4).map(String) : []
+  };
+}
+function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+/* ============================================================
+   Populate datalists
+   ============================================================ */
+const speciesNames = Object.keys(PALS_DB).sort();
+const passiveNames = Object.keys(PASSIVES_DB).sort();
+function fillDatalists(){
+  document.getElementById('speciesList').innerHTML =
+    speciesNames.map(n=>`<option value="${esc(n)}">`).join('');
+  document.getElementById('passiveList').innerHTML =
+    passiveNames.map(n=>{
+      const p = PASSIVES_DB[n]; const tag = passiveTag(p);
+      return `<option value="${esc(n)}">${tag}</option>`;
+    }).join('');
+}
+function passiveTag(p){
+  if(!p) return '';
+  const parts=[];
+  if(p.attack_pct) parts.push(`Atk ${p.attack_pct>0?'+':''}${p.attack_pct}%`);
+  if(p.defense_pct) parts.push(`Def ${p.defense_pct>0?'+':''}${p.defense_pct}%`);
+  return parts.join(', ') || (p.description ? stripHtml(p.description) : 'non-combat');
+}
+function stripHtml(s){ return String(s).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim(); }
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function elementTag(e){ return `<span class="el" data-element="${esc(e)}">${esc(e)}</span>`; }
+function passiveTone(name){
+  const p=PASSIVES_DB[name]||{};
+  const bonuses=[p.attack_pct,p.defense_pct,p.hp_pct].map(Number).filter(Number.isFinite);
+  if(bonuses.some(v=>v<0)) return 'combat-negative';
+  if(bonuses.some(v=>v>0)) return 'combat-positive';
+  return '';
+}
+function passivePills(entry){
+  return entry.passives.map(p=>`<span class="pill ${passiveTone(p)}" title="${esc(stripHtml((PASSIVES_DB[p]||{}).description||''))}">${esc(p)}</span>`).join('')
+    || '<span class="muted">—</span>';
+}
+
+/* ============================================================
+   Form handling
+   ============================================================ */
+const $ = id => document.getElementById(id);
+function speciesInfo(){
+  const s = $('species').value.trim();
+  const b = PALS_DB[s];
+  if(b){
+    $('speciesInfo').innerHTML = `Base ${b.hp_stat}/${b.attack_stat}/${b.defense_stat} · ${b.elements.map(elementTag).join('')||'—'}`;
+  }else{
+    $('speciesInfo').textContent = s ? 'Unknown species' : '';
+  }
+}
+$('species').addEventListener('input', speciesInfo);
+
+function readForm(){
+  return normalizeEntry({
+    id: $('editId').value || undefined,
+    species: $('species').value.trim(),
+    nickname: $('nickname').value.trim(),
+    owner: $('owner').value.trim(),
+    level: $('level').value,
+    ivHp: $('ivHp').value, ivAtk: $('ivAtk').value, ivDef: $('ivDef').value,
+    condense: $('condense').value, trust: $('trust').value,
+    soulHp: $('soulHp').value, soulAtk: $('soulAtk').value, soulDef: $('soulDef').value,
+    passives: [$('p0').value,$('p1').value,$('p2').value,$('p3').value].map(s=>s.trim()).filter(Boolean)
+  });
+}
+function validate(){
+  const s = $('species').value.trim();
+  if(!PALS_DB[s]) return 'Pick a valid species from the list.';
+  for(const [id,name] of [['ivHp','HP'],['ivAtk','Attack'],['ivDef','Defense']]){
+    const v = $(id).value;
+    if(v==='' || isNaN(Number(v))) return `${name} IV is required (0–100).`;
+    if(Number(v)<0 || Number(v)>100) return `${name} IV must be 0–100.`;
+  }
+  const lv = Number($('level').value);
+  if(!lv || lv<1 || lv>80) return 'Level must be 1–80.';
+  for(const [id,name,max] of [['condense','Condense stars',4],['trust','Trust rank',10],
+    ['soulHp','HP soul rank',20],['soulAtk','Attack soul rank',20],['soulDef','Defense soul rank',20]]){
+    const v=$(id).value;
+    if(v==='') continue;
+    if(isNaN(Number(v)) || Number(v)<0 || Number(v)>max) return `${name} must be 0–${max}.`;
+  }
+  for(const pid of ['p0','p1','p2','p3']){
+    const pv = $(pid).value.trim();
+    if(pv && !PASSIVES_DB[pv]) return `Unknown passive: "${pv}".`;
+  }
+  return '';
+}
+$('palForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const err = validate();
+  $('formErr').textContent = err;
+  if(err) return;
+  const entry = readForm();
+  const idx = state.pals.findIndex(p=>p.id===entry.id);
+  if(idx>=0) state.pals[idx]=entry; else state.pals.push(entry);
+  save(); resetForm(); render();
+});
+$('cancelBtn').addEventListener('click', resetForm);
+function resetForm(){
+  $('palForm').reset();
+  $('editId').value=''; $('level').value=50;
+  $('pickerTitle').textContent='Add a Pal';
+  $('saveBtn').textContent='Add Pal';
+  $('cancelBtn').style.display='none';
+  $('formErr').textContent=''; $('speciesInfo').textContent='';
+  $('manualEntry').open=false;
+}
+function editPal(id){
+  const p = state.pals.find(x=>x.id===id); if(!p) return;
+  $('editId').value=p.id; $('species').value=p.species; $('nickname').value=p.nickname;
+  $('owner').value=p.owner||'';
+  $('level').value=p.level; $('ivHp').value=p.ivHp; $('ivAtk').value=p.ivAtk; $('ivDef').value=p.ivDef;
+  $('condense').value=p.condense||0; $('trust').value=p.trust||0;
+  $('soulHp').value=p.soulHp||0; $('soulAtk').value=p.soulAtk||0; $('soulDef').value=p.soulDef||0;
+  ['p0','p1','p2','p3'].forEach((pid,i)=>$(pid).value=p.passives[i]||'');
+  $('pickerTitle').textContent='Edit Pal'; $('saveBtn').textContent='Save changes';
+  $('cancelBtn').style.display='inline-block'; speciesInfo();
+  $('manualEntry').open=true;
+  $('pickerCard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function deletePal(id){
+  const p = state.pals.find(x=>x.id===id); if(!p) return;
+  if(!confirm(`Delete ${p.nickname||p.species}?`)) return;
+  state.pals = state.pals.filter(x=>x.id!==id);
+  save(); render();
+}
+
+/* ============================================================
+   Export / Import
+   ============================================================ */
+$('exportBtn').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `palworld-pals-${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+});
+$('importBtn').addEventListener('click', ()=>$('importFile').click());
+$('importFile').addEventListener('change', e=>{
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const d = JSON.parse(reader.result);
+      const incoming = (Array.isArray(d) ? d : d.pals);
+      if(!Array.isArray(incoming)) throw new Error('No pal list found in file.');
+      const cleaned = incoming.map(normalizeEntry).filter(Boolean);
+      if(!cleaned.length) throw new Error('No valid Pals in file.');
+      // Per-player ingest files carry a top-level "player" instead of per-entry owners.
+      if(!Array.isArray(d) && d.player) cleaned.forEach(c=>{ if(!c.owner) c.owner=String(d.player); });
+      const mode = confirm(`Import ${cleaned.length} Pal(s).\n\nOK = REPLACE your current list.\nCancel = MERGE (append).`);
+      if(mode) state.pals = cleaned;
+      else{ const seen=new Set(state.pals.map(p=>p.id)); cleaned.forEach(c=>{ if(seen.has(c.id)) c.id=uid(); state.pals.push(c); }); }
+      if(!Array.isArray(d) && d.targetLevel){ state.targetLevel=d.targetLevel; $('targetLevel').value=d.targetLevel; }
+      if(!Array.isArray(d) && d.assume && typeof d.assume==='object') state.assume = {
+        condense:d.assume.condense!==false,
+        souls:d.assume.souls!==false,
+        trust:d.assume.trust!==false
+      };
+      save(); render();
+    }catch(err){ alert('Import failed: '+err.message); }
+    $('importFile').value='';
+  };
+  reader.readAsText(file);
+});
+
+/* ============================================================
+   Rendering: element chips, table, party
+   ============================================================ */
+const ALL_ELEMENTS = (()=>{
+  const s = new Set();
+  for(const k in PALS_DB) (PALS_DB[k].elements||[]).forEach(e=>s.add(e));
+  return [...s].sort();
+})();
+
+function renderChips(){
+  const box = $('elementChips');
+  box.innerHTML = ALL_ELEMENTS.map(e=>
+    `<button type="button" class="chip element-chip ${activeElements.has(e)?'on':''}" data-el="${esc(e)}" data-element="${esc(e)}" aria-pressed="${activeElements.has(e)}">${esc(e)}</button>`).join('');
+  box.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+    const el=c.dataset.el;
+    if(activeElements.has(el)) activeElements.delete(el); else activeElements.add(el);
+    render();
+  }));
+}
+$('elClear').addEventListener('click',()=>{ activeElements.clear(); render(); });
+
+function renderAssumeChips(){
+  const opts=[['condense','Max condense (4★)'],['souls','Max souls (20/20/20)'],['trust','Max trust (T10)']];
+  const box=$('assumeChips');
+  box.innerHTML=opts.map(([k,label])=>
+    `<span class="chip ${state.assume[k]?'on':''}" data-assume="${k}">${label}</span>`).join('');
+  box.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+    const k=c.dataset.assume; state.assume[k]=!state.assume[k]; save(); render();
+  }));
+}
+
+// Owner chips: built from the owners present in the list ('' = unassigned).
+// Unlike element/text filters, the owner filter also scopes the party of 5.
+function renderOwnerChips(){
+  const owners = [...new Set(state.pals.map(p=>p.owner||''))].sort((a,b)=>a.localeCompare(b));
+  const named = owners.filter(o=>o);
+  [...activeOwners].forEach(o=>{ if(!owners.includes(o)) activeOwners.delete(o); });
+  $('ownerField').style.display = named.length ? '' : 'none';
+  if(!named.length){ activeOwners.clear(); return; }
+  $('ownerList').innerHTML = named.map(o=>`<option value="${esc(o)}">`).join('');
+  const box = $('ownerChips');
+  box.innerHTML = owners.map(o=>
+    `<span class="chip ${activeOwners.has(o)?'on':''}" data-owner="${esc(o)}">${o?esc(o):'(unassigned)'}</span>`).join('');
+  box.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+    const o=c.dataset.owner;
+    if(activeOwners.has(o)) activeOwners.delete(o); else activeOwners.add(o);
+    render();
+  }));
+}
+$('ownClear').addEventListener('click',()=>{ activeOwners.clear(); render(); });
+function ownerFiltered(pals){
+  return activeOwners.size ? pals.filter(p=>activeOwners.has(p.owner||'')) : pals;
+}
+
+const CONDENSE_CUM=[0,4,12,24,48]; // fodder consumed at 0..4 stars (v1.0: 4/8/12/24)
+const SOUL_COST=[null,['S',1],['S',2],['S',3],['S',4],['M',1],['M',2],['M',3],['L',1],['L',2],['L',3],
+  ['G',3],['G',3],['G',3],['G',3],['G',3],['G',3],['G',3],['G',3],['G',3],['G',3]]; // 11-20 split approx; 30G total exact
+const TRUST_THRESHOLDS=[0,6000,13000,21000,30000,40000,55000,80000,110000,150000,200000];
+function costToFinish(e){
+  const a=state.assume, c={fodder:0,S:0,M:0,L:0,G:0,peaches:0};
+  if(a.condense) c.fodder=48-CONDENSE_CUM[e.condense||0];
+  if(a.souls) for(const k of ['soulHp','soulAtk','soulDef'])
+    for(let r=(e[k]||0)+1;r<=20;r++){ const [sz,n]=SOUL_COST[r]; c[sz]+=n; }
+  // Trust points approximated at the current rank's threshold (AUGMENTS.md section 4); peach = 20,000 pts.
+  if(a.trust) c.peaches=Math.ceil((200000-TRUST_THRESHOLDS[e.trust||0])/20000);
+  return c;
+}
+
+// Build a display row (derived stats) for a Pal entry.
+function decorate(entry){
+  const base = PALS_DB[entry.species] || {elements:[],hp_stat:0,attack_stat:0,defense_stat:0};
+  const cur = computeAt(entry, entry.level) || {hp:0,atk:0,def:0,score:0};
+  const tgt = computeAt(entry, state.targetLevel, assumedAug(entry)) || {hp:0,atk:0,def:0,score:0};
+  return {
+    entry, base,
+    elements: base.elements||[],
+    hp:cur.hp, atk:cur.atk, def:cur.def,
+    currentScore:cur.score, targetScore:tgt.score,
+    headroom: tgt.score-cur.score,
+    cost:costToFinish(entry)
+  };
+}
+
+function augmentCell(e){
+  if(!(e.condense||e.soulHp||e.soulAtk||e.soulDef||e.trust)) return '<span class="muted">—</span>';
+  const text=`★${e.condense} · ${e.soulHp}/${e.soulAtk}/${e.soulDef} · T${e.trust}`;
+  const title=`${e.condense} condense stars; souls HP ${e.soulHp}, Attack ${e.soulAtk}, Defense ${e.soulDef}; Trust ${e.trust}`;
+  return `<span class="augment" title="${esc(title)}">${text}</span>`;
+}
+function costCell(r){
+  const c=r.cost, parts=[];
+  if(state.assume.condense) parts.push(`${c.fodder}F`);
+  if(state.assume.souls) parts.push(`${c.S}S/${c.M}M/${c.L}L/<b>${c.G}G</b>`);
+  if(state.assume.trust) parts.push(`${c.peaches}P`);
+  const remaining=c.fodder+c.S+c.M+c.L+c.G+c.peaches;
+  if(!remaining) return '<span class="muted">maxed</span>';
+  const title=`${c.fodder} condense fodder; ${c.S} Small, ${c.M} Medium, ${c.L} Large, ${c.G} Giant souls; ${c.peaches} Kinship Peaches`;
+  return `<span class="cost-remaining" title="${esc(title)}">${parts.join(' · ')}</span>`;
+}
+
+const COLUMNS = [
+  {key:'rank',   label:'#',        num:true,  get:(r,i)=>i+1, sortable:false},
+  {key:'name',   label:'Pal',      get:r=>r.entry.nickname||r.entry.species, sort:r=>(r.entry.nickname||r.entry.species).toLowerCase()},
+  {key:'owner',  label:'Owner',    get:r=>r.entry.owner?esc(r.entry.owner):'<span class="muted">—</span>', sort:r=>(r.entry.owner||'').toLowerCase()},
+  {key:'element',label:'Element',  get:r=>r.elements.map(elementTag).join(''), sort:r=>r.elements.join('/')},
+  {key:'level',  label:'Lvl',      num:true, get:r=>r.entry.level, sort:r=>r.entry.level},
+  {key:'ivs',    label:'IVs (H/A/D)', get:r=>`${r.entry.ivHp}/${r.entry.ivAtk}/${r.entry.ivDef}`, sortable:false},
+  {key:'passives',label:'Passives',get:r=>passivePills(r.entry), sortable:false},
+  {key:'augments',label:'Augments',get:r=>augmentCell(r.entry),sort:r=>r.entry.condense/4+(r.entry.soulHp+r.entry.soulAtk+r.entry.soulDef)/60+r.entry.trust/10},
+  {key:'hp',     label:'HP',       num:true, get:r=>r.hp, sort:r=>r.hp},
+  {key:'atk',    label:'Atk',      num:true, get:r=>r.atk, sort:r=>r.atk},
+  {key:'def',    label:'Def',      num:true, get:r=>r.def, sort:r=>r.def},
+  {key:'currentScore',label:'Current', num:true, get:r=>`<span class="score">${r.currentScore.toFixed(1)}</span>`, sort:r=>r.currentScore},
+  {key:'targetScore', label:'Target',  num:true, get:r=>`<span class="score">${r.targetScore.toFixed(1)}</span>`, sort:r=>r.targetScore},
+  {key:'headroom',    label:'Headroom',num:true, get:r=>{const v=r.headroom;return `<span class="${v>=0?'head-pos':'head-neg'}">${v>=0?'+':''}${v.toFixed(1)}</span>`;}, sort:r=>r.headroom},
+  {key:'cost',label:'Cost to finish',num:true,get:r=>costCell(r),sort:r=>r.cost.G},
+  {key:'actions',label:'',         get:r=>`<button class="sm ghost" data-edit="${r.entry.id}">Edit</button> <button class="sm ghost danger" data-del="${r.entry.id}">✕</button>`, sortable:false},
+];
+
+function currentFilteredRows(){
+  const q = $('textFilter').value.trim().toLowerCase();
+  let rows = ownerFiltered(state.pals).map(decorate);
+  if(activeElements.size){
+    rows = rows.filter(r=>r.elements.some(e=>activeElements.has(e)));
+  }
+  if(q){
+    rows = rows.filter(r=>{
+      const hay = [r.entry.species, r.entry.nickname, r.entry.owner, r.elements.join(' '), r.entry.passives.join(' ')].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }
+  const col = COLUMNS.find(c=>c.key===sortCol);
+  if(col && col.sort){
+    rows.sort((a,b)=>{
+      const va=col.sort(a), vb=col.sort(b);
+      if(va<vb) return -1*sortDir; if(va>vb) return 1*sortDir; return 0;
+    });
+  }
+  return rows;
+}
+
+function renderTable(){
+  const head = $('headRow');
+  head.innerHTML = COLUMNS.map(c=>{
+    const arrow = (c.key===sortCol)?`<span class="sortarrow">${sortDir<0?'▼':'▲'}</span>`:'';
+    return `<th class="${c.num?'num':''}" data-col="${c.key}">${esc(c.label)}${arrow}</th>`;
+  }).join('');
+  head.querySelectorAll('th').forEach(th=>{
+    const key=th.dataset.col; const col=COLUMNS.find(c=>c.key===key);
+    if(col && col.sortable!==false && col.sort) th.addEventListener('click',()=>{
+      if(sortCol===key) sortDir*=-1; else{ sortCol=key; sortDir=-1; }
+      renderTable();
+    });
+  });
+
+  const rows = currentFilteredRows();
+  const body = $('palBody');
+  body.innerHTML = rows.map((r,i)=>
+    '<tr>'+COLUMNS.map(c=>`<td class="${c.num?'num ':''}cell-${c.key}">${c.get(r,i)}</td>`).join('')+'</tr>'
+  ).join('');
+  body.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>editPal(b.dataset.edit)));
+  body.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>deletePal(b.dataset.del)));
+
+  $('tableCount').textContent = `— ${rows.length} of ${state.pals.length}`;
+  $('emptyMsg').style.display = state.pals.length ? 'none':'block';
+  $('palTable').style.display = state.pals.length ? '':'none';
+}
+
+/* ---- Party of 5: greedy element-disjoint pick ---- */
+let optimizeBy = 'target';
+function renderParty(){
+  const grid = $('partyGrid');
+  grid.classList.toggle('mode-target',optimizeBy==='target');
+  grid.classList.toggle('mode-current',optimizeBy==='current');
+  const pool = ownerFiltered(state.pals);   // owner filter scopes the party too
+  if(!pool.length){ grid.innerHTML=''; $('partyEmpty').style.display='block'; return; }
+  $('partyEmpty').style.display='none';
+  const rows = pool.map(decorate);
+  const metric = r => optimizeBy==='target' ? r.targetScore : r.currentScore;
+  // Greedy, highest score first: take a Pal only if it brings at least one
+  // element not yet covered. A Pal can swap active skills at will, so a
+  // dual-element Pal covers BOTH elements -- but a later Pal may still be picked
+  // if it adds a NEW element (e.g. a Water/Ice Pal fills the Ice slot even though
+  // Water is already covered). Every pick expands element coverage; overlap on an
+  // already-covered element is allowed so the higher-scoring Pal can win the slot.
+  // Pals with no DB element bring nothing new, so they're never picked.
+  const covered = new Set();
+  const party = [];
+  for(const r of rows.slice().sort((a,b)=>metric(b)-metric(a))){
+    if(party.length>=5) break;
+    if(!r.elements.some(e=>!covered.has(e))) continue;
+    party.push(r);
+    r.elements.forEach(e=>covered.add(e));
+  }
+  grid.innerHTML = party.map(r=>`
+    <div class="pcard"${r.elements[0]?` data-element="${esc(r.elements[0])}"`:''}${r.elements[1]?` data-element-secondary="${esc(r.elements[1])}"`:''}>
+      <div class="nm">${esc(r.entry.nickname||r.entry.species)}</div>
+      <div class="muted" style="font-size:12px">${esc(r.entry.species)} · Lv ${r.entry.level}</div>
+      <div style="margin:6px 0">${r.elements.map(elementTag).join('')||'<span class="muted">—</span>'}</div>
+      <div class="party-details">
+        <span class="detail-label">IVs</span>
+        <span class="detail-value" title="HP / Attack / Defense">${r.entry.ivHp}/${r.entry.ivAtk}/${r.entry.ivDef} <span class="muted">H/A/D</span></span>
+        <span class="detail-label">Passives</span>
+        <span class="detail-value">${passivePills(r.entry)}</span>
+        <span class="detail-label">Augments</span>
+        <span class="detail-value">${augmentCell(r.entry)}</span>
+      </div>
+      <div class="sc">${metric(r).toFixed(1)}</div>
+    </div>`).join('');
+}
+$('optSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+  optimizeBy=b.dataset.opt;
+  $('optSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  renderParty();
+}));
+
+/* ============================================================
+   Wire-up
+   ============================================================ */
+$('targetLevel').addEventListener('input',()=>{
+  const v = Math.max(1,Math.min(80,Number($('targetLevel').value)||80));
+  state.targetLevel=v; save(); render();
+});
+$('textFilter').addEventListener('input', renderTable);
+
+function render(){ renderChips(); renderAssumeChips(); renderOwnerChips(); renderTable(); renderParty(); }
+
+function init(){
+  fillDatalists();
+  load();
+  $('targetLevel').value = state.targetLevel;
+  render();
+}
+init();
+</script>
+</body>
+</html>

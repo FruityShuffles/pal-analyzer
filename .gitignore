@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+
+# Real player save data and generated Pal rosters -- never commit.
+saves/
+out/

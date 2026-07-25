@@ -113,8 +113,17 @@ stats used by Trust scoring).
 `pals.json` / `passives.json` keys. Anything unmatched goes into `ingest_review.md`:
 
 - **Combat-relevant passive, missing** → add to `PASSIVE_OVERRIDES` in `build_data.py`.
-- **Species missing** → usually a new-DLC Pal absent from the wiki pull; refresh
-  `build_data.py` or add manually. Unknown species import but score 0 until added.
+- **Species missing** → usually a new-DLC Pal absent from the wiki pull. Refreshing
+  `build_data.py` alone won't fix it (the wiki lags DLC by weeks-to-months); add an
+  entry to `SPECIES_OVERRIDES` in `build_data.py` instead. Source exact stats from the
+  palworld-save-pal repo's `data/json/pals.json` (`raw.githubusercontent.com/oMaN-Rod/
+  palworld-save-pal/main/data/json/pals.json`) — each entry's `scaling: {hp, attack,
+  defense}` and `element_types` are the real datamined values, not a wiki guess. Element
+  names need remapping to the wiki's vocabulary: `Electricity→Electric, Earth→Ground,
+  Leaf→Grass, Normal→Neutral` (Dark/Dragon/Fire/Ice/Water match already). Unknown
+  species import but score 0 until added. After editing overrides, rerun
+  `build_data.py` → `build_report.py` → `ingest_save.py`.
 
-At time of writing: 98.8% of owned species and all combat passives resolved; the only
-gaps were 2 new-DLC Pals (Dynamoff, Skutlass Ignis) and 8 non-combat passives.
+As of 2026-07-25: all owned species and all combat-relevant passives resolve cleanly
+(17 DLC species were added to `SPECIES_OVERRIDES` that day); the only remaining
+`ingest_review.md` entries are non-combat passives, which are expected and harmless.

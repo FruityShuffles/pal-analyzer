@@ -11,3 +11,10 @@ tools/gamedata/vendor/
 tools/gamedata/export/
 tools/gamedata/PalDataExport/bin/
 tools/gamedata/PalDataExport/obj/
+
+# Local agent/editor scratch
+.claude/settings.local.json
+.agents/
+
+# Raw save files, wherever they land
+*.sav

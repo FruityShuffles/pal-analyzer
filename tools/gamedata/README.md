@@ -53,7 +53,8 @@ asset paths above were found.
 
 | File | Used for |
 |---|---|
-| `DT_PalMonsterParameter.json` | species `Hp` / `ShotAttack` / `Defense`, `ElementType1/2`, `Friendship_*` (Trust) |
+| `DT_PalMonsterParameter.json` | species `Hp` / `ShotAttack` / `Defense`, `ElementType1/2`, `Friendship_*` (Trust), and the breeding fields `CombiRank` / `CombiDuplicatePriority` / `IgnoreCombi` / `MaleProbability` |
+| `DT_PalCombiUnique.json` | unique parent-pair → child breeding overrides (`docs/BREEDING.md`) |
 | `DT_PassiveSkill_Main.json` | passive effect types/values/targets and rank |
 | `DT_PalNameText_en.json`, `DT_SkillNameText_en.json`, `DT_SkillDescText_en.json`, `DT_UI_Common_Text_en.json` | English display names and descriptions |
 | `_meta.json` | provenance (pak name/size/mtime) copied into the generated JSON's `_source` |

@@ -18,6 +18,25 @@ the hand-maintained `SPECIES_OVERRIDES` / `PASSIVE_OVERRIDES` patches unnecessar
 Cross-checked against `oMaN-Rod/palworld-save-pal`'s independent datamine: **407 species
 rows agreed exactly** on base stats, Trust friendship coefficients, and element types.
 
+### Breeding data (added 2026-07-26)
+
+Same pak, same extractor. Two additions:
+
+- **`DT_PalMonsterParameter`** already carried the breeding fields; the importer simply
+  stopped discarding them. `data/pals.json` species records gained `combi_rank`
+  (`CombiRank`), `combi_priority` (`CombiDuplicatePriority`), `ignore_combi`,
+  `male_probability` and `variant` (from a non-empty `ZukanIndexSuffix`).
+- **`DT_PalCombiUnique`** is a new export target — the 253 usable unique parent-pair
+  overrides, written to **`data/breeding.json`** as `{unique: [{a, ga, b, gb, child}]}`.
+  Its `ParentTribeA/B` are `EPalTribeID` enums while `ChildCharacterID` is a bare row key,
+  and at least one tribe enum disagrees with its row key on capitalisation
+  (`EPalTribeID::Blueplatypus` vs. row `BluePlatypus` = Fuack), so the importer resolves
+  all three case-insensitively — the same compare `build_pals()` already used.
+
+Cross-checked against `tylercamp/palcalc`'s independent CUE4Parse datamine: the derived
+child-species table agreed on **all 44,552 parent pairs the two game builds share, with
+zero mismatches**. See `docs/BREEDING.md`.
+
 ### Superseded: the palworld.wiki.gg Cargo API
 
 Everything from here to the licensing note describes the earlier wiki pipeline. It is
@@ -87,6 +106,12 @@ Verified real sample rows (captured during research):
 ```
 
 Some passives affect two stats — the same `passiveSkillName` repeats with a different `stat` row. Many rows have non-combat `stat` values that should be read but ignored for scoring: `Work Speed`, `Element Boost <Type>`, `Element Resist <Type>`, `Full Stomatch Decrease` (that typo is in the wiki's own data, not a transcription error here), `Sanity Decrease`, `Swim Speed`, etc. For scoring, only sum rows where `stat` is exactly `"Attack"` or `"Defense"`.
+
+> **SUPERSEDED (2026-07-25)** — the paragraph below is true of the *wiki's* data only, and that
+> data is no longer what ships. `DT_PassiveSkill_Main` in the game files has two displayable max-HP
+> passives (God of Destruction −50%, World Tree Seedbed −20%), so `hp_pct` is **not** always 0 and
+> `passiveBonuses()` sums all three stats. See `FORMULAS.md` §1. Kept for the record of what the
+> wiki source contained.
 
 **RESOLVED (2026-07-18)**: pulled the full `PassiveSkillEffect` table (no `where` filter) — 114 rows. There is **no HP-boosting passive at all**. The complete set of distinct `stat` values is: `Active Skill Cool Time Decrease`, `Attack`, `Breed Speed`, `Defense`, `Element Boost <Type>` (Dark/Dragon/Electric/Fire/Grass/Ground/Ice/Neutral/Water), `Element Resist <Type>` (same 9 types), `Farming Work Suitability`, `Full Stomatch Decrease` [sic], `Life Steal`, `Logging`, `Mining`, `Movement Speed`, `Pal and Player Auto Health Regeneration Rate`, `Pal SP Increase`, `Sanity Decrease`, `Sell Price`, `Shop Buy Price Money Increase`, `Shop Sell Price Money Increase`, `Swim Speed`, `Work Speed`. The only combat-stat percent rows are `stat == "Attack"` and `stat == "Defense"` (all `valueType == "percent"`). **There is no max-HP passive** — the closest is `Pal and Player Auto Health Regeneration Rate` (regen, not max HP) and `Life Steal`, neither of which is a max-HP multiplier. **Consequence: `HP_PassiveBonus%` in the `FORMULAS.md` growth formula is always 0** for every real passive. `build_data.py` should still write an `hp_pct` field to `passives.json` (always 0.0) for schema symmetry, but only `Attack`/`Defense` rows ever contribute.
 

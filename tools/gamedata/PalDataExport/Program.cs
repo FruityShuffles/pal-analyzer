@@ -24,6 +24,9 @@ internal static class Program
     {
         ("Pal/Content/Pal/DataTable/Character/DT_PalMonsterParameter",            "DT_PalMonsterParameter.json"),
         ("Pal/Content/Pal/DataTable/Character/DT_PalMonsterParameter_Common",     "DT_PalMonsterParameter_Common.json"),
+        // Unique breeding pairs (Parent A + Parent B -> a fixed child), which override the
+        // generic CombiRank-average rule. Rows may pin a specific parent gender.
+        ("Pal/Content/Pal/DataTable/Character/DT_PalCombiUnique",                 "DT_PalCombiUnique.json"),
         ("Pal/Content/Pal/DataTable/PassiveSkill/DT_PassiveSkill_Main",           "DT_PassiveSkill_Main.json"),
         ("Pal/Content/Pal/DataTable/PassiveSkill/DT_PassiveSkill_Main_Common",    "DT_PassiveSkill_Main_Common.json"),
         ("Pal/Content/Pal/DataTable/PassiveSkill/DT_PassiveSkillEffectCondition", "DT_PassiveSkillEffectCondition.json"),

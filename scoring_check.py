@@ -37,15 +37,29 @@ def combat_score(hp, attack, defense):
     return (hp * attack * defense) ** (1.0 / 3.0)
 
 
+def element_bonus(element_boosts_by_passive, elements):
+    """Best usable element boost, as a decimal.
+
+    Element boosts raise damage dealt by attacks of one element, so they never touch
+    the displayed Attack stat -- they enter the score as their own multiplier class.
+    Every attack move is a single element, so only the best-boosted element the Pal
+    actually HAS can be used; boosts naming the same element add. See FORMULAS.md.
+    """
+    best = 0.0
+    for element in elements:
+        best = max(best, sum(b.get(element, 0.0) for b in element_boosts_by_passive))
+    return best / 100.0
+
+
 def score_pal(hp_stat, attack_stat, defense_stat, level,
               hp_iv=0, atk_iv=0, def_iv=0,
               hp_passive=0.0, atk_passive=0.0, def_passive=0.0,
               soul_hp=0, soul_atk=0, soul_def=0, stars=0, trust=0,
-              f_hp=0.0, f_atk=0.0, f_def=0.0):
+              f_hp=0.0, f_atk=0.0, f_def=0.0, element_pct=0.0):
     hp = stat_hp(hp_stat + f_hp * trust, level, hp_iv, hp_passive, soul_hp, stars)
     atk = stat_attack(attack_stat + f_atk * trust, level, atk_iv, atk_passive, soul_atk, stars)
     dfn = stat_defense(defense_stat + f_def * trust, level, def_iv, def_passive, soul_def, stars)
-    return hp, atk, dfn, combat_score(hp, atk, dfn)
+    return hp, atk, dfn, combat_score(hp, atk * (1 + element_pct), dfn)
 
 
 def main():
@@ -101,6 +115,27 @@ def main():
     assert augmented["Mammorest max souls + stars"][3] > results[("Mammorest", 50)]
     assert augmented["Kitsun synthetic T10"][3] > results[("Kitsun", 50)]
     assert augmented["Mammorest ordering probe"][3] > results[("Mammorest", 50)]
+
+    # Element boosts: best usable element only, off-element boosts are worth nothing,
+    # same-element boosts add. Mirrors elementBonus() in the template.
+    lunker = {"Water": 20.0, "Ice": 20.0}
+    flame, sea = {"Fire": 30.0}, {"Water": 30.0}
+    assert element_bonus([lunker], ["Water", "Electric"]) == 0.20
+    assert element_bonus([flame], ["Water"]) == 0.0
+    assert element_bonus([flame, sea], ["Fire", "Water"]) == 0.30, "best element, not the sum"
+    assert element_bonus([lunker, sea], ["Water"]) == 0.50, "same-element boosts add"
+
+    # Penking Lux (Water/Electric, 105/105/100) with Lunker: +20% Defense and a +20%
+    # Water damage boost the stat screen never shows. Both legs must land.
+    bare = score_pal(105, 105, 100, 50)
+    lunk = score_pal(105, 105, 100, 50, def_passive=0.20,
+                     element_pct=element_bonus([lunker], ["Water", "Electric"]))
+    print("\nElement-boost vector (Penking Lux + Lunker @ L50):")
+    print(f"  bare  : hp={bare[0]}, atk={bare[1]}, def={bare[2]}, score={bare[3]:.6f}")
+    print(f"  Lunker: hp={lunk[0]}, atk={lunk[1]}, def={lunk[2]}, score={lunk[3]:.6f}")
+    assert lunk[1] == bare[1], "an element boost must not move the displayed Attack stat"
+    assert lunk[2] == round(bare[2] * 1.2), "Lunker's Defense leg"
+    assert abs(lunk[3] / bare[3] - 1.2 ** (2 / 3)) < 1e-3, "score gains both 20% legs"
     print("\nALL CHECKS PASSED -- formula locked.")
 
 

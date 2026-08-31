@@ -91,6 +91,14 @@
   th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
   tbody tr:hover{background:var(--panel2)}
   .sortarrow{font-size:10px;color:var(--accent);margin-left:3px}
+  .good{color:var(--good)} .bad{color:var(--danger)}
+  /* Sticky so the view switch is always reachable -- the ranked table is thousands
+     of rows tall and the breeding panel used to sit below all of it. */
+  .viewbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;
+    flex-wrap:wrap;margin:-18px -20px 16px;padding:12px 20px;
+    background:rgba(15,18,22,.92);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line)}
+  .viewbar .seg button{padding:7px 14px;font-weight:600}
   .score{font-weight:700}
   th[data-col="currentScore"],.cell-currentScore .score{color:var(--current)}
   th[data-col="targetScore"],.cell-targetScore .score{color:var(--target)}
@@ -103,8 +111,30 @@
     border-radius:5px;padding:1px 6px;margin:1px;display:inline-block}
   .pill.combat-positive{color:#7ce3b3;background:rgba(56,211,159,.08);border-color:rgba(56,211,159,.35)}
   .pill.combat-negative{color:#ff8a8a;background:rgba(255,107,107,.08);border-color:rgba(255,107,107,.35)}
+  .pill.proposed{color:#8fd6ff;background:rgba(96,178,255,.08);border-style:dashed;border-color:rgba(96,178,255,.5)}
+  .pill.dropped{color:var(--muted);text-decoration:line-through;opacity:.65}
+  .gold{color:var(--cost);white-space:nowrap}
+  .elem-mult{font-size:11px;color:#7ce3b3;margin-left:3px}
   .augment{color:#d9a9ff}
   .empty{padding:34px;text-align:center;color:var(--muted)}
+  .spin{display:inline-block;width:13px;height:13px;vertical-align:-2px;
+    border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;
+    animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .wish{background:var(--panel2);border:1px solid var(--line);border-radius:9px;
+    padding:12px;margin-bottom:10px}
+  .wish-head{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .wish-head>div:first-child{flex:1;min-width:220px}
+  .wish-eggs{font-size:19px;font-weight:600;color:var(--accent2)}
+  .steps{list-style:none;margin:10px 0 0;padding:0;counter-reset:step}
+  .steps li{position:relative;padding:6px 0 6px 30px;border-top:1px solid var(--line)}
+  .steps li::before{counter-increment:step;content:counter(step);position:absolute;left:0;
+    top:7px;width:20px;height:20px;border-radius:50%;background:var(--chip);
+    color:var(--muted);font-size:11px;line-height:20px;text-align:center}
+  .parent{white-space:nowrap}
+  .from-step{color:var(--target)}
+  .own{color:var(--current)}
+  .filler{color:var(--muted)}
   .party{display:grid;gap:10px}
   @media(min-width:700px){.party{grid-template-columns:repeat(5,1fr)}}
   .pcard{position:relative;overflow:hidden;background:var(--panel2);border:1px solid var(--line);
@@ -151,6 +181,17 @@
 </header>
 
 <main>
+  <!-- ============ VIEW SWITCHER ============ -->
+  <nav class="viewbar">
+    <div class="seg" id="viewSeg">
+      <button type="button" data-view="roster" class="on">Roster &amp; ranking</button>
+      <button type="button" data-view="breed">Breeding paths</button>
+      <button type="button" data-view="wishlist">Wishlist</button>
+    </div>
+    <span class="count" id="viewHint"></span>
+  </nav>
+
+  <div id="viewRoster">
   <!-- ============ PARTY OF 5 ============ -->
   <section class="card">
     <div class="toolbar" style="justify-content:space-between">
@@ -198,6 +239,14 @@
           <div class="field" style="max-width:120px">
             <label for="level">Level *</label>
             <input type="number" id="level" min="1" max="80" value="50" required>
+          </div>
+          <div class="field" style="max-width:120px">
+            <label for="gender">Gender</label>
+            <select id="gender">
+              <option value="">— unknown</option>
+              <option value="Male">Male ♂</option>
+              <option value="Female">Female ♀</option>
+            </select>
           </div>
         </div>
         <div class="field">
@@ -271,7 +320,10 @@
       <div class="field" style="margin-bottom:12px">
         <label>Target assumes</label>
         <div class="chips" id="assumeChips"></div>
-        <div class="hint">Applied to TargetScore, Headroom, party (Target mode), and the cost column.</div>
+        <div class="hint">Applied to TargetScore, Headroom, party (Target mode), and the cost column.
+          The passive chips fill each Pal's 4 slots with the best buyable set, evicting whatever
+          is worth less in a fight — including work-speed passives, which matter on base Pals but
+          are invisible to a combat score. Sort by <b>Gain/100k</b> for the cheapest wins.</div>
       </div>
       <div class="field" style="margin-bottom:12px;display:none" id="ownerField">
         <label>Owners <span class="count">— scopes the table and the party</span> <span class="count" id="ownClear" style="cursor:pointer">(clear)</span></label>
@@ -285,6 +337,106 @@
         </table>
       </div>
       <div class="empty" id="emptyMsg" style="display:none">No Pals yet — import JSON or add one manually to get started.</div>
+    </section>
+  </div>
+  </div>
+
+  <!-- ============ BREEDING ============ -->
+  <div id="viewBreed" style="display:none">
+    <section class="card" id="breedCard">
+      <div class="roster-actions">
+        <div>
+          <h2 style="margin:0">Breeding paths <span class="count" id="breedCount"></span></h2>
+          <div class="hint" style="margin-top:4px">What could you <i>make</i> that beats what you own?
+            Buyable passives are already handled by the planner — breeding is the only way to get the
+            <b>unbuyable</b> ones (Legend, Lunker, Lucky, the element emperors), so the search is about
+            landing those on a species worth having them.</div>
+        </div>
+        <div class="btnrow">
+          <div class="seg" id="breedDepthSeg">
+            <button type="button" data-depth="1" class="on">1 step</button>
+            <button type="button" data-depth="2">2 steps</button>
+          </div>
+          <button type="button" id="breedRun" class="primary">Find breeding paths</button>
+        </div>
+      </div>
+
+      <!-- Breeding-scoped copies of the shared controls. They write the same state as
+           the ones in the Roster view, so the two stay in sync; they exist here so the
+           panel is usable without switching views. -->
+      <div class="toolbar" style="margin-top:12px">
+        <div class="field" style="max-width:130px">
+          <label for="breedTargetLevel">Target level</label>
+          <input type="number" id="breedTargetLevel" class="tl-input" min="1" max="80" value="80">
+        </div>
+        <div class="field" style="flex:1;min-width:200px">
+          <label>Target assumes <span class="count">— shared with the ranked table</span></label>
+          <div class="chips" id="breedAssumeChips"></div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:12px;display:none" id="breedOwnerField">
+        <label>Owners <span class="count">— only these Pals are used as parents</span>
+          <span class="count" id="breedOwnClear" style="cursor:pointer">(clear)</span></label>
+        <div class="chips" id="breedOwnerChips"></div>
+      </div>
+      <div class="field" style="margin:0 0 12px">
+        <div class="chips" id="breedChips"></div>
+        <div class="hint">Projected IVs are the <b>expected</b> result of inheritance, not a best case:
+          two 100-IV parents average 79, so a bred Pal usually <i>loses</i> IVs against one you have
+          already maxed. Eggs is the average number you need to hatch before the wanted passives land;
+          it counts hatches, not hours. A bred Pal starts at 0★ / 0 souls / T0.</div>
+      </div>
+      <div class="hint" id="breedStale" style="display:none">⚠ Roster or assumptions changed since this ran — press <b>Find breeding paths</b> again.</div>
+      <div class="tblwrap">
+        <table id="breedTable">
+          <thead><tr id="breedHead"></tr></thead>
+          <tbody id="breedBody"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="breedEmpty">Press <b>Find breeding paths</b> to search your roster.</div>
+    </section>
+  </div>
+
+  <!-- ============ WISHLIST ============ -->
+  <div id="viewWishlist" style="display:none">
+    <section class="card">
+      <div>
+        <h2 style="margin:0">Wishlist <span class="count" id="wishCount"></span></h2>
+        <div class="hint" style="margin-top:4px">Name the Pal you want and the passives it has to
+          have, and this works out the cheapest way to breed it from the Pals you can actually put
+          in a pen. The other panel asks <i>what should I make?</i>; this one answers <i>how do I
+          make this?</i> Cost is <b>total expected eggs</b> — every hatch, including the ones you
+          throw back. Passives you can simply buy for 50k are bought, not bred.</div>
+      </div>
+
+      <div class="toolbar" style="margin-top:14px">
+        <div class="field" style="min-width:190px">
+          <label for="wishSpecies">Species</label>
+          <input type="text" id="wishSpecies" list="speciesList" placeholder="e.g. Anubis">
+        </div>
+        <div class="field" style="flex:1;min-width:300px">
+          <label>Passives <span class="count">— 1 to 4</span></label>
+          <div class="passgrid">
+            <input type="text" id="wishP0" list="passiveList" placeholder="passive 1">
+            <input type="text" id="wishP1" list="passiveList" placeholder="passive 2">
+            <input type="text" id="wishP2" list="passiveList" placeholder="passive 3">
+            <input type="text" id="wishP3" list="passiveList" placeholder="passive 4">
+          </div>
+        </div>
+        <div class="field">
+          <button type="button" id="wishAdd" class="primary">+ Add wish</button>
+        </div>
+      </div>
+      <div class="err" id="wishErr"></div>
+
+      <div class="field" style="margin-bottom:12px;display:none" id="wishOwnerField">
+        <label>Owners <span class="count">— only these Pals can be parents</span>
+          <span class="count" id="wishOwnClear" style="cursor:pointer">(clear)</span></label>
+        <div class="chips" id="wishOwnerChips"></div>
+      </div>
+
+      <div id="wishList"></div>
+      <div class="empty" id="wishEmpty">No wishes yet — name a species and its passives above.</div>
     </section>
   </div>
 
@@ -302,6 +454,7 @@
    ============================================================ */
 const PALS_DB = /*__PALS_JSON__*/ {};
 const PASSIVES_DB = /*__PASSIVES_JSON__*/ {};
+const BREEDING_DB = /*__BREEDING_JSON__*/ {};
 
 /* ============================================================
    Combat-score math — faithful port of scoring_check.py / FORMULAS.md
@@ -336,6 +489,169 @@ function passiveBonuses(passiveNames){
   return { atk: atk/100, def: def/100, hp: hp/100 };
 }
 
+/* ============================================================
+   Passive planner — "what if I bought this Pal the cheap passives?"
+   A Pal has 4 passive slots. Ordinary (Rank 1-3) passives can be bought onto
+   any Pal for gold; Rank 4 needs a costly one-time consumable; Rank 5 is World
+   Tree-only. AddPal is the game's own "legal on an ordinary Pal" flag and is
+   what actually gates the shop -- Legend, Lucky, Lunker and Whopper are low
+   enough rank but AddPal:false, so they stay keepable and unbuyable.
+   See docs/AUGMENTS.md section 5.
+   ============================================================ */
+const PASSIVE_GOLD = 50000;   // gold per purchased slot, add or replace alike
+// Top-tier passives cost a one-time consumable, not gold, so there is no real
+// exchange rate. Gain/100k needs one denominator to stay sortable, so a token is
+// priced at this many gold. It is an ASSUMPTION, not game data -- edit it to match
+// what a token is actually worth to you.
+const PREMIUM_GOLD_EQUIV = 500000;
+// Breeding will only chase a BUYABLE passive whose standalone multiplier clears this.
+// A tuning knob, not game data: the chase pool drives the archetype count, and the pair
+// loop is quadratic in it. At 1.20 the pool tops out at 30 (~203k pairs, ~3s) instead of
+// the 52 a "chase everything combat-relevant" rule would give (~777k pairs, ~15s). The
+// passive list has a natural cliff here -- below it sit the +10% craft passives and the
+// outright negatives, which are never worth extra eggs. Unbuyables ignore this bar.
+const CHASE_BAR = 1.20;
+function combatRelevant(p){
+  return !!(p.attack_pct || p.defense_pct || p.hp_pct
+    || Object.keys(p.element_boosts||{}).length);
+}
+// The score multiplier a passive contributes on its own, using its best element boost.
+// Same product planPassives() maximises, so the chase bar and the planner agree on what
+// "valuable" means. `els` optional: omitted, the boost counts for its best element.
+function passiveMult(p, els){
+  const eb = p.element_boosts||{};
+  const boost = els ? Math.max(0, ...els.map(e=>eb[e]||0))
+                    : Math.max(0, ...Object.values(eb));
+  return (1+(p.attack_pct||0)/100) * (1+(p.defense_pct||0)/100)
+       * (1+(p.hp_pct||0)/100) * (1+boost/100);
+}
+function buyablePool(minRank, maxRank){
+  return Object.keys(PASSIVES_DB).filter(n=>{
+    const p = PASSIVES_DB[n];
+    if(!p.add_pal) return false;
+    if((p.rank||0) < minRank || (p.rank||0) > maxRank) return false;
+    return combatRelevant(p);
+  });
+}
+const CRAFT_POOL   = buyablePool(1,3);
+const PREMIUM_POOL = buyablePool(4,4);
+
+// Which purchase tiers the Target score is allowed to assume, as a stable cache key.
+function passiveTiers(){
+  const t=[];
+  if(state.assume.craft) t.push('craft');
+  if(state.assume.premium) t.push('premium');
+  return t.join('+');
+}
+
+// Best passive set reachable from `existing` by buying from the enabled tiers.
+// Objective is the multiplier product (1+atk)(1+def)(1+hp): the combat score is
+// proportional to it, and it is level-independent, so the plan doesn't drift as
+// the target level moves. Search space is at most C(17,4)=2380 subsets, and the
+// result is cached per (passive signature, tiers) -- rosters repeat signatures
+// heavily, so this collapses to a few dozen real searches.
+const planCache = new Map();
+function planPassives(existing, tiers, elements){
+  const have = (existing||[]).filter(Boolean);
+  // A Pal's own elements decide which element boosts are worth anything, so they are
+  // part of the objective and must be part of the cache key.
+  const els = (elements||[]).slice(0,2);
+  const key = have.slice().sort().join('|') + '#' + tiers + '#' + els.join('/');
+  const cached = planCache.get(key);
+  if(cached) return cached;
+
+  const pool = [];
+  if(tiers.indexOf('craft')>=0) pool.push(...CRAFT_POOL);
+  if(tiers.indexOf('premium')>=0) pool.push(...PREMIUM_POOL);
+  // Drop what this Pal already has (a passive can't be doubled up) and what could not
+  // possibly help it -- an element boost for an element it doesn't have. That keeps the
+  // candidate list near its old size despite the 9 new buyable element passives.
+  const boostFor = (p,e) => e ? ((p.element_boosts||{})[e]||0) : 0;
+  const buyable = pool.filter(n=>{
+    if(have.indexOf(n)>=0) return false;
+    const p = PASSIVES_DB[n];
+    return !!(p.attack_pct || p.defense_pct || p.hp_pct
+      || boostFor(p,els[0]) || boostFor(p,els[1]));
+  });
+  const cand = have.concat(buyable);
+  // Percent tuples, so the walk carries running sums instead of re-summing per subset.
+  // Unknown names (unmapped save IDs) read as zeros, matching passiveBonuses().
+  //
+  // Do NOT try to shrink this by dropping "dominated" buyables (Ferocious +20 Atk looks
+  // redundant next to Musclehead +30 Atk). Bonuses are ADDITIVE across the four slots, so
+  // a weaker passive is still worth a slot ALONGSIDE the stronger one -- the best craft
+  // set for a Water Pal is Musclehead + Ferocious + Burly Body + Heavyweight, x2.100,
+  // and pruning Ferocious silently drops it to x2.002. See FORMULAS.md section 4.
+  const stat = cand.map(n=>{ const p=PASSIVES_DB[n]||{};
+    return [p.attack_pct||0, p.defense_pct||0, p.hp_pct||0,
+            boostFor(p,els[0]), boostFor(p,els[1])]; });
+
+  // best[k] = highest-scoring legal set using exactly k purchases. A passive can't
+  // be deleted, only overwritten, so dropping one costs a purchase: a set is only
+  // reachable when purchases >= passives dropped. Without that constraint the
+  // planner would "free" a Pal of its junk and report gains it can't actually buy.
+  const best = new Array(5).fill(null);
+  const pick = [];
+  (function walk(start, a, d, h, e0, e1, k, kept){
+    if(k >= have.length - kept){
+      // Only the better of the Pal's two elements can be used at a time (one element
+      // per attack move), so the element class contributes max(e0,e1), not e0+e1.
+      const m = (1+a/100)*(1+d/100)*(1+h/100)*(1+Math.max(e0,e1)/100);
+      if(!best[k] || m > best[k].mult + 1e-12) best[k] = {buys:k, passives:pick.map(i=>cand[i]), mult:m};
+    }
+    if(pick.length === 4) return;
+    for(let i=start;i<cand.length;i++){
+      const s = stat[i], buy = i>=have.length;
+      pick.push(i);
+      walk(i+1, a+s[0], d+s[1], h+s[2], e0+s[3], e1+s[4], k+(buy?1:0), kept+(buy?0:1));
+      pick.pop();
+    }
+  })(0,0,0,0,0,0,0,0);
+
+  // Spending more is always allowed but not always better (a 4th purchase may have
+  // to evict something good), so the frontier is the running max, not best[k] raw.
+  const frontier = [];
+  let run = null;
+  for(let k=0;k<=4;k++){
+    if(best[k] && (!run || best[k].mult > run.mult)) run = best[k];
+    frontier.push(run);
+  }
+  const plan = frontier[4] || {buys:0, passives:have.slice(), mult:1};
+  const final = plan.passives;
+  const added = final.filter(n=>have.indexOf(n)<0);
+  const result = {
+    passives: final,
+    kept: have.filter(n=>final.indexOf(n)>=0),
+    dropped: have.filter(n=>final.indexOf(n)<0),
+    added,
+    goldSlots: added.filter(n=>CRAFT_POOL.indexOf(n)>=0).length,
+    premiumSlots: added.filter(n=>PREMIUM_POOL.indexOf(n)>=0).length,
+    frontier
+  };
+  planCache.set(key, result);
+  return result;
+}
+
+// Element boosts ("30% increase in Fire attack damage") raise damage dealt rather than
+// the Pal's displayed Attack stat, so they sit outside the stat formula and enter the
+// score as their own multiplier class -- see FORMULAS.md section 2.
+// Every attack move is exactly one element, so a Pal can only ever cash in one boost at
+// a time: take the best element it actually HAS, never the sum across elements. Boosts
+// naming the same element do add (Lunker's Water +20 with Lord of the Sea's Water +30).
+function elementBonus(passiveNames, elements){
+  if(!elements || !elements.length) return 0;
+  let best = 0;
+  for(const el of elements){
+    let sum = 0;
+    for(const nm of passiveNames){
+      const b = (PASSIVES_DB[nm]||{}).element_boosts;
+      if(b && b[el]) sum += b[el];
+    }
+    if(sum > best) best = sum;
+  }
+  return best/100;
+}
+
 function actualAug(e){
   return {stars:e.condense||0, soulHp:e.soulHp||0, soulAtk:e.soulAtk||0,
     soulDef:e.soulDef||0, trust:e.trust||0};
@@ -352,11 +668,175 @@ function assumedAug(e){
 function computeAt(entry, level, aug){
   const base = PALS_DB[entry.species];
   if(!base) return null;
-  const g=aug||actualAug(entry), b=passiveBonuses(entry.passives||[]);
+  const g=aug||actualAug(entry), names=entry.passives||[], b=passiveBonuses(names);
   const hp=statHp(base.hp_stat+(base.friendship_hp||0)*g.trust, level, entry.ivHp, b.hp, g.soulHp, g.stars);
   const atk=statAttack(base.attack_stat+(base.friendship_attack||0)*g.trust, level, entry.ivAtk, b.atk, g.soulAtk, g.stars);
   const def=statDefense(base.defense_stat+(base.friendship_defense||0)*g.trust, level, entry.ivDef, b.def, g.soulDef, g.stars);
-  return { hp, atk, def, score: combatScore(hp, atk, def) };
+  // atk stays the number the game displays; elem is applied only to the score.
+  const elem=elementBonus(names, base.elements||[]);
+  return { hp, atk, def, elem, score: combatScore(hp, atk*(1+elem), def) };
+}
+
+/* ============================================================
+   Breeding — faithful port of breeding_check.py / docs/BREEDING.md
+   ============================================================ */
+// A species that is the child of a unique combo can ONLY be produced by that combo,
+// so it is struck from the generic nearest-rank pool -- as are ignore_combi species
+// (legendaries, raid/event Pals), which are never a rank-rule child but ARE legal
+// parents. Both exclusions are load-bearing; see docs/BREEDING.md section 1.
+const UNIQUE_COMBOS = (()=>{
+  const m = new Map();
+  for(const c of (BREEDING_DB.unique||[])){
+    const push=(a,b,ga,gb,child)=>{
+      const k=a+' '+b;
+      if(!m.has(k)) m.set(k,[]);
+      m.get(k).push({ga,gb,child});
+    };
+    push(c.a,c.b,c.ga,c.gb,c.child);
+    push(c.b,c.a,c.gb,c.ga,c.child);
+  }
+  return m;
+})();
+const COMBO_CHILDREN = new Set((BREEDING_DB.unique||[]).map(c=>c.child));
+// Sorted by rank so childSpecies can binary-search instead of scanning 183 entries
+// on every one of the ~125k pair evaluations a search makes.
+const CHILD_POOL = Object.keys(PALS_DB)
+  .filter(n=>!PALS_DB[n].ignore_combi && !COMBO_CHILDREN.has(n))
+  .map(n=>({name:n, rank:PALS_DB[n].combi_rank||0,
+            prio:PALS_DB[n].combi_priority||0, variant:!!PALS_DB[n].variant}))
+  .sort((x,y)=>x.rank-y.rank);
+
+// Ties go to the HIGHER combi_priority, then the non-variant Pal, then the name so
+// the answer never depends on object iteration order. Ranks are multiples of 10, so
+// a target ending in 5 sits exactly between two candidates -- ties are common, not
+// an edge case, and flipping this direction changes ~12% of all pairs.
+function betterCandidate(a, b, target){
+  if(!a) return b;
+  if(!b) return a;
+  const da=Math.abs(a.rank-target), db=Math.abs(b.rank-target);
+  if(da!==db) return da<db ? a : b;
+  if(a.prio!==b.prio) return a.prio>b.prio ? a : b;
+  if(a.variant!==b.variant) return a.variant ? b : a;
+  return a.name<b.name ? a : b;
+}
+const childCache = new Map();
+function childSpecies(a, b, genderA, genderB){
+  if(a===b) return a;                       // same species always breeds true
+  const combos = UNIQUE_COMBOS.get(a+' '+b);
+  if(combos){
+    for(const c of combos){
+      if((!c.ga || c.ga===genderA) && (!c.gb || c.gb===genderB)) return c.child;
+    }
+  }
+  const pa=PALS_DB[a], pb=PALS_DB[b];
+  if(!pa || !pb) return null;
+  const key = a<b ? a+' '+b : b+' '+a;
+  const hit = childCache.get(key);
+  if(hit!==undefined) return hit;
+  // The +1 is INSIDE the floor: round-half-up, not truncation.
+  const target = Math.floor((pa.combi_rank + pb.combi_rank + 1) / 2);
+  // Walk outward from the insertion point; stop once the rank gap exceeds the best
+  // distance found, since CHILD_POOL is rank-sorted.
+  let lo=0, hi=CHILD_POOL.length-1;
+  while(lo<hi){ const mid=(lo+hi)>>1; if(CHILD_POOL[mid].rank<target) lo=mid+1; else hi=mid; }
+  let best=null;
+  for(let i=lo; i<CHILD_POOL.length; i++){
+    if(best && CHILD_POOL[i].rank-target > Math.abs(best.rank-target)) break;
+    best = betterCandidate(best, CHILD_POOL[i], target);
+  }
+  for(let i=lo-1; i>=0; i--){
+    if(best && target-CHILD_POOL[i].rank > Math.abs(best.rank-target)) break;
+    best = betterCandidate(best, CHILD_POOL[i], target);
+  }
+  const name = best ? best.name : null;
+  childCache.set(key, name);
+  return name;
+}
+
+// Passives: the child draws exactly N from the parents' combined, DEDUPLICATED
+// passive pool, then independently rolls extra lottery passives. Capped at 4.
+const PASSIVE_DIRECT = [0, 0.40, 0.30, 0.20, 0.10];   // index = N drawn
+const IV_INHERIT_P = (1*0.50 + 2*0.25 + 3*0.25) / 3;  // per-stat, = 1.75/3
+function nCk(n, k){
+  if(k<0 || k>n) return 0;
+  let r=1;
+  for(let i=0;i<k;i++) r = r*(n-i)/(i+1);
+  return r;
+}
+// P(every wanted passive is among those drawn). A SUPERSET event, not an exact match:
+// an extra inherited passive is not a failure, because overwriting one costs the same
+// 50k an empty slot costs to fill. Scoring the exact match instead puts nearly every
+// plan at 25-250 eggs, where the ranking stops discriminating. See BREEDING.md s3.
+const inheritCache = new Map();
+function inheritProb(poolSize, wanted){
+  if(wanted===0) return 1;
+  if(wanted>poolSize || wanted>4) return 0;
+  const key = poolSize*8+wanted;
+  const hit = inheritCache.get(key);
+  if(hit!==undefined) return hit;
+  let total = 0;
+  for(let n=1;n<=4;n++){
+    const drawn = Math.min(n, poolSize);
+    if(drawn < wanted) continue;
+    total += PASSIVE_DIRECT[n] * nCk(poolSize-wanted, drawn-wanted) / nCk(poolSize, drawn);
+  }
+  inheritCache.set(key, total);
+  return total;
+}
+// Each stat is inherited from a random parent with probability 1.75/3, else re-rolled
+// (averaging 50). This is the only IV projection consistent with the egg count shown
+// beside it -- two 100-IV parents average 79, so a bred child usually LOSES IVs.
+function expectedIv(a, b){
+  return IV_INHERIT_P * ((a+b)/2) + (1-IV_INHERIT_P) * 50;
+}
+// add_pal:false means no amount of gold or tokens can put these on a Pal, so inheriting
+// them is the only way to get them, whatever the assumption chips say.
+// Declared here (not with the search below) because the self-test runs in between.
+const UNBUYABLE = new Set(Object.keys(PASSIVES_DB)
+  .filter(n=>!PASSIVES_DB[n].add_pal && combatRelevant(PASSIVES_DB[n])));
+
+// What breeding chases. NOT the same as "what can't be bought".
+//
+// `add_pal` says a passive CAN be applied with an item, not that it is free -- a rank-4
+// slot costs a one-time consumable, a rank 1-3 slot costs PASSIVE_GOLD. Inheriting one is
+// therefore always worth something, in one of two currencies:
+//   - the assumption chip for its tier is OFF  -> the child cannot buy it at all, so
+//     inheriting it is worth SCORE. With premium off, Demon God (x1.365, the third-best
+//     combat passive in the game) is exactly as unobtainable as Legend.
+//   - the chip is ON -> the planner would buy it anyway, so inheriting it is worth the
+//     purchase price instead, and shows up in the row's cost rather than its score.
+// Either way it belongs in the pool, so this is deliberately tier-INDEPENDENT: gating it
+// on the chips would make a passive un-chaseable in exactly the case where the only thing
+// inheriting it saves you is money.
+//
+// Buyables must clear CHASE_BAR because the pool drives the archetype count and the pair
+// loop is quadratic in it. Unbuyables are always in regardless of value -- they were the
+// whole pool before this existed, and dropping any would be a regression.
+// Can the child just buy this, given the tiers the user enabled? Mirrors buyablePool().
+function obtainableUnder(name, tiers){
+  const p = PASSIVES_DB[name];
+  if(!p || !p.add_pal) return false;              // never obtainable by purchase
+  const r = p.rank||0;
+  if(r>=1 && r<=3) return tiers.indexOf('craft')>=0;
+  if(r===4) return tiers.indexOf('premium')>=0;
+  return false;                                   // rank 5 / negative: in neither pool
+}
+const CHASE_POOL = (()=>{
+  const s = new Set(UNBUYABLE);
+  for(const n of Object.keys(PASSIVES_DB)){
+    const p = PASSIVES_DB[n];
+    if(!p.add_pal || !combatRelevant(p)) continue;
+    if(passiveMult(p) < CHASE_BAR) continue;      // not worth the eggs
+    s.add(n);
+  }
+  return s;
+})();
+
+// Probability a bred child comes out the gender a later step needs.
+function genderChance(species, gender){
+  const mp = (PALS_DB[species]||{}).male_probability;
+  const p = (mp===undefined ? 50 : mp) / 100;
+  return gender==='Male' ? p : gender==='Female' ? (1-p) : 1;
 }
 
 /* ============================================================
@@ -399,14 +879,120 @@ function computeAt(entry, level, aug){
   checkVector('synthetic trust',kitTrust,1155.724763,4375,662,533);
   checkVector('multiplier ordering',ordering,1720.015859,6750,1267,595);
   console.assert(mamMaxScore>at(mam,50),'self-test: augmented score is monotonic');
-  console.log('Combat-score self-test complete (see assertions above; no failures = OK).');
+
+  // Passive planner. Locks the pool gating and the balance results that a greedy
+  // "take the biggest attack passives" pick gets wrong -- see docs/FORMULAS.md section 4.
+  const plan=(have,tiers)=>planPassives(have,tiers||'craft').passives.slice().sort().join(',');
+  console.assert(CRAFT_POOL.indexOf('Musclehead')>=0 && CRAFT_POOL.indexOf('Legend')<0
+    && CRAFT_POOL.indexOf('Lunker')<0 && CRAFT_POOL.indexOf('Otherworldly Cells')<0,
+    'self-test: craft pool gated by add_pal, not rank alone', CRAFT_POOL);
+  console.assert(PREMIUM_POOL.slice().sort().join(',')==='Demon God,Diamond Body',
+    'self-test: premium pool', PREMIUM_POOL);
+  console.assert(plan([])==='Burly Body,Ferocious,Heavyweight,Musclehead',
+    'self-test: blank Pal takes the balanced four', plan([]));
+  console.assert(plan(['Demon God','Lunker'])==='Burly Body,Demon God,Lunker,Musclehead',
+    'self-test: balance beats stacking attack', plan(['Demon God','Lunker']));
+  console.assert(plan(['Legend'])==='Burly Body,Heavyweight,Legend,Musclehead',
+    'self-test: Heavyweight beats Ferocious alongside Legend', plan(['Legend']));
+  console.assert(planPassives(['Pacifist','Brittle','Serious','Coward'],'craft').dropped.length===4,
+    'self-test: junk passives all evicted');
+  console.assert(planPassives(['Legend'],'craft').goldSlots===3,
+    'self-test: purchase count excludes kept passives');
+  // A passive can only be overwritten, never deleted, so the zero-purchase plan is
+  // always the Pal's existing set -- junk included -- and every drop costs a buy.
+  // Element boosts: worth their full value on a matching element, worth nothing off it,
+  // and never summed across two elements (one element per attack move).
+  console.assert(elementBonus(['Lunker'],['Water','Electric'])===0.20,
+    'self-test: Lunker boosts a Water/Electric Pal', elementBonus(['Lunker'],['Water','Electric']));
+  console.assert(elementBonus(['Flame Emperor'],['Water'])===0,
+    'self-test: off-element boost is worthless');
+  console.assert(elementBonus(['Flame Emperor','Lord of the Sea'],['Fire','Water'])===0.30,
+    'self-test: best element, not the sum of both');
+  console.assert(elementBonus(['Lunker','Lord of the Sea'],['Water'])===0.50,
+    'self-test: same-element boosts add');
+  console.assert(planPassives(['Flame Emperor'],'craft',['Fire']).passives.indexOf('Flame Emperor')>=0,
+    'self-test: a matching element boost is kept, not replaced');
+  console.assert(planPassives(['Flame Emperor'],'craft',['Water']).dropped.join(',')==='Flame Emperor',
+    'self-test: an off-element boost is dropped');
+  console.assert(CRAFT_POOL.indexOf('Pyromaniac')>=0,
+    'self-test: buyable element boosts are in the pool');
+  console.assert(planPassives([],'craft',['Water']).passives.indexOf('Pyromaniac')<0,
+    'self-test: a Water Pal is never offered the Fire boost');
+
+  const junk = planPassives(['Pacifist'],'craft');
+  console.assert(junk.frontier[0].passives.join(',')==='Pacifist',
+    'self-test: nothing is dropped for free', junk.frontier[0].passives);
+  console.assert(junk.frontier.every(f=>f.buys >= 1 - f.passives.filter(n=>n==='Pacifist').length),
+    'self-test: every eviction is paid for');
+  // --- breeding (mirrors breeding_check.py; see docs/BREEDING.md) ---
+  console.assert(childSpecies('Lamball','Lamball')==='Lamball',
+    'self-test: same species breeds true');
+  console.assert(childSpecies('Katress','Wixen','Male','Female')==='Wixen Noct',
+    'self-test: gender-pinned unique combo (M/F)');
+  console.assert(childSpecies('Katress','Wixen','Female','Male')==='Katress Ignis',
+    'self-test: gender-pinned unique combo (F/M)');
+  console.assert(childSpecies('Relaxaurus','Sparkit')==='Relaxaurus Lux',
+    'self-test: unique combo overrides the rank rule');
+  // Lamball 3050 + Cattiva 2760 -> floor((3050+2760+1)/2) = 2905, exactly midway
+  // between two candidates, so this case is decided purely by the priority tiebreak.
+  console.assert(childSpecies('Lamball','Cattiva')===childSpecies('Cattiva','Lamball'),
+    'self-test: unpinned combos are symmetric');
+  console.assert(!CHILD_POOL.some(p=>PALS_DB[p.name].ignore_combi),
+    'self-test: legendaries are excluded from the child pool');
+  console.assert(!CHILD_POOL.some(p=>COMBO_CHILDREN.has(p.name)),
+    'self-test: combo-only children are excluded from the child pool');
+  console.assert(childSpecies('Frostallion','Frostallion')==='Frostallion',
+    'self-test: a legendary is still a legal parent');
+  console.assert(Math.abs(inheritProb(2,2)-0.60)<1e-12, 'self-test: inheritProb(2,2)');
+  console.assert(Math.abs(inheritProb(8,1)-0.25)<1e-12, 'self-test: inheritProb(8,1)');
+  console.assert(Math.abs(inheritProb(1,1)-1.00)<1e-12, 'self-test: inheritProb(1,1)');
+  console.assert(inheritProb(5,5)===0, 'self-test: 5 passives is impossible (4 slots)');
+  console.assert(Math.abs(expectedIv(100,100)-79.16666666666667)<1e-9,
+    'self-test: two maxed parents still average 79, not 100');
+  console.assert(Math.abs(expectedIv(50,50)-50)<1e-9, 'self-test: expectedIv fixed point');
+
+  // Availability: one Pal cannot be bred with itself. This is the single most
+  // important invariant in the search -- without it, singleton self-pairs dominate.
+  const P0 = CHASE_POOL;
+  const solo = [normalizeEntry({id:'x1',species:'Anubis',passives:['Legend'],gender:'Male'})];
+  const soloArch = buildArchetypes(solo, P0);
+  console.assert(soloArch.length===1 && soloArch[0].count===1,
+    'self-test: one Pal makes one archetype of count 1');
+  console.assert(pairFeasible(soloArch[0], soloArch[0])===null,
+    'self-test: a singleton cannot pair with itself');
+  const twoSame = buildArchetypes([
+    normalizeEntry({id:'y1',species:'Anubis',passives:['Legend'],gender:'Male'}),
+    normalizeEntry({id:'y2',species:'Anubis',passives:['Legend'],gender:'Male'})], P0);
+  console.assert(pairFeasible(twoSame[0], twoSame[0])!==null,
+    'self-test: two individuals of the same archetype can pair');
+  const mArch = buildArchetypes([normalizeEntry({id:'m',species:'Anubis',gender:'Male'})], P0)[0];
+  const fArch = buildArchetypes([normalizeEntry({id:'f',species:'Anubis',gender:'Female'})], P0)[0];
+  console.assert(pairFeasible(mArch, mArch)===null, 'self-test: two males cannot pair');
+  console.assert(pairFeasible(mArch, fArch)==='ok', 'self-test: opposite genders pair');
+
+  // The premise of the whole search: a passive being buyable is not a reason to skip
+  // breeding for it. Demon God is add_pal:true but costs a top-tier token, so inheriting
+  // it is worth either score (premium chip off) or that token (chip on).
+  console.assert(CHASE_POOL.has('Demon God'),
+    'self-test: Demon God is chased even though add_pal is true');
+  console.assert(CHASE_POOL.has('Diamond Body') && CHASE_POOL.has('Musclehead'),
+    'self-test: other high-value buyables are chased too');
+  console.assert([...UNBUYABLE].every(n=>CHASE_POOL.has(n)),
+    'self-test: unbuyables are chased regardless of CHASE_BAR');
+  console.assert(!CHASE_POOL.has('Brave') && !CHASE_POOL.has('Work Slave'),
+    'self-test: buyables below CHASE_BAR are not worth eggs');
+  console.assert([...CHASE_POOL].every(n=>combatRelevant(PASSIVES_DB[n])),
+    'self-test: nothing without a combat effect is chased');
+  console.log('Combat-score + breeding self-test complete (see assertions above; no failures = OK).');
 })();
 
 /* ============================================================
    State + persistence
    ============================================================ */
 const LS_KEY = 'palAnalyzer.v1';
-let state = { version:1, targetLevel:80, assume:{condense:true,souls:true,trust:true}, pals:[] };
+let state = { version:2, targetLevel:80, view:'roster',
+  assume:{condense:true,souls:true,trust:true,craft:false,premium:false},
+  breed:{depth:1, perfectIVs:false}, wishlist:[], pals:[] };
 let sortCol = 'targetScore', sortDir = -1;
 let activeElements = new Set();
 let activeOwners = new Set();
@@ -419,11 +1005,26 @@ function load(){
       if(d && Array.isArray(d.pals)){
         state.pals = d.pals.map(normalizeEntry).filter(Boolean);
         if(d.targetLevel) state.targetLevel = d.targetLevel;
+        // The augment keys default on (!==false); the passive-purchase keys default
+        // off (===true), so an absent key means "don't assume I bought anything".
         if(d.assume && typeof d.assume==='object') state.assume = {
           condense:d.assume.condense!==false,
           souls:d.assume.souls!==false,
-          trust:d.assume.trust!==false
+          trust:d.assume.trust!==false,
+          craft:d.assume.craft===true,
+          premium:d.assume.premium===true
         };
+        // load() whitelists what it copies across, so anything added to `state` has
+        // to be listed here or it saves fine and silently never comes back.
+        if(d.breed && typeof d.breed==='object') state.breed = {
+          depth: d.breed.depth===2 ? 2 : 1,
+          perfectIVs: d.breed.perfectIVs===true
+        };
+        // Wishes outlive the roster on purpose: out/ gets re-ingested and re-imported
+        // constantly, and import only replaces state.pals.
+        if(Array.isArray(d.wishlist))
+          state.wishlist = d.wishlist.map(normalizeWish).filter(Boolean);
+        if(d.view==='breed' || d.view==='roster' || d.view==='wishlist') state.view = d.view;
       }
     }
   }catch(e){ console.warn('load failed', e); }
@@ -446,8 +1047,26 @@ function normalizeEntry(e){
     condense: clampInt(e.condense,4),
     soulHp: clampInt(e.soulHp,20), soulAtk: clampInt(e.soulAtk,20), soulDef: clampInt(e.soulDef,20),
     trust: clampInt(e.trust,10),
-    passives: Array.isArray(e.passives) ? e.passives.filter(x=>x).slice(0,4).map(String) : []
+    passives: Array.isArray(e.passives) ? e.passives.filter(x=>x).slice(0,4).map(String) : [],
+    gender: normGender(e.gender)
   };
+}
+// '' (unknown) is a first-class value, not an error: a roster imported before gender
+// was captured has none, and treating unknown as illegal would empty the breeding
+// panel on first use. Such pairs are shown, flagged, and ranked below verified ones.
+function normalizeWish(w){
+  if(!w || typeof w!=='object' || !w.species) return null;
+  const seen = new Set();
+  const passives = (Array.isArray(w.passives) ? w.passives : [])
+    .map(x=>String(x||'').trim()).filter(x=>x && !seen.has(x) && seen.add(x)).slice(0,4);
+  if(!passives.length) return null;
+  return {id: w.id || uid(), species: String(w.species), passives};
+}
+function normGender(v){
+  const s = String(v==null?'':v).split('::').pop().trim().toLowerCase();
+  if(s==='male'||s==='m') return 'Male';
+  if(s==='female'||s==='f') return 'Female';
+  return '';
 }
 function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
@@ -470,21 +1089,52 @@ function passiveTag(p){
   const parts=[];
   if(p.attack_pct) parts.push(`Atk ${p.attack_pct>0?'+':''}${p.attack_pct}%`);
   if(p.defense_pct) parts.push(`Def ${p.defense_pct>0?'+':''}${p.defense_pct}%`);
+  for(const el in (p.element_boosts||{})) parts.push(`${el} dmg +${p.element_boosts[el]}%`);
   return parts.join(', ') || (p.description ? stripHtml(p.description) : 'non-combat');
 }
 function stripHtml(s){ return String(s).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim(); }
 function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function elementTag(e){ return `<span class="el" data-element="${esc(e)}">${esc(e)}</span>`; }
-function passiveTone(name){
+// An element boost only counts as combat-positive on a Pal that actually has that
+// element; on anything else it is dead weight, so the tone is per-Pal, not per-passive.
+function passiveTone(name, elements){
   const p=PASSIVES_DB[name]||{};
   const bonuses=[p.attack_pct,p.defense_pct,p.hp_pct].map(Number).filter(Number.isFinite);
   if(bonuses.some(v=>v<0)) return 'combat-negative';
   if(bonuses.some(v=>v>0)) return 'combat-positive';
+  const eb=p.element_boosts||{};
+  if((elements||[]).some(e=>eb[e]>0)) return 'combat-positive';
   return '';
 }
-function passivePills(entry){
-  return entry.passives.map(p=>`<span class="pill ${passiveTone(p)}" title="${esc(stripHtml((PASSIVES_DB[p]||{}).description||''))}">${esc(p)}</span>`).join('')
+function pill(name, tone){
+  return `<span class="pill ${tone}" title="${esc(stripHtml((PASSIVES_DB[name]||{}).description||''))}">${esc(name)}</span>`;
+}
+function passivePills(entry, elements){
+  return entry.passives.map(p=>pill(p, passiveTone(p, elements))).join('')
     || '<span class="muted">—</span>';
+}
+function fmtGold(g){ return g>=1000 ? Math.round(g/1000)+'k' : String(g); }
+
+// The planned passive set: kept passives in their own tone, purchases dashed blue,
+// evictions struck through. Trailing cost is what the plan would take to execute.
+function planPills(r){
+  if(!r.plan) return '<span class="muted">—</span>';
+  const p = r.plan;
+  const els = r.elements;
+  const html = p.passives.map(n=>pill(n, p.added.indexOf(n)>=0 ? 'proposed' : passiveTone(n, els)))
+    .concat(p.dropped.map(n=>pill(n,'dropped'))).join('');
+  const bits = [];
+  if(r.gold) bits.push(fmtGold(r.gold));
+  if(r.tokens) bits.push('✦'+r.tokens);
+  if(!bits.length) return (html||'<span class="muted">—</span>') + ' <span class="muted">nothing to buy</span>';
+  // Diminishing returns: score gained after each additional purchase. The running-max
+  // frontier can repeat a cheaper plan, so label by its real buy count and dedupe.
+  const base = r.frontier[0].score, seen = new Set();
+  const curve = r.frontier.filter(f=>{
+    if(!f || !f.buys || seen.has(f.buys)) return false;
+    seen.add(f.buys); return true;
+  }).map(f=>`${f.buys} buy${f.buys>1?'s':''}: +${(f.score-base).toFixed(1)}`).join(' · ');
+  return `${html} <span class="gold" title="${esc(curve)}">· ${bits.join(' ')}</span>`;
 }
 
 /* ============================================================
@@ -509,6 +1159,7 @@ function readForm(){
     nickname: $('nickname').value.trim(),
     owner: $('owner').value.trim(),
     level: $('level').value,
+    gender: $('gender').value,
     ivHp: $('ivHp').value, ivAtk: $('ivAtk').value, ivDef: $('ivDef').value,
     condense: $('condense').value, trust: $('trust').value,
     soulHp: $('soulHp').value, soulAtk: $('soulAtk').value, soulDef: $('soulDef').value,
@@ -561,7 +1212,8 @@ function editPal(id){
   const p = state.pals.find(x=>x.id===id); if(!p) return;
   $('editId').value=p.id; $('species').value=p.species; $('nickname').value=p.nickname;
   $('owner').value=p.owner||'';
-  $('level').value=p.level; $('ivHp').value=p.ivHp; $('ivAtk').value=p.ivAtk; $('ivDef').value=p.ivDef;
+  $('level').value=p.level; $('gender').value=p.gender||'';
+  $('ivHp').value=p.ivHp; $('ivAtk').value=p.ivAtk; $('ivDef').value=p.ivDef;
   $('condense').value=p.condense||0; $('trust').value=p.trust||0;
   $('soulHp').value=p.soulHp||0; $('soulAtk').value=p.soulAtk||0; $('soulDef').value=p.soulDef||0;
   ['p0','p1','p2','p3'].forEach((pid,i)=>$(pid).value=p.passives[i]||'');
@@ -607,7 +1259,9 @@ $('importFile').addEventListener('change', e=>{
       if(!Array.isArray(d) && d.assume && typeof d.assume==='object') state.assume = {
         condense:d.assume.condense!==false,
         souls:d.assume.souls!==false,
-        trust:d.assume.trust!==false
+        trust:d.assume.trust!==false,
+        craft:d.assume.craft===true,
+        premium:d.assume.premium===true
       };
       save(); render();
     }catch(err){ alert('Import failed: '+err.message); }
@@ -637,35 +1291,49 @@ function renderChips(){
 }
 $('elClear').addEventListener('click',()=>{ activeElements.clear(); render(); });
 
+// Rendered into BOTH views' containers. They read and write the same `state.assume`,
+// so the two copies are always consistent -- there is no second source of truth.
 function renderAssumeChips(){
-  const opts=[['condense','Max condense (4★)'],['souls','Max souls (20/20/20)'],['trust','Max trust (T10)']];
-  const box=$('assumeChips');
-  box.innerHTML=opts.map(([k,label])=>
+  const opts=[['condense','Max condense (4★)'],['souls','Max souls (20/20/20)'],['trust','Max trust (T10)'],
+    ['craft','Buy passives (50k ea)'],['premium','+ top-tier passives']];
+  const html = opts.map(([k,label])=>
     `<span class="chip ${state.assume[k]?'on':''}" data-assume="${k}">${label}</span>`).join('');
-  box.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
-    const k=c.dataset.assume; state.assume[k]=!state.assume[k]; save(); render();
-  }));
+  for(const id of ['assumeChips','breedAssumeChips']){
+    const box=$(id);
+    box.innerHTML=html;
+    box.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+      const k=c.dataset.assume; state.assume[k]=!state.assume[k]; save(); render();
+    }));
+  }
 }
 
 // Owner chips: built from the owners present in the list ('' = unassigned).
-// Unlike element/text filters, the owner filter also scopes the party of 5.
+// Unlike element/text filters, the owner filter also scopes the party of 5 AND which
+// Pals the breeding search may use as parents. Rendered into both views for that
+// reason -- scoping breeding to one player is a primary use, not an afterthought.
 function renderOwnerChips(){
   const owners = [...new Set(state.pals.map(p=>p.owner||''))].sort((a,b)=>a.localeCompare(b));
   const named = owners.filter(o=>o);
   [...activeOwners].forEach(o=>{ if(!owners.includes(o)) activeOwners.delete(o); });
-  $('ownerField').style.display = named.length ? '' : 'none';
+  for(const id of ['ownerField','breedOwnerField','wishOwnerField'])
+    $(id).style.display = named.length ? '' : 'none';
   if(!named.length){ activeOwners.clear(); return; }
   $('ownerList').innerHTML = named.map(o=>`<option value="${esc(o)}">`).join('');
-  const box = $('ownerChips');
-  box.innerHTML = owners.map(o=>
+  const html = owners.map(o=>
     `<span class="chip ${activeOwners.has(o)?'on':''}" data-owner="${esc(o)}">${o?esc(o):'(unassigned)'}</span>`).join('');
-  box.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
-    const o=c.dataset.owner;
-    if(activeOwners.has(o)) activeOwners.delete(o); else activeOwners.add(o);
-    render();
-  }));
+  for(const id of ['ownerChips','breedOwnerChips','wishOwnerChips']){
+    const box = $(id);
+    box.innerHTML = html;
+    box.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+      const o=c.dataset.owner;
+      if(activeOwners.has(o)) activeOwners.delete(o); else activeOwners.add(o);
+      render();
+    }));
+  }
 }
 $('ownClear').addEventListener('click',()=>{ activeOwners.clear(); render(); });
+$('breedOwnClear').addEventListener('click',()=>{ activeOwners.clear(); render(); });
+$('wishOwnClear').addEventListener('click',()=>{ activeOwners.clear(); render(); });
 function ownerFiltered(pals){
   return activeOwners.size ? pals.filter(p=>activeOwners.has(p.owner||'')) : pals;
 }
@@ -684,21 +1352,1025 @@ function costToFinish(e){
   return c;
 }
 
-// Build a display row (derived stats) for a Pal entry.
+// Build a display row (derived stats) for a Pal entry. CurrentScore always uses the
+// Pal's actual level, augments and passives; only the Target side takes assumptions.
 function decorate(entry){
   const base = PALS_DB[entry.species] || {elements:[],hp_stat:0,attack_stat:0,defense_stat:0};
   const cur = computeAt(entry, entry.level) || {hp:0,atk:0,def:0,score:0};
-  const tgt = computeAt(entry, state.targetLevel, assumedAug(entry)) || {hp:0,atk:0,def:0,score:0};
+  const aug = assumedAug(entry);
+  const asIs = computeAt(entry, state.targetLevel, aug) || {hp:0,atk:0,def:0,score:0};
+
+  const tiers = passiveTiers();
+  let plan=null, tgt=asIs, passiveGain=0, gold=0, tokens=0, frontier=null;
+  if(tiers){
+    plan = planPassives(entry.passives, tiers, base.elements);
+    tgt = computeAt({...entry, passives:plan.passives}, state.targetLevel, aug) || asIs;
+    passiveGain = tgt.score - asIs.score;
+    gold = plan.goldSlots * PASSIVE_GOLD;
+    tokens = plan.premiumSlots;
+    // Score at each purchase count, so the tooltip can show diminishing returns.
+    frontier = plan.frontier.map((f,k)=>{
+      const c = f ? computeAt({...entry, passives:f.passives}, state.targetLevel, aug) : null;
+      return {buys:f?f.buys:k, score:c?c.score:asIs.score};
+    });
+  }
   return {
     entry, base,
     elements: base.elements||[],
-    hp:cur.hp, atk:cur.atk, def:cur.def,
+    hp:cur.hp, atk:cur.atk, def:cur.def, elem:cur.elem||0,
     currentScore:cur.score, targetScore:tgt.score,
     headroom: tgt.score-cur.score,
+    plan, passiveGain, gold, tokens, frontier,
+    // "Is this Pal cheap to improve?" -- score gained per 100k spent, with premium
+    // tokens folded in at PREMIUM_GOLD_EQUIV so mixed plans stay comparable.
+    gainPerGold: (gold + tokens*PREMIUM_GOLD_EQUIV) > 0
+      ? passiveGain/((gold + tokens*PREMIUM_GOLD_EQUIV)/100000) : 0,
     cost:costToFinish(entry)
   };
 }
 
+/* ============================================================
+   Breeding search — "what should I make?"  See docs/BREEDING.md.
+
+   What breeding is worth depends on what the user is willing to BUY. A passive with
+   add_pal:false can never be bought at any price (Legend, Lunker, Lucky, the element
+   emperors); one that is buyable only counts as free when the matching assumption chip
+   is actually on -- with the premium chip off, Demon God is as unobtainable as Legend.
+   But even when the chip IS on, inheriting a buyable passive saves its purchase price.
+   So CHASE_POOL includes both kinds, and a bred Pal's ceiling is
+       (chased passives inherited from its parents) + (whatever the tiers let it buy),
+   scored on two axes: the score it reaches, and the gold/tokens it still owes.
+   ============================================================ */
+// Group the roster by (species, gender, chased set). Each group keeps the actual
+// entry ids -- feasibility is a matching problem, not a set union: pairing a Pal with
+// itself is the highest-scoring thing the objective can produce and is also fiction.
+// The representative is the individual with the FEWEST total passives, because the
+// inheritance pool is both parents' passives deduped, so junk on a parent directly
+// dilutes the odds of drawing the ones you want.
+//
+// `pool` is CHASE_POOL. Keying on the FULL passive set instead would take this from ~760
+// groups to ~2,100 and the pair count from ~200k to ~2.2M, which is why CHASE_BAR exists.
+function buildArchetypes(pals, pool){
+  const groups = new Map();
+  for(const e of pals){
+    const base = PALS_DB[e.species];
+    if(!base) continue;                       // unmapped species can't be bred
+    const unb = (e.passives||[]).filter(p=>pool.has(p)).sort();
+    const key = e.species+'|'+(e.gender||'?')+'|'+unb.join(',');
+    let g = groups.get(key);
+    if(!g){
+      g = {species:e.species, gender:e.gender||'', chased:unb, ids:[], rep:e, count:0};
+      groups.set(key, g);
+    }
+    g.ids.push(e.id); g.count++;
+    const n = (x)=>(x.passives||[]).length;
+    const iv = (x)=>(x.ivHp||0)+(x.ivAtk||0)+(x.ivDef||0);
+    if(n(e)<n(g.rep) || (n(e)===n(g.rep) && iv(e)>iv(g.rep))) g.rep = e;
+  }
+  return [...groups.values()];
+}
+
+// Two archetypes can actually be bred together only if two DISTINCT individuals with
+// opposite genders exist. Unknown gender is permitted but reported, since a roster
+// imported before gender was captured has none.
+function pairFeasible(A, B){
+  if(A===B) return A.count>=2 ? (A.gender ? 'unverified' : 'unverified') : null;
+  if(A.gender && B.gender) return A.gender===B.gender ? null : 'ok';
+  return 'unverified';
+}
+
+function allSubsets(arr, max){
+  const out=[[]];
+  for(let i=0;i<arr.length;i++){
+    const n=out.length;
+    for(let j=0;j<n;j++){
+      if(out[j].length<max) out.push(out[j].concat(arr[i]));
+    }
+  }
+  return out;
+}
+
+// Everything about a projected child that does NOT depend on its IVs: the planned
+// passive set and the multipliers it implies. The search calls this hundreds of
+// thousands of times with only a handful of distinct (species, inherited) pairs, so
+// memoising it is what keeps the pair loop affordable.
+const childPlanCache = new Map();
+function childPlan(species, inherited, tiers){
+  const key = species+'#'+tiers+'#'+inherited.join(',');
+  let v = childPlanCache.get(key);
+  if(v!==undefined) return v;
+  const base = PALS_DB[species];
+  if(!base){ childPlanCache.set(key, null); return null; }
+  const plan = tiers ? planPassives(inherited, tiers, base.elements) : null;
+  const passives = plan ? plan.passives : inherited;
+  const b = passiveBonuses(passives);
+  v = {passives, plan, b, elem:elementBonus(passives, base.elements||[]),
+       // A bred Pal hatches at 0 stars / 0 souls / T0, so the assumption chips decide
+       // what its Target score is allowed to include, exactly as for an owned Pal.
+       aug: assumedAug({condense:0, soulHp:0, soulAtk:0, soulDef:0, trust:0})};
+  childPlanCache.set(key, v);
+  return v;
+}
+
+// Score a hypothetical child: inherited passives are free and kept, the planner
+// fills the rest of the 4 slots from whatever purchase tiers are enabled.
+//
+// `gold`/`tokens` are what finishing this child still costs AFTER inheritance. They fall
+// out of planPassives() for free: a passive the child was born with is in `have`, not in
+// `added`, so inheriting one it would otherwise have bought drops a slot off the bill.
+// That is the only signal distinguishing "bred Demon God" from "bought Demon God" when
+// the premium chip is on -- both produce the identical passive set and identical score.
+function projectChild(species, inherited, ivs, tiers){
+  const base = PALS_DB[species];
+  const cp = childPlan(species, inherited, tiers);
+  if(!cp) return null;
+  const g = cp.aug, L = state.targetLevel;
+  const hp = statHp(base.hp_stat+(base.friendship_hp||0)*g.trust, L, ivs[0], cp.b.hp, g.soulHp, g.stars);
+  const atk = statAttack(base.attack_stat+(base.friendship_attack||0)*g.trust, L, ivs[1], cp.b.atk, g.soulAtk, g.stars);
+  const def = statDefense(base.defense_stat+(base.friendship_defense||0)*g.trust, L, ivs[2], cp.b.def, g.soulDef, g.stars);
+  const gold = cp.plan ? cp.plan.goldSlots*PASSIVE_GOLD : 0;
+  const tokens = cp.plan ? cp.plan.premiumSlots : 0;
+  return {score: combatScore(hp, atk*(1+cp.elem), def), hp, atk, def, elem:cp.elem,
+          gold, tokens, cost: gold + tokens*PREMIUM_GOLD_EQUIV,
+          passives: cp.passives, plan: cp.plan,
+          entry: {species, passives:cp.passives, ivHp:ivs[0], ivAtk:ivs[1], ivDef:ivs[2],
+                  condense:0, soulHp:0, soulAtk:0, soulDef:0, trust:0}};
+}
+
+function searchBreeding(pals, opts){
+  const t0 = (typeof performance!=='undefined' ? performance.now() : Date.now());
+  const tiers = passiveTiers();
+  const depth = (opts&&opts.depth) || 1;
+  const perfect = !!(opts&&opts.perfectIVs);
+  const limit = (opts&&opts.limit) || 300;
+  const archs = buildArchetypes(pals, CHASE_POOL);
+
+  // Baseline to beat: the best TargetScore already owned of each species, so a
+  // suggestion only appears when it actually improves on what the user has.
+  const bestOwned = new Map();
+  for(const e of pals){
+    const c = computeAt(e, state.targetLevel, assumedAug(e));
+    if(!c) continue;
+    const prev = bestOwned.get(e.species);
+    if(!prev || c.score>prev) bestOwned.set(e.species, c.score);
+  }
+  const bestOwnedAny = Math.max(0, ...bestOwned.values());
+
+  // Keep the single best plan per (child species, inherited set) so the panel shows
+  // variety across species rather than 300 rows of the same Pal.
+  const found = new Map();
+  const consider = (row)=>{
+    const k = row.species+'|'+row.inherited.join(',');
+    const prev = found.get(k);
+    if(!prev || row.score>prev.score+1e-9
+       || (Math.abs(row.score-prev.score)<1e-9 && row.eggs<prev.eggs)) found.set(k, row);
+  };
+
+  // Per-species ceiling: the best any child of this species could ever score, with
+  // perfect IVs and every unbuyable in the roster available. If that cannot beat what
+  // the user already owns of the species, no pair producing it is worth evaluating.
+  // One lookup kills most of the pair loop on a mature roster.
+  const rosterChased = [...new Set([].concat(...archs.map(a=>a.chased)))];
+  const ceiling = new Map();
+  const speciesUseless = (species)=>{
+    let c = ceiling.get(species);
+    if(c===undefined){
+      const els = PALS_DB[species].elements||[];
+      const best = rosterChased.filter(n=>{
+        const p = PASSIVES_DB[n]||{};
+        if(p.attack_pct || p.defense_pct || p.hp_pct) return true;
+        const eb = p.element_boosts||{};
+        return els.some(e=>eb[e]);
+      }).slice(0,4);
+      const proj = projectChild(species, best, [100,100,100], tiers);
+      c = proj ? proj.score : 0;
+      ceiling.set(species, c);
+    }
+    return c <= (bestOwned.get(species)||0);
+  };
+
+  const evalPair = (A, B)=>{
+    const feas = pairFeasible(A, B);
+    if(!feas) return;
+    const species = childSpecies(A.species, B.species, A.gender, B.gender);
+    if(!species || !PALS_DB[species]) return;
+    if(speciesUseless(species)) return;
+    // Only chased passives worth something ON THIS CHILD are worth breeding for -- an
+    // element boost for an element the child doesn't have is dead weight.
+    const els = PALS_DB[species].elements||[];
+    const usable = [...new Set(A.chased.concat(B.chased))].filter(n=>{
+      const p = PASSIVES_DB[n]||{};
+      if(p.attack_pct || p.defense_pct || p.hp_pct) return true;
+      const eb = p.element_boosts||{};
+      return els.some(e=>eb[e]);
+    }).sort();
+    // m is the FULL deduped passive pool of the two representatives, not just the
+    // chased ones -- junk passives are drawn too and dilute the odds.
+    const m = new Set((A.rep.passives||[]).concat(B.rep.passives||[])).size;
+    const ivs = perfect ? [100,100,100]
+      : [expectedIv(A.rep.ivHp||0, B.rep.ivHp||0),
+         expectedIv(A.rep.ivAtk||0, B.rep.ivAtk||0),
+         expectedIv(A.rep.ivDef||0, B.rep.ivDef||0)];
+    // Pareto over which passives to chase: the 4th is often NEGATIVE (it displaces
+    // a better bought passive) and each extra one multiplies the egg cost.
+    const ivTotal = ivs[0]+ivs[1]+ivs[2];
+    for(const sub of allSubsets(usable, 4)){
+      // Chasing a passive the child could simply BUY is worth at most its price, and the
+      // price is additive while the egg cost is multiplicative -- inheritProb falls off a
+      // cliff with each extra wanted passive. So one such passive per plan is a real
+      // trade ("hatch it with Demon God, save the token") and two never is. It also pays
+      // for itself twice over on a 2,330-Pal roster with both purchase chips on: ~4.6 s
+      // -> ~3.4 s, and the top rows stop being 700-egg plans that chase three passives
+      // the child could have bought outright.
+      if(sub.length>1 && sub.filter(n=>obtainableUnder(n, tiers)).length>1) continue;
+      const p = inheritProb(Math.max(m, sub.length), sub.length);
+      if(p<=0) continue;
+      const eggs = 1/p;
+      // Dominance: for a fixed (species, inherited set) the score rises monotonically
+      // with IVs, so a candidate that is no better on IVs AND no cheaper cannot win.
+      // Checking that before projecting skips most of the work on a large roster.
+      const prev = found.get(species+'|'+sub.join(','));
+      if(prev && ivTotal<=prev.ivTotal && eggs>=prev.eggs-1e-12) continue;
+      const proj = projectChild(species, sub, ivs, tiers);
+      if(!proj) continue;
+      // Only suggest something better than the same species already in the box --
+      // otherwise the panel fills with worse copies of Pals the user has.
+      if(proj.score <= (bestOwned.get(species)||0)) continue;
+      // ...but the headline number compares against the best Pal owned OVERALL. A
+      // species you own none of would otherwise show its whole score as "gain" and
+      // outrank every real upgrade, which says nothing about whether it is worth doing.
+      consider({species, inherited:sub, score:proj.score, gain:proj.score-bestOwnedAny,
+                eggs, cost:proj.cost, gold:proj.gold, tokens:proj.tokens,
+                elements:PALS_DB[species].elements||[], proj, steps:1, feas,
+                a:A, b:B, ivs, ivTotal, owned:bestOwned.get(species)||0});
+    }
+  };
+
+  // Pairs where NEITHER parent carries a usable unbuyable can only ever produce the
+  // empty-inheritance "acquire" row, whose score depends solely on the child species
+  // and the parents' IVs. Enumerating subsets and re-projecting for each such pair is
+  // pure waste -- keep the best-IV pair per child species and project once at the end.
+  // On a real roster this is the overwhelming majority of the pair space.
+  const carriers = [], plain = [];
+  for(const a of archs) (a.chased.length ? carriers : plain).push(a);
+  const ivSum = (a)=>(a.rep.ivHp||0)+(a.rep.ivAtk||0)+(a.rep.ivDef||0);
+
+  const bestPlain = new Map();     // child species -> best-IV feasible plain pair
+  for(let i=0;i<plain.length;i++){
+    for(let j=i;j<plain.length;j++){
+      const A=plain[i], B=plain[j];
+      if(!pairFeasible(A,B)) continue;
+      const species = childSpecies(A.species, B.species, A.gender, B.gender);
+      if(!species || !PALS_DB[species] || speciesUseless(species)) continue;
+      const s = ivSum(A)+ivSum(B);
+      const prev = bestPlain.get(species);
+      if(!prev || s>prev.s) bestPlain.set(species, {A, B, s});
+    }
+  }
+  for(const [species, {A, B}] of bestPlain) evalPair(A, B);
+
+  // Carriers are few, so they get the full treatment against everything.
+  for(let i=0;i<carriers.length;i++){
+    for(let j=i;j<carriers.length;j++) evalPair(carriers[i], carriers[j]);
+    for(let j=0;j<plain.length;j++) evalPair(carriers[i], plain[j]);
+  }
+
+  let rows = [...found.values()];
+
+  if(depth>=2) rows = rows.concat(searchDepth2(archs, rows, tiers, perfect, bestOwned, bestOwnedAny));
+
+  // Rank by the projected Pal itself, then by the two things a plan actually spends:
+  // eggs, then gold. Eggs lead because they are what the breeding panel is FOR -- when a
+  // passive is buyable under the current tiers, inheriting it and buying it produce the
+  // identical passive set and an exactly equal score, and paying 50k to skip 600 hatches
+  // is the right default. Cost still breaks the remaining ties and is a sortable column.
+  rows.sort((x,y)=>y.score-x.score || x.eggs-y.eggs || x.cost-y.cost);
+  // Each pair yields a Pareto frontier over which passives to chase ("stop at Legend for
+  // 2.5 eggs, or take Legend + Divine Dragon for 6.7"), which is worth showing -- but
+  // unbounded it fills the panel with one species. Keep at most 3 per child species.
+  //
+  // Those 3 are picked by DOMINANCE, not just by rank: a row earns a slot only if it is
+  // cheaper in eggs or in gold than every row already kept for that species. Taking the
+  // top 3 outright would spend all of them on near-identical plans and hide the genuine
+  // tradeoff, which is exactly where an inherited-instead-of-bought passive lives -- it
+  // ties on score and loses on eggs, so it only ever surfaces on the cost axis.
+  const perSpecies = new Map();
+  rows = rows.filter(r=>{
+    const kept = perSpecies.get(r.species) || [];
+    if(kept.length >= 3) return false;
+    if(kept.some(k=>k.eggs<=r.eggs+1e-9 && k.cost<=r.cost+1e-9)) return false;
+    kept.push(r); perSpecies.set(r.species, kept);
+    return true;
+  }).slice(0, limit);
+  // Resolve each surviving plan to two CONCRETE individuals (phase 2). This is what
+  // answers "which Anubis do I use", and it is where the availability invariant is
+  // enforced for real rather than at archetype granularity.
+  for(const r of rows) r.pair = concretePair(r, pals);
+  rows = rows.filter(r=>r.pair);
+  return {rows, ms:(typeof performance!=='undefined'?performance.now():Date.now())-t0,
+          archetypes:archs.length, bestOwnedAny};
+}
+
+// Pick the actual two Pals to use: minimise the combined deduped passive pool (that
+// is what drives the odds), require two distinct ids, and require opposite genders
+// when both are known.
+function concretePair(row, pals){
+  const want = new Set(row.inherited);
+  const candsFor = (arch)=>pals.filter(e=>e.species===arch.species
+    && (!arch.gender || (e.gender||'')===arch.gender)
+    && arch.chased.every(u=>(e.passives||[]).indexOf(u)>=0));
+  const A = candsFor(row.a), B = candsFor(row.b);
+  let best=null;
+  for(const a of A){
+    for(const b of B){
+      if(a.id===b.id) continue;
+      const ga=a.gender||'', gb=b.gender||'';
+      if(ga && gb && ga===gb) continue;
+      const m = new Set((a.passives||[]).concat(b.passives||[])).size;
+      const have = [...want].filter(u=>(a.passives||[]).concat(b.passives||[]).indexOf(u)>=0).length;
+      if(have<want.size) continue;
+      const verified = !!(ga && gb);
+      const rank = [m, verified?0:1];
+      if(!best || rank[0]<best.rank[0] || (rank[0]===best.rank[0] && rank[1]<best.rank[1]))
+        best = {a, b, m, verified, rank};
+    }
+  }
+  if(!best) return null;
+  // The odds shown must match the pair shown, so recompute from the real individuals.
+  // Only for one-step plans: a two-step row's eggs already fold in the intermediate's
+  // cost and its gender roll, and this pair is only that plan's FIRST step.
+  if(row.steps===1){
+    const p = inheritProb(Math.max(best.m, row.inherited.length), row.inherited.length);
+    if(p>0) row.eggs = 1/p;
+  }
+  return best;
+}
+
+// Depth 2: breed a step-1 child, then pair THAT with a roster Pal. The space is
+// (pairs)^2, so this only runs against a hard-pruned frontier of intermediates.
+function searchDepth2(archs, step1, tiers, perfect, bestOwned, bestOwnedAny){
+  const K = 150;
+  // A two-step plan only earns its place if no ONE-step plan already reaches the same
+  // species at least as well for no more eggs. Without this the panel fills with
+  // "breed X, then breed it again" loops that are strictly worse than breeding X once.
+  const oneStepFront = new Map();
+  for(const r of step1){
+    const f = oneStepFront.get(r.species) || [];
+    f.push(r); oneStepFront.set(r.species, f);
+  }
+  const dominatedByOneStep = (species, score, eggs)=>
+    (oneStepFront.get(species)||[]).some(r=>r.score>=score-1e-9 && r.eggs<=eggs+1e-9);
+  // Frontier: best score per (species, inherited set), cheapest first.
+  const front = step1.slice().sort((x,y)=>y.gain-x.gain || x.eggs-y.eggs).slice(0, K);
+  // Only partners that bring an unbuyable the intermediate doesn't already have can
+  // improve it; everything else just costs eggs.
+  const out = [];
+  for(const mid of front){
+    const midSet = new Set(mid.inherited);
+    for(const P of archs){
+      if(!P.chased.some(u=>!midSet.has(u))) continue;
+      const species = childSpecies(mid.species, P.species, '', P.gender);
+      if(!species || !PALS_DB[species]) continue;
+      const els = PALS_DB[species].elements||[];
+      const pool = [...new Set(mid.inherited.concat(P.chased))].filter(n=>{
+        const p = PASSIVES_DB[n]||{};
+        if(p.attack_pct || p.defense_pct || p.hp_pct) return true;
+        const eb = p.element_boosts||{};
+        return els.some(e=>eb[e]);
+      }).sort();
+      if(!pool.length) continue;
+      // The intermediate carries its inherited set plus whatever junk came with it;
+      // model its pool as the inherited set (optimistic -- see BREEDING.md limits).
+      const m = new Set(mid.inherited.concat(P.rep.passives||[])).size;
+      const ivs = perfect ? [100,100,100]
+        : [expectedIv(mid.ivs[0], P.rep.ivHp||0),
+           expectedIv(mid.ivs[1], P.rep.ivAtk||0),
+           expectedIv(mid.ivs[2], P.rep.ivDef||0)];
+      // The intermediate has to come out the right gender to be usable in step 2.
+      const genderCost = 1/genderChance(mid.species, P.gender==='Male'?'Female':'Male');
+      for(const sub of allSubsets(pool, 4)){
+        if(sub.length<=mid.inherited.length
+           && mid.inherited.every(u=>sub.indexOf(u)>=0)) continue;  // no gain over step 1
+        const proj = projectChild(species, sub, ivs, tiers);
+        if(!proj) continue;
+        const p = inheritProb(Math.max(m, sub.length), sub.length);
+        if(p<=0) continue;
+        if(proj.score <= (bestOwned.get(species)||0)) continue;
+        const eggs = mid.eggs*genderCost + 1/p;
+        if(eggs>100) continue;                  // egg budget
+        if(dominatedByOneStep(species, proj.score, eggs)) continue;
+        out.push({species, inherited:sub, score:proj.score,
+                  gain:proj.score-bestOwnedAny, eggs,
+                  cost:proj.cost, gold:proj.gold, tokens:proj.tokens,
+                  elements:els, proj, steps:2, feas:mid.feas,
+                  a:mid.a, b:mid.b, via:mid, partner:P, ivs,
+                  owned:bestOwned.get(species)||0});
+      }
+    }
+  }
+  return out;
+}
+
+
+/* ============================================================
+   Wishlist -- breed one NAMED target, cheapest route
+   ------------------------------------------------------------
+   The breeding panel above is forward and unconstrained: enumerate roster pairs, see
+   what falls out, rank by score. This inverts it -- the child and its passives are
+   given, and the question is what to breed, in what order, and how many eggs it costs.
+   Inverting is what makes it affordable: with at most 4 named passives, everything that
+   matters about an intermediate Pal is (species, which of the wanted passives it
+   carries, how much junk rides along), so the state space is ~24k nodes rather than
+   every passive combination in the game.
+
+   Ground truth: docs/WISHLIST.md.
+   ============================================================ */
+const WISH_BUDGET_MS = 10000;  // anytime: return the cheapest plan found by the deadline
+const WISH_BEAM_START = 120;   // carrier nodes expanded in the first pass...
+const WISH_BEAM_MAX = 30000;   // ...widening fourfold per pass until time runs out
+const PASSIVE_LOTTERY = [0.40, 0.30, 0.20, 0.10];   // index = extra passives rolled
+
+// P(a hatch is ACCEPTABLE: it carries all `wanted`, and at most `maxExtras` others).
+// Generalises inheritProb(), which is exactly the maxExtras<0 (unlimited) case.
+//
+// The extra dimension exists because junk is a PRICE, not a wall: a dirty parent only
+// enlarges the pool the wanted passives are drawn from, so at every step the breeder
+// chooses how picky to be. Holding out for a cleaner egg costs hatches now and buys a
+// smaller pool later, and which side wins is arithmetic, not principle.
+//
+// Unlike inheritProb() the lottery matters here: a direct draw of `d` leaves 4-d slots
+// and the lottery fills up to 3 of them, so being picky also means re-rolling every
+// lottery hit. That is the flat 2.5x an exact-match intermediate pays and a superset one
+// never does. Mirrored by p_accept() in breeding_check.py.
+function acceptProb(m, k, maxExtras){
+  if(k>4 || k>m) return 0;
+  let total = 0;
+  for(let n=1;n<=4;n++){
+    const d = Math.min(n, m);
+    if(d < k) continue;
+    const pDraw = nCk(m-k, d-k) / nCk(m, d);
+    if(maxExtras<0){ total += PASSIVE_DIRECT[n]*pDraw; continue; }
+    const room = 4-d;                       // the game caps total passives at 4
+    let pLot = 0;
+    for(let l=0;l<=3;l++) if((d-k) + Math.min(l, room) <= maxExtras) pLot += PASSIVE_LOTTERY[l];
+    total += PASSIVE_DIRECT[n]*pDraw*pLot;
+  }
+  return total;
+}
+
+/* ---- packing -----------------------------------------------------------
+   The search runs tens of millions of inner iterations, so a node is an integer, not
+   an object key: (speciesIndex * 16 + wantedMask) * 5 + junk. String keys and their
+   allocations were the single largest cost when this was profiled. Everything wide
+   enough to be indexed is a typed array or a plain array, and the probabilities are a
+   lookup table because m <= 12, k <= 4 and junk <= 4 make the whole space 325 cells. */
+const WISH_SPECIES = Object.keys(PALS_DB);
+const WISH_NSP = WISH_SPECIES.length;
+const WISH_SP_IDX = new Map(WISH_SPECIES.map((n,i)=>[n,i]));
+const WISH_STRIDE = 80;                     // 16 masks x 5 junk levels per species
+const POPCNT = (()=>{ const a = new Uint8Array(16);
+  for(let i=1;i<16;i++) a[i] = a[i>>1] + (i&1); return a; })();
+const ACCEPT = (()=>{ const a = new Float64Array(13*25);
+  for(let m=0;m<=12;m++) for(let k=0;k<=4;k++) for(let x=0;x<=4;x++)
+    a[m*25+k*5+x] = acceptProb(m, k, x);
+  return a; })();
+const nodeId = (sp, mask, j)=>(sp*16 + mask)*5 + j;
+const nodeSpecies = (id)=>WISH_SPECIES[(id/80)|0];
+
+// Katress x Wixen is the game's only gender-dependent outcome, so one pair can have two
+// children. Everywhere else both calls agree and the second slot stays empty.
+const WISH_KID_A = new Int32Array(WISH_NSP*WISH_NSP).fill(-2);
+const WISH_KID_B = new Int32Array(WISH_NSP*WISH_NSP).fill(-2);
+function wishKids(ia, ib){
+  const p = ia*WISH_NSP + ib;
+  if(WISH_KID_A[p]===-2){
+    const a = WISH_SPECIES[ia], b = WISH_SPECIES[ib];
+    const c1 = childSpecies(a, b, 'Male', 'Female');
+    const c2 = childSpecies(a, b, 'Female', 'Male');
+    const i1 = (c1 && WISH_SP_IDX.has(c1)) ? WISH_SP_IDX.get(c1) : -1;
+    const i2 = (c2 && c2!==c1 && WISH_SP_IDX.has(c2)) ? WISH_SP_IDX.get(c2) : -1;
+    WISH_KID_A[p] = i1; WISH_KID_B[p] = i2;
+  }
+  return p;
+}
+
+// Which species can ever be the child of two DIFFERENT species. Everything else is
+// reachable only through rule 1 (same species breeds true), which means its passives
+// have to be on that species already -- Frostallion, Jetragon and Blazamut Ryu are the
+// ones this bites. Computed once over the 45k species pairs and cached, because
+// answering it up front turns a 10-second dead end into an instant explanation.
+let crossReachCache = null;
+function wishCrossReachable(){
+  if(crossReachCache) return crossReachCache;
+  const out = new Uint8Array(WISH_NSP);
+  for(let a=0; a<WISH_NSP; a++){
+    for(let b=a+1; b<WISH_NSP; b++){
+      const p = wishKids(a, b);
+      const k1 = WISH_KID_A[p], k2 = WISH_KID_B[p];
+      if(k1>=0) out[k1] = 1;
+      if(k2>=0) out[k2] = 1;
+    }
+  }
+  return (crossReachCache = out);
+}
+
+const OPPOSITE = {Male:'Female', Female:'Male'};
+const wishNow = ()=> (typeof performance!=='undefined' ? performance.now() : Date.now());
+
+// A wish is a spec and the solver does not second-guess it: every passive named must be
+// BRED, with one liberty -- a rank 1-3 add_pal passive is bought for PASSIVE_GOLD
+// instead, because 50k is noise against even one extra hatch. Rank-4 passives cost a
+// scarce token rather than gold, so they are never bought here; if you would spend a
+// token on one you simply leave it out of the wish.
+function wishSplit(passives){
+  const bred=[], buy=[], unknown=[];
+  for(const n of (passives||[])){
+    if(!PASSIVES_DB[n]){ unknown.push(n); continue; }
+    (obtainableUnder(n, ['craft']) ? buy : bred).push(n);
+  }
+  return {bred, buy, unknown};
+}
+
+/* ---- plans -------------------------------------------------------------
+   A plan is a MAP from node id to the step that produces it, never a list or a set of
+   species. Two sub-plans can each contain the same node reached a different way, and a
+   set union would count it once while no single build order actually produces it;
+   keying by node makes "eggs == sum over the map" true by construction and pays for a
+   shared intermediate exactly once, which is right because parents survive breeding.
+   docs/BREED_REACH.md section 3 hit the identical trap one dimension lower. */
+const EMPTY_PLAN = {steps:new Map(), eggs:0, root:-1};
+function stepEggs(s){ return s.eggs * s.gm * s.copies; }
+function planPrune(steps, rootKey){
+  // Merging two parents' plans can drag in steps the root no longer needs. Walk the
+  // dependency graph from the root and keep only what it actually uses.
+  const keep = new Map(), stack = [rootKey];
+  while(stack.length){
+    const k = stack.pop();
+    if(keep.has(k)) continue;
+    const s = steps.get(k);
+    if(!s) continue;
+    keep.set(k, s);
+    if(s.aBred) stack.push(s.aKey);
+    if(s.bBred) stack.push(s.bKey);
+  }
+  let eggs = 0;
+  for(const s of keep.values()) eggs += stepEggs(s);
+  return {steps:keep, eggs, root:rootKey};
+}
+// Steps are shared between plans, so a demand (a gender to hit, a second copy to hatch)
+// clones rather than mutates. Where two consumers disagree the stricter one wins.
+function planDemand(steps, key, gm, copies){
+  const s = steps.get(key);
+  if(!s || (gm<=s.gm && copies<=s.copies)) return;
+  const c = {};
+  for(const f in s) c[f] = s[f];
+  c.gm = Math.max(gm, s.gm); c.copies = Math.max(copies, s.copies);
+  steps.set(key, c);
+}
+
+/* ---- clean partners ----------------------------------------------------
+   The cheapest way to obtain a Pal of each species carrying NOTHING. Both parents must
+   themselves be clean: a child always draws at least one passive from a non-empty pool,
+   so acceptProb(m,0,0) is 0 for every m>0. That collapses this to a shortest path over
+   species whose every edge costs the same 1/0.40 = 2.5 eggs -- the odds of rolling no
+   lottery passive -- and makes it independent of the wish, so it is computed once per
+   roster and reused by every wish.
+
+   Allowing bred partners at all is deliberate: restricting partners to Pals you own
+   breaks the real case where a child needs two parents that are both only available
+   clean, since one of them then has to be bred first (docs/BREED_REACH.md section 3). */
+let cleanCache = null;                      // {key, pool}
+function cleanPartners(pals, cacheKey){
+  if(cleanCache && cacheKey && cleanCache.key===cacheKey) return cleanCache.pool;
+  const CLEAN_EGGS = 1/ACCEPT[0];           // acceptProb(0,0,0) = P(no lottery) = 0.40
+  const best = new Map();                   // species index -> plan
+  const owned = new Map();                  // species index -> genders you actually have
+  for(const e of pals){
+    if((e.passives||[]).length) continue;
+    const i = WISH_SP_IDX.get(e.species);
+    if(i===undefined) continue;
+    let g = owned.get(i);
+    if(!g){ owned.set(i, g = {hasMale:false, hasFemale:false, hasUnknown:false}); best.set(i, EMPTY_PLAN); }
+    if(e.gender==='Male') g.hasMale = true;
+    else if(e.gender==='Female') g.hasFemale = true;
+    else g.hasUnknown = true;
+  }
+  // Same gender rules as the main search: a pair needs one of each, and only a fixed
+  // starter pins anything. Skipping this here would let the pre-pass hand the search a
+  // filler chain that cannot actually be bred.
+  const lockOf = (i)=>{
+    const g = owned.get(i);
+    if(!g || g.hasUnknown || (g.hasMale && g.hasFemale)) return null;
+    return g.hasMale ? 'Male' : g.hasFemale ? 'Female' : null;
+  };
+  for(let round=0; round<10; round++){
+    const have = [...best.keys()];
+    let changed = false;
+    for(let x=0;x<have.length;x++){
+      for(let y=x+1;y<have.length;y++){     // X x X breeds true: nothing new
+        const ia = have[x], ib = have[y];
+        const p = wishKids(ia, ib);
+        const pa = best.get(ia), pb = best.get(ib);
+        const aKey = nodeId(ia,0,0), bKey = nodeId(ib,0,0);
+        const ga = owned.get(ia), gb = owned.get(ib);
+        if(ga && gb && !((ga.hasMale && gb.hasFemale) || (ga.hasFemale && gb.hasMale)
+                         || ga.hasUnknown || gb.hasUnknown)) continue;
+        const lockA = lockOf(ia), lockB = lockOf(ib);
+        const gmA = (!ga && lockB) ? 1/genderChance(WISH_SPECIES[ia], OPPOSITE[lockB]) : 1;
+        const gmB = (!gb && lockA) ? 1/genderChance(WISH_SPECIES[ib], OPPOSITE[lockA]) : 1;
+        for(const kid of [WISH_KID_A[p], WISH_KID_B[p]]){
+          if(kid < 0) continue;
+          const key = nodeId(kid,0,0);
+          if(pa.steps.has(key) || pb.steps.has(key)) continue;   // no self-derivation
+          const prev = best.get(kid);
+          if(prev && prev.eggs <= Math.max(pa.eggs, pb.eggs) + CLEAN_EGGS + 1e-12) continue;
+          const steps = new Map(pa.steps);
+          for(const [k,s] of pb.steps) if(!steps.has(k)) steps.set(k, s);
+          const aBred = !ga && steps.has(aKey), bBred = !gb && steps.has(bKey);
+          if(aBred && gmA>1) planDemand(steps, aKey, gmA, 1);
+          if(bBred && gmB>1) planDemand(steps, bKey, gmB, 1);
+          steps.set(key, {key, species:WISH_SPECIES[kid], mask:0, j:0, m:0, maxExtras:0,
+            eggs:CLEAN_EGGS, gm:1, copies:1, twin:false, clean:true,
+            aKey, bKey, aBred, bBred});
+          const plan = planPrune(steps, key);
+          if(!prev || plan.eggs < prev.eggs - 1e-12){ best.set(kid, plan); changed = true; }
+        }
+      }
+    }
+    if(!changed) break;
+  }
+  if(cacheKey) cleanCache = {key:cacheKey, pool:best};
+  return best;
+}
+
+// Only a fixed starter pins a gender. Two bred intermediates are both unhatched, so
+// neither is targeted -- you take whichever comes and pair them. A node counts as
+// pinned only when every individual behind it shares one KNOWN gender; both genders
+// available means nothing is pinned, and unknown gender charges nothing and is badged.
+function lockedGender(n){
+  if(!n.owned || n.hasUnknown) return null;
+  if(n.hasMale && n.hasFemale) return null;
+  return n.hasMale ? 'Male' : n.hasFemale ? 'Female' : null;
+}
+// A pair needs one male and one female, and a Pal can never breed with itself.
+function ownedPairOk(A, B){
+  if(A===B) return A.count>=2 && ((A.hasMale && A.hasFemale) || A.hasUnknown);
+  return (A.hasMale && B.hasFemale) || (A.hasFemale && B.hasMale) || A.hasUnknown || B.hasUnknown;
+}
+
+/* The search. A generator so the caller decides how to drive it: the page yields a
+   frame between rounds to keep the spinner alive, tools/js_check.js drains it in a
+   loop. It must never run from render() -- only from the Solve button.
+
+   Iterative broadening: each pass is a fixed-point relaxation under a beam, and the
+   passes widen until one finishes untruncated or the budget runs out. A narrow first
+   pass is the point -- it produces SOME complete route in a fraction of a second, and
+   every later pass inherits it as a cost bound, which prunes far more than the wider
+   beam costs. Optimality is claimed only when a pass converges without ever hitting
+   its beam. */
+function* wishSolveIter(pals, wish, opts){
+  opts = opts || {};
+  const t0 = wishNow();
+  const budget = (opts.budgetMs===undefined) ? WISH_BUDGET_MS : opts.budgetMs;
+  const deadline = t0 + budget;
+  const target = wish.species;
+  const split = wishSplit(wish.passives||[]);
+  const D = split.bred, FULL = (1<<D.length)-1;
+  const done = (extra)=>Object.assign({target, split, ms:wishNow()-t0}, extra);
+
+  if(!PALS_DB[target]) return done({blocked:'"'+target+'" is not a species in the game data.'});
+  if(split.unknown.length)
+    return done({blocked:'Unknown passive: '+split.unknown.join(', ')+'.'});
+  if(D.length>4) return done({blocked:'A Pal has only 4 passive slots.'});
+  const tgt = WISH_SP_IDX.get(target);
+  const idx = new Map(D.map((n,i)=>[n,i]));
+
+  // A passive carried by nobody you can reach and unbuyable is a hard stop, and saying
+  // WHICH one is the whole value of the answer.
+  const carried = new Set();
+  for(const e of pals) for(const nm of (e.passives||[])) if(idx.has(nm)) carried.add(nm);
+  const missing = D.filter(n=>!carried.has(n));
+  if(missing.length) return done({blocked:'No Pal you can breed with carries '
+    + missing.join(' or ') + ', and ' + (missing.length>1?'they':'it')
+    + ' cannot be bought. Catch or trade for a carrier first.'});
+
+  // Already in the box. Worth answering before anything else: it is the one result
+  // where the honest advice is "do nothing", and it is also the only way a self-only
+  // species like Jetragon can satisfy a wish.
+  const owned = [];
+  for(const e of pals){
+    if(e.species!==target) continue;
+    let mask = 0;
+    for(const nm of (e.passives||[])) if(idx.has(nm)) mask |= 1<<idx.get(nm);
+    owned.push({e, mask});
+    if((mask & FULL)===FULL)
+      return done({plan:{steps:new Map(), eggs:0, root:-1}, order:[], eggs:0,
+        have:e, status:'converged', rounds:0, pairs:0, passes:0, nodeCount:0});
+  }
+
+  // Self-only species: rule 1 is the only way in, so every wanted passive must already
+  // sit on one of yours. Checking here rather than after a failed search is the
+  // difference between an instant answer and ten seconds of nothing.
+  if(!wishCrossReachable()[tgt]){
+    let union = 0;
+    const own = owned.length;
+    for(const o of owned) union |= o.mask;
+    if((union & FULL) !== FULL || own < 2){
+      const gap = D.filter((_,i)=>!(union & (1<<i)));
+      return done({blocked:target + ' is never the child of two different species, so '
+        + 'the only way to breed one is from two ' + target + 's — which means the '
+        + 'passives have to be on ' + target + 's already. You have ' + own
+        + (gap.length ? ', and none of them carries ' + gap.join(' or ') + '.' : '.')});
+    }
+  }
+
+  const cleanPool = cleanPartners(pals, opts.cleanKey);
+  let best = null, bound = Infinity, converged = false;
+  let rounds = 0, pairs = 0, passes = 0, nodeCount = 0, lastNodes = null;
+
+  for(let beam = WISH_BEAM_START; ; beam = beam*4){
+    passes++;
+    // --- seed the roster ------------------------------------------------
+    const nodes = [];                        // sparse, indexed by node id
+    const live = [];                         // every node that has a plan
+    const getNode = (id)=>{
+      let n = nodes[id];
+      if(!n){
+        n = {id, sp:(id/80)|0, species:nodeSpecies(id), mask:((id/5)|0)&15, j:id%5,
+             owned:false, entries:[], plan:null, count:0,
+             hasMale:false, hasFemale:false, hasUnknown:false};
+        nodes[id] = n;
+      }
+      return n;
+    };
+    for(const e of pals){
+      const sp = WISH_SP_IDX.get(e.species);
+      if(sp===undefined) continue;
+      let mask=0, j=0;
+      const seen = new Set();
+      for(const nm of (e.passives||[])){
+        if(seen.has(nm)) continue;
+        seen.add(nm);
+        const i = idx.get(nm);
+        if(i===undefined) j++; else mask |= 1<<i;
+      }
+      const n = getNode(nodeId(sp, mask, Math.min(j, 4-POPCNT[mask])));
+      if(!n.owned){ n.owned = true; n.plan = EMPTY_PLAN; live.push(n); }
+      n.entries.push(e); n.count++;
+      if(e.gender==='Male') n.hasMale = true;
+      else if(e.gender==='Female') n.hasFemale = true;
+      else n.hasUnknown = true;
+    }
+    for(const [sp, plan] of cleanPool){
+      const n = getNode(nodeId(sp, 0, 0));
+      if(n.owned) continue;
+      if(!n.plan) live.push(n);
+      if(!n.plan || plan.eggs < n.plan.eggs) n.plan = plan;
+    }
+    lastNodes = nodes;
+
+    // Junk on the TARGET is free: you cannot delete a passive, only overwrite one, and
+    // an overwrite costs the same 50k as filling an empty slot. So take the most
+    // permissive (cheapest) acceptance the wish allows.
+    const bestTarget = ()=>{
+      let b = null;
+      for(let jc=0; jc+D.length<=4; jc++){
+        const n = nodes[nodeId(tgt, FULL, jc)];
+        if(n && n.plan && (!b || n.plan.eggs < b.eggs)) b = n.plan;
+      }
+      return b;
+    };
+    if(!best){ const b0 = bestTarget(); if(b0){ best = b0; bound = b0.eggs; } }
+
+    let frontier = live.filter(n=>n.mask);
+    let truncated = false, settled = false;
+
+    while(true){
+      if(!frontier.length){ settled = true; break; }
+      if(wishNow() >= deadline) break;
+      rounds++;
+      const partners = [];
+      for(const n of live){
+        if(n.plan.eggs >= bound) continue;
+        let l = partners[n.sp];
+        if(!l) partners[n.sp] = l = [];
+        l.push(n);
+      }
+      // A partner carrying the same wanted passives, with no more junk and no more
+      // eggs, makes every other one redundant. On a mature roster this is most of the
+      // pair space: dozens of dirty no-passive variants per species collapse to one.
+      for(let sp=0; sp<partners.length; sp++){
+        const l = partners[sp];
+        if(!l || l.length<2) continue;
+        l.sort((x,y)=>x.mask-y.mask || x.j-y.j || x.plan.eggs-y.plan.eggs);
+        const keep = [];
+        for(const n of l){
+          if(!keep.some(k=>k.mask===n.mask && k.j<=n.j && k.plan.eggs<=n.plan.eggs+1e-12))
+            keep.push(n);
+        }
+        partners[sp] = keep;
+      }
+      const front = [], frontSp = [];
+      for(const n of frontier){
+        let l = front[n.sp];
+        if(!l){ front[n.sp] = l = []; frontSp.push(n.sp); }
+        l.push(n);
+      }
+      const improved = new Set();
+
+      let sliced = 0;
+      for(const spA of frontSp){
+        const listA = front[spA];
+        for(let spB=0; spB<WISH_NSP; spB++){
+          const listB = partners[spB];
+          if(!listB) continue;
+          const pk = wishKids(spA, spB);
+          const k1 = WISH_KID_A[pk], k2 = WISH_KID_B[pk];
+          if(k1 < 0 && k2 < 0) continue;
+          for(let ai=0; ai<listA.length; ai++){
+            const A = listA[ai];
+            for(let bi=0; bi<listB.length; bi++){
+              const B = listB[bi];
+              pairs++;
+              const combined = A.mask | B.mask;
+              if(!combined) continue;        // clean x clean is the pre-pass's job
+              if(A===B){ if(A.owned && !ownedPairOk(A, A)) continue; }
+              else if(A.owned && B.owned && !ownedPairOk(A, B)) continue;
+              const m = POPCNT[combined] + A.j + B.j;
+              const pa = A.plan, pb = B.plan;
+              const parentEggs = pa.eggs > pb.eggs ? pa.eggs : pb.eggs;
+              const lockA = lockedGender(A), lockB = lockedGender(B);
+              const gmA = (!A.owned && lockB) ? 1/genderChance(A.species, OPPOSITE[lockB]) : 1;
+              const gmB = (!B.owned && lockA) ? 1/genderChance(B.species, OPPOSITE[lockA]) : 1;
+              for(let ki=0; ki<2; ki++){
+                const kid = ki ? k2 : k1;
+                if(kid < 0) continue;
+                const base = kid*80;
+                for(let W=combined; W>0; W=(W-1)&combined){
+                  const k = POPCNT[W];
+                  const row = m*25 + k*5;
+                  let prevP = 0;
+                  for(let jc=0; jc+k<=4; jc++){
+                    const prob = ACCEPT[row + jc];
+                    if(prob <= prevP) continue;   // same odds, more junk: dominated
+                    prevP = prob;
+                    // Re-breeding a parent into exactly what it already is buys nothing.
+                    if(kid===A.sp && W===A.mask && jc>=A.j) continue;
+                    if(kid===B.sp && W===B.mask && jc>=B.j) continue;
+                    const eggs = 1/prob;
+                    if(parentEggs + eggs >= bound) continue;
+                    const key = base + W*5 + jc;
+                    const child = nodes[key];
+                    if(child){
+                      if(child.owned) continue;   // free beats anything bred
+                      // Lower bound: the merged plan holds at least the bigger parent's
+                      // steps plus this one. Skipping the merge is most of the speed.
+                      if(child.plan && parentEggs + eggs >= child.plan.eggs - 1e-12) continue;
+                    }
+                    if(pa.steps.has(key) || pb.steps.has(key)) continue;   // no cycles
+                    const steps = new Map(pa.steps);
+                    for(const [kk,ss] of pb.steps) if(!steps.has(kk)) steps.set(kk, ss);
+                    const aBred = !A.owned && steps.has(A.id);
+                    const bBred = !B.owned && steps.has(B.id);
+                    if(A===B){ if(aBred) planDemand(steps, A.id, gmA, 2); }
+                    else{
+                      if(aBred && gmA>1) planDemand(steps, A.id, gmA, 1);
+                      if(bBred && gmB>1) planDemand(steps, B.id, gmB, 1);
+                    }
+                    steps.set(key, {key, species:WISH_SPECIES[kid], mask:W, j:jc, m,
+                      maxExtras:jc, eggs, gm:1, copies:1, twin:(A===B),
+                      pin:(ki ? 'a=Female' : (k2>=0 ? 'a=Male' : null)),
+                      aKey:A.id, bKey:B.id, aBred, bBred});
+                    const plan = planPrune(steps, key);
+                    if(plan.eggs >= bound) continue;
+                    const node = child || getNode(key);
+                    if(!node.plan){ node.plan = plan; live.push(node); }
+                    else if(plan.eggs < node.plan.eggs - 1e-12) node.plan = plan;
+                    else continue;
+                    improved.add(node);
+                    if(kid===tgt && W===FULL){ bound = plan.eggs; best = plan; }
+                  }
+                }
+              }
+            }
+          }
+        }
+        if(wishNow() >= deadline) break;
+        // Hand control back mid-round as well as between rounds. A round on the hard
+        // wishes runs well over a second, which is long enough for a frozen spinner to
+        // read as a hung page.
+        if((++sliced & 7)===0) yield {passes, rounds, pairs, nodes:live.length,
+          eggs:best ? best.eggs : undefined};
+      }
+
+      // The beam is bucketed by how many wanted passives a node carries rather than
+      // taken straight off the cheapest. Sorting on eggs alone fills it with cheap
+      // single-passive carriers and starves the 3- and 4-passive nodes that are the
+      // only ones near the goal -- which is exactly where the expensive wishes live.
+      const buckets = [[],[],[],[],[]];
+      for(const n of improved) if(n.mask && n.plan.eggs < bound) buckets[POPCNT[n.mask]].push(n);
+      const share = Math.max(1, Math.ceil(beam/4));
+      const next = [];
+      for(let b=4;b>=1;b--){
+        buckets[b].sort((x,y)=>x.plan.eggs - y.plan.eggs);
+        if(buckets[b].length > share) truncated = true;
+        for(const n of buckets[b].slice(0, share)) next.push(n);
+      }
+      frontier = next;
+      nodeCount = live.length;
+      yield {passes, rounds, pairs, nodes:nodeCount, eggs:best ? best.eggs : undefined};
+    }
+
+    if(settled && !truncated){ converged = true; break; }
+    if(wishNow() >= deadline || beam >= WISH_BEAM_MAX) break;
+  }
+
+  const hitDeadline = wishNow() >= deadline;
+  if(!best) return done({blocked:wishUnreachable(target, tgt, lastNodes, D, hitDeadline),
+    rounds, pairs, passes, nodeCount});
+  wishResolve(best, lastNodes);
+  return done({plan:best, order:wishBuildOrder(best), rounds, pairs, passes, nodeCount,
+    eggs:best.eggs, status:converged ? 'converged' : 'budget'});
+}
+
+// Why nothing came back. The missing-passive and self-only-species checks both ran up
+// front, so by here the target is reachable in principle and the search simply did not
+// get there.
+function wishUnreachable(target, tgt, nodes, D, hitDeadline){
+  return hitDeadline
+    ? 'No route found inside the ' + Math.round(WISH_BUDGET_MS/1000)
+      + '-second budget. Try Solve again, or widen the owner filter.'
+    : 'No route reaches ' + target + ' with those passives from the Pals you can breed with.';
+}
+
+// Dependencies first, so the printed plan is a build order you can follow top to bottom.
+function wishBuildOrder(plan){
+  const out = [], seen = new Set();
+  const visit = (k)=>{
+    if(seen.has(k)) return;
+    seen.add(k);
+    const s = plan.steps.get(k);
+    if(!s) return;
+    if(s.aBred) visit(s.aKey);
+    if(s.bBred) visit(s.bKey);
+    out.push(s);
+  };
+  visit(plan.root);
+  return out;
+}
+
+// Phase 2: name the actual Pals. Parents survive breeding, so one individual may serve
+// several steps -- but never both sides of one step, which is where the availability
+// invariant really bites (docs/BREEDING.md section 5).
+function wishResolve(plan, nodes){
+  const pickPair = (A, B)=>{
+    let best = null;
+    for(const a of A.entries){
+      for(const b of B.entries){
+        if(a.id===b.id) continue;
+        const ga = a.gender||'', gb = b.gender||'';
+        if(ga && gb && ga===gb) continue;
+        const rank = (ga && gb) ? 0 : 1;
+        if(!best || rank < best.rank) best = {a, b, rank};
+      }
+    }
+    return best;
+  };
+  for(const s of plan.steps.values()){
+    const A = nodes[s.aKey], B = nodes[s.bKey];
+    s.aNode = A; s.bNode = B;
+    s.verified = true;
+    const aOwned = A && A.owned && !s.aBred, bOwned = B && B.owned && !s.bBred;
+    if(aOwned && bOwned){
+      const pair = pickPair(A, B);
+      if(pair){ s.aEntry = pair.a; s.bEntry = pair.b; s.verified = pair.rank===0; }
+      else s.verified = false;
+    }else{
+      if(aOwned) s.aEntry = A.entries.find(e=>e.gender) || A.entries[0];
+      if(bOwned) s.bEntry = B.entries.find(e=>e.gender) || B.entries[0];
+      if((s.aEntry && !s.aEntry.gender) || (s.bEntry && !s.bEntry.gender)) s.verified = false;
+    }
+  }
+}
+
+// Drain the generator synchronously. Used by tools/js_check.js; the page drives the
+// generator itself so it can paint a spinner between rounds.
+function wishSolve(pals, wish, opts){
+  const it = wishSolveIter(pals, wish, opts);
+  let r = it.next();
+  while(!r.done) r = it.next();
+  return r.value;
+}
+
+// Atk shows the number the game displays; the element multiplier rides alongside it,
+// because it is real damage the stat screen never shows.
+function atkCell(r){
+  if(!r.elem) return String(r.atk);
+  const el = r.elements.find(e=>elementBonus(r.entry.passives,[e])===r.elem) || r.elements[0];
+  const title = `Displayed Attack ${r.atk}; ${el} attack damage +${Math.round(r.elem*100)}% `
+    + `→ effective ${Math.round(r.atk*(1+r.elem))}`;
+  return `${r.atk} <span class="elem-mult" title="${esc(title)}">×${(1+r.elem).toFixed(2)}</span>`;
+}
 function augmentCell(e){
   if(!(e.condense||e.soulHp||e.soulAtk||e.soulDef||e.trust)) return '<span class="muted">—</span>';
   const text=`★${e.condense} · ${e.soulHp}/${e.soulAtk}/${e.soulDef} · T${e.trust}`;
@@ -718,15 +2390,24 @@ function costCell(r){
 
 const COLUMNS = [
   {key:'rank',   label:'#',        num:true,  get:(r,i)=>i+1, sortable:false},
-  {key:'name',   label:'Pal',      get:r=>r.entry.nickname||r.entry.species, sort:r=>(r.entry.nickname||r.entry.species).toLowerCase()},
+  // Gender rides along in the name cell rather than claiming a column of its own --
+  // it only matters when pairing Pals up, which the breeding panel handles.
+  {key:'name',   label:'Pal',
+   get:r=>esc(r.entry.nickname||r.entry.species) + (r.entry.gender
+     ? ` <span class="muted" title="${r.entry.gender}">${r.entry.gender==='Male'?'♂':'♀'}</span>` : ''),
+   sort:r=>(r.entry.nickname||r.entry.species).toLowerCase()},
   {key:'owner',  label:'Owner',    get:r=>r.entry.owner?esc(r.entry.owner):'<span class="muted">—</span>', sort:r=>(r.entry.owner||'').toLowerCase()},
   {key:'element',label:'Element',  get:r=>r.elements.map(elementTag).join(''), sort:r=>r.elements.join('/')},
   {key:'level',  label:'Lvl',      num:true, get:r=>r.entry.level, sort:r=>r.entry.level},
   {key:'ivs',    label:'IVs (H/A/D)', get:r=>`${r.entry.ivHp}/${r.entry.ivAtk}/${r.entry.ivDef}`, sortable:false},
-  {key:'passives',label:'Passives',get:r=>passivePills(r.entry), sortable:false},
+  {key:'passives',label:'Passives',get:r=>passivePills(r.entry, r.elements), sortable:false},
+  {key:'plan',label:'Passive plan',get:r=>planPills(r), sort:r=>r.passiveGain},
+  {key:'gainPerGold',label:'Gain/100k',num:true,
+    get:r=>r.gainPerGold ? `<span class="head-pos">+${r.gainPerGold.toFixed(1)}</span>` : '<span class="muted">—</span>',
+    sort:r=>r.gainPerGold},
   {key:'augments',label:'Augments',get:r=>augmentCell(r.entry),sort:r=>r.entry.condense/4+(r.entry.soulHp+r.entry.soulAtk+r.entry.soulDef)/60+r.entry.trust/10},
   {key:'hp',     label:'HP',       num:true, get:r=>r.hp, sort:r=>r.hp},
-  {key:'atk',    label:'Atk',      num:true, get:r=>r.atk, sort:r=>r.atk},
+  {key:'atk',    label:'Atk',      num:true, get:r=>atkCell(r), sort:r=>r.atk*(1+r.elem)},
   {key:'def',    label:'Def',      num:true, get:r=>r.def, sort:r=>r.def},
   {key:'currentScore',label:'Current', num:true, get:r=>`<span class="score">${r.currentScore.toFixed(1)}</span>`, sort:r=>r.currentScore},
   {key:'targetScore', label:'Target',  num:true, get:r=>`<span class="score">${r.targetScore.toFixed(1)}</span>`, sort:r=>r.targetScore},
@@ -743,7 +2424,7 @@ function currentFilteredRows(){
   }
   if(q){
     rows = rows.filter(r=>{
-      const hay = [r.entry.species, r.entry.nickname, r.entry.owner, r.elements.join(' '), r.entry.passives.join(' ')].join(' ').toLowerCase();
+      const hay = [r.entry.species, r.entry.nickname, r.entry.owner, r.entry.gender, r.elements.join(' '), r.entry.passives.join(' ')].join(' ').toLowerCase();
       return hay.includes(q);
     });
   }
@@ -819,7 +2500,7 @@ function renderParty(){
         <span class="detail-label">IVs</span>
         <span class="detail-value" title="HP / Attack / Defense">${r.entry.ivHp}/${r.entry.ivAtk}/${r.entry.ivDef} <span class="muted">H/A/D</span></span>
         <span class="detail-label">Passives</span>
-        <span class="detail-value">${passivePills(r.entry)}</span>
+        <span class="detail-value">${passivePills(r.entry, r.elements)}</span>
         <span class="detail-label">Augments</span>
         <span class="detail-value">${augmentCell(r.entry)}</span>
       </div>
@@ -832,21 +2513,418 @@ $('optSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=
   renderParty();
 }));
 
+/* ---- Breeding panel ----
+   The search is far too heavy to sit on the render path (render() already
+   re-decorates the whole roster on every keystroke), so it runs ONLY from the
+   button. renderBreedPanel() just repaints whatever the last run produced, and
+   shows a "re-run" banner once the inputs it depended on have moved. Do not be
+   tempted to call searchBreeding() from render(). */
+let breedCache = null;             // {key, rows, ms, archetypes, bestOwnedAny}
+let breedSortCol = 'score', breedSortDir = -1;
+
+// Cheap change-detector over the inputs the search actually consumes. FNV-1a over a
+// per-Pal signature -- JSON.stringify(state.pals) would be ~800 KB on every render.
+function rosterSig(){
+  let h = 0x811c9dc5;
+  const mix = (s)=>{ for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } };
+  for(const p of state.pals){
+    mix(p.id); mix(p.species); mix(p.gender||''); mix(String(p.ivHp)); mix(String(p.ivAtk));
+    mix(String(p.ivDef)); mix((p.passives||[]).join(','));
+  }
+  return (h>>>0).toString(36) + '.' + state.pals.length;
+}
+function breedKey(){
+  return [state.targetLevel, passiveTiers(), state.assume.condense?1:0, state.assume.souls?1:0,
+    state.assume.trust?1:0, state.breed.depth, state.breed.perfectIVs?1:0,
+    [...activeOwners].sort().join(','), rosterSig()].join('|');
+}
+
+const BREED_COLUMNS = [
+  {key:'species', label:'Child', sort:r=>r.species,
+   cell:r=>`<div><b>${esc(r.species)}</b>${r.steps>1?' <span class="count">2 steps</span>':''}</div>`
+     + `<div style="margin-top:3px">${r.elements.map(elementTag).join('')||'<span class="muted">—</span>'}</div>`},
+  {key:'score', label:'Projected', num:true, sort:r=>r.score,
+   cell:r=>`<span title="At target level ${state.targetLevel} with the assumption chips applied, from a fresh 0★/0-soul/T0 Pal">${r.score.toFixed(1)}</span>`},
+  {key:'gain', label:'vs best owned', num:true, sort:r=>r.gain,
+   cell:r=>{
+     const g = r.gain, cls = g>0?'good':(g<0?'bad':'');
+     const owned = r.owned>0 ? `Best ${esc(r.species)} you own projects to ${r.owned.toFixed(1)}.`
+                             : `You own no ${esc(r.species)}.`;
+     return `<span class="${cls}" title="${owned} Compared against your best Pal overall (${(breedCache&&breedCache.bestOwnedAny||0).toFixed(1)}).">${g>=0?'+':''}${g.toFixed(1)}</span>`;
+   }},
+  {key:'eggs', label:'Eggs', num:true, sort:r=>r.eggs,
+   cell:r=>`<span title="Average hatches before the wanted passives land. Counts eggs, not hours.">${r.eggs<10?r.eggs.toFixed(1):Math.round(r.eggs)}</span>`},
+  // What the child STILL costs after hatching. Inheriting a buyable passive shows up
+  // here rather than in the score, since the planner would have bought it either way.
+  {key:'cost', label:'Then buy', num:true, sort:r=>r.cost,
+   cell:r=>{
+     const bits = [];
+     if(r.gold) bits.push(fmtGold(r.gold));
+     if(r.tokens) bits.push('✦'+r.tokens);
+     if(!bits.length) return '<span class="muted" title="Nothing left to buy — this child hatches with the whole planned set.">—</span>';
+     return `<span class="gold" title="Gold and ✦top-tier tokens still needed to finish this child. A passive it inherits is one it does not have to buy; tokens are ranked as ${fmtGold(PREMIUM_GOLD_EQUIV)} gold each, which is an assumption you can edit.">${bits.join(' ')}</span>`;
+   }},
+  {key:'inherited', label:'Passives', sort:r=>r.inherited.length,
+   cell:r=>breedPassiveCell(r)},
+  {key:'ivs', label:'IVs', num:true, sort:r=>r.ivs[0]+r.ivs[1]+r.ivs[2],
+   cell:r=>`<span class="muted" title="Expected HP / Attack / Defense IVs${state.breed.perfectIVs?' (ceiling: perfect-IV assumption on)':''}">`
+     + r.ivs.map(v=>Math.round(v)).join('/') + '</span>'},
+  {key:'pair', label:'Path', sort:r=>r.pair.a.species,
+   cell:r=>breedPathCell(r)},
+];
+
+function breedPassiveCell(r){
+  const inh = new Set(r.inherited);
+  const list = (r.proj.passives||[]);
+  const html = list.map(n=>pill(n, inh.has(n) ? 'proposed' : passiveTone(n, r.elements))).join('');
+  const bought = list.filter(n=>!inh.has(n)).length;
+  const bits = [];
+  if(r.inherited.length) bits.push(`${r.inherited.length} bred`);
+  if(bought) bits.push(`${bought} bought`);
+  return html + (bits.length?` <span class="count">${bits.join(' + ')}</span>`:'');
+}
+
+function palLabel(p){
+  const g = p.gender==='Male' ? '♂' : p.gender==='Female' ? '♀' : '<span title="Gender unknown — check in game">?</span>';
+  const who = p.owner ? ` <span class="muted">(${esc(p.owner)})</span>` : '';
+  return `${esc(p.nickname||p.species)} ${g}${who}`;
+}
+function breedPathCell(r){
+  const p = r.pair;
+  const warn = p.verified ? '' : ' <span title="One or both parents have no recorded gender — verify in game">⚠</span>';
+  let html = `<div>${palLabel(p.a)} <span class="muted">×</span> ${palLabel(p.b)}${warn}</div>`;
+  if(r.steps>1 && r.via){
+    // Two-step plans: the pair above makes the intermediate, which is then bred on.
+    html += `<div class="muted" style="font-size:12px;margin-top:2px">→ ${esc(r.via.species)}`
+         +  `, then × ${esc(r.partner.species)} → <b>${esc(r.species)}</b></div>`;
+  }else{
+    html += `<div class="muted" style="font-size:12px;margin-top:2px">→ ${esc(r.species)}</div>`;
+  }
+  return html;
+}
+
+function renderBreedChips(){
+  const opts = [['perfectIVs','Assume perfect IVs']];
+  const box = $('breedChips');
+  box.innerHTML = opts.map(([k,label])=>
+    `<div class="chip${state.breed[k]?' on':''}" data-breed="${k}">${label}</div>`).join('');
+  box.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+    state.breed[c.dataset.breed] = !state.breed[c.dataset.breed];
+    save(); renderBreedChips(); renderBreedPanel();
+  }));
+}
+
+function renderBreedTable(){
+  const head = $('breedHead');
+  head.innerHTML = BREED_COLUMNS.map(c=>{
+    const arrow = (c.key===breedSortCol)?`<span class="sortarrow">${breedSortDir<0?'▼':'▲'}</span>`:'';
+    return `<th data-bcol="${c.key}"${c.num?' class="num"':''}>${c.label}${arrow}</th>`;
+  }).join('');
+  head.querySelectorAll('th').forEach(th=>th.addEventListener('click',()=>{
+    const key = th.dataset.bcol;
+    if(key===breedSortCol) breedSortDir = -breedSortDir;
+    else { breedSortCol = key; breedSortDir = -1; }
+    renderBreedTable();      // re-sorts the cache; never re-runs the search
+  }));
+  const col = BREED_COLUMNS.find(c=>c.key===breedSortCol) || BREED_COLUMNS[1];
+  const rows = (breedCache ? breedCache.rows.slice() : []).sort((a,b)=>{
+    const va=col.sort(a), vb=col.sort(b);
+    const d = (typeof va==='string') ? va.localeCompare(vb) : (va-vb);
+    return d*breedSortDir || b.score-a.score;
+  });
+  $('breedBody').innerHTML = rows.map(r=>
+    '<tr>' + BREED_COLUMNS.map(c=>`<td${c.num?' class="num"':''}>${c.cell(r)}</td>`).join('') + '</tr>'
+  ).join('');
+}
+
+function renderBreedPanel(){
+  const has = !!breedCache;
+  const stale = has && breedCache.key !== breedKey();
+  $('breedStale').style.display = stale ? 'block' : 'none';
+  $('breedEmpty').style.display = has ? 'none' : 'block';
+  $('breedTable').style.display = has ? '' : 'none';
+  $('breedCount').textContent = has
+    ? `— ${breedCache.rows.length} option${breedCache.rows.length===1?'':'s'} from `
+      + `${breedCache.archetypes} parent groups (${Math.round(breedCache.ms)} ms)`
+    : '';
+  if(has) renderBreedTable();
+}
+
+function runBreedSearch(){
+  const btn = $('breedRun');
+  btn.disabled = true; btn.textContent = 'Searching…';
+  // Yield one frame so the disabled/"Searching…" state actually paints before the
+  // synchronous search blocks the thread. A Worker would need a separate script
+  // blob, which breaks the single-self-contained-file constraint.
+  setTimeout(()=>{
+    try{
+      const pals = ownerFiltered(state.pals);     // owner chips scope breeding too
+      const key = breedKey();
+      const res = searchBreeding(pals, {depth:state.breed.depth, perfectIVs:state.breed.perfectIVs});
+      breedCache = {key, rows:res.rows, ms:res.ms, archetypes:res.archetypes,
+                    bestOwnedAny:res.bestOwnedAny};
+    }catch(e){
+      console.error('breeding search failed', e);
+      alert('Breeding search failed: ' + (e && e.message || e));
+    }finally{
+      btn.disabled = false; btn.textContent = 'Find breeding paths';
+      renderBreedPanel();
+    }
+  }, 0);
+}
+$('breedRun').addEventListener('click', runBreedSearch);
+$('breedDepthSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+  state.breed.depth = Number(b.dataset.depth)||1;
+  $('breedDepthSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  save(); renderBreedPanel();
+}));
+
+/* ============================================================
+   Wishlist panel
+   ============================================================ */
+const wishResults = new Map();     // wish id -> {stamp, res}
+const wishBusy = new Map();        // wish id -> latest progress from the generator
+
+// Results go stale for the same reasons breeding results do: a different roster or a
+// different owner scope is a different question.
+function wishStamp(w){
+  return [w.species, w.passives.join(','), [...activeOwners].sort().join(','), rosterSig()].join('|');
+}
+// The clean-partner pre-pass depends only on the roster and the owner scope, never on
+// the wish, so every wish in a session reuses one computation.
+function wishCleanKey(){ return [...activeOwners].sort().join(',') + '|' + rosterSig(); }
+
+function wishPassiveNote(n){
+  const p = PASSIVES_DB[n] || {};
+  return obtainableUnder(n, ['craft'])
+    ? 'Rank ' + (p.rank||'?') + ' — bought for ' + fmtGold(PASSIVE_GOLD) + ', never bred.'
+    : 'Cannot be bought for gold, so it has to be inherited.';
+}
+
+// One parent of one step. The whole point of the panel is that you can tell at a glance
+// which Pals you already have and which are things you still have to make.
+function wishParent(step, side){
+  const bred = side==='a' ? step.aBred : step.bBred;
+  const key = side==='a' ? step.aKey : step.bKey;
+  const entry = side==='a' ? step.aEntry : step.bEntry;
+  const species = nodeSpecies(key);
+  if(bred) return `<span class="parent from-step">${esc(species)} <span class="count">from step `
+    + `${step._from[key]}</span></span>`;
+  if(entry) return `<span class="parent own">${palLabel(entry)}</span>`;
+  return `<span class="parent filler">${esc(species)}</span>`;
+}
+
+function wishStepRow(step, D){
+  const wanted = D.filter((_,i)=>step.mask & (1<<i));
+  const pills = wanted.length ? wanted.map(n=>pill(n, 'proposed')).join('')
+    : '<span class="muted">no passives — a clean partner</span>';
+  const junk = step.j ? ` <span class="count" title="Slots you are willing to let junk `
+    + `passives fill. Holding out for a cleaner hatch costs more eggs here and fewer `
+    + `later.">+${step.j} junk ok</span>` : '';
+  const eggs = stepEggs(step);
+  const why = [];
+  if(step.gm>1) why.push('x' + step.gm.toFixed(1) + ' to hatch the gender the next step needs');
+  if(step.copies>1) why.push('x2 — this step feeds both sides of a later pair');
+  if(step.clean) why.push('a passive-free partner; catching one may be quicker');
+  if(step.pin) why.push('gender-pinned combo: ' + step.pin);
+  return '<li>'
+    + `<div>${wishParent(step,'a')} <span class="muted">&times;</span> ${wishParent(step,'b')}`
+    + ` <span class="muted">&rarr;</span> <b>${esc(step.species)}</b> ${pills}${junk}</div>`
+    + `<div class="hint" style="margin-top:2px">`
+    + `<span class="gold" title="Expected hatches until one is acceptable, drawn from a `
+    + `combined parent pool of ${step.m}.">${eggs<10 ? eggs.toFixed(1) : Math.round(eggs)} eggs</span>`
+    + (step.verified===false ? ' <span title="A parent has no recorded gender — check in game">&#9888;</span>' : '')
+    + (why.length ? ' <span class="muted">· ' + esc(why.join(' · ')) + '</span>' : '')
+    + '</div></li>';
+}
+
+function wishBody(res){
+  const D = res.split.bred, buy = res.split.buy;
+  const out = [];
+  if(res.blocked) return `<div class="hint" style="color:var(--warn);margin-top:8px">`
+    + `&#9888; ${esc(res.blocked)}</div>`;
+  if(res.have) return `<div class="hint" style="margin-top:8px">You already have one — `
+    + `<b>${palLabel(res.have)}</b>`
+    + (buy.length ? `. Buy ${esc(buy.join(' and '))} onto it for ${fmtGold(buy.length*PASSIVE_GOLD)}.` : '.')
+    + `</div>`;
+  // Number the steps first so a parent can point back at the one that produced it.
+  const from = {};
+  res.order.forEach((s,i)=>{ from[s.key] = i+1; });
+  res.order.forEach(s=>{ s._from = from; });
+  out.push('<ol class="steps">' + res.order.map(s=>wishStepRow(s, D)).join('') + '</ol>');
+  if(buy.length) out.push(`<div class="hint" style="margin-top:8px">Then buy `
+    + buy.map(n=>pill(n,'')).join('') + ` onto the finished Pal — `
+    + `<span class="gold">${fmtGold(buy.length*PASSIVE_GOLD)}</span>. `
+    + `Junk it hatched with gets overwritten by these, which is why junk on the last `
+    + `hatch costs nothing.</div>`);
+  return out.join('');
+}
+
+function wishCard(w){
+  const base = PALS_DB[w.species];
+  const els = base ? (base.elements||[]).map(elementTag).join('') : '';
+  const hit = wishResults.get(w.id);
+  const busy = wishBusy.get(w.id);
+  const stale = hit && hit.stamp !== wishStamp(w);
+  const res = hit && hit.res;
+  const pills = w.passives.map(n=>
+    `<span class="pill ${obtainableUnder(n,['craft'])?'':'combat-positive'}" `
+    + `title="${esc(wishPassiveNote(n))}">${esc(n)}</span>`).join('');
+
+  let right = '';
+  if(busy){
+    right = `<div><span class="spin"></span> <span class="count">searching`
+      + (busy.eggs!==undefined ? ` — best so far ${Math.round(busy.eggs)} eggs` : '')
+      + `${busy.rounds?` · round ${busy.rounds}`:''}</span></div>`;
+  }else if(res && !res.blocked){
+    const status = res.status==='converged'
+      ? '<span class="good" title="The search finished without ever hitting its own limits, so this is the cheapest route in the model.">cheapest route</span>'
+      : `<span title="Stopped at the ${Math.round(WISH_BUDGET_MS/1000)}-second budget with the best route found so far. Solve again to keep looking.">best in ${Math.round(WISH_BUDGET_MS/1000)}s</span>`;
+    right = `<div style="text-align:right"><div class="wish-eggs" title="Total expected hatches `
+      + `across every step, including the ones you throw back.">`
+      + `${res.eggs<10 ? res.eggs.toFixed(1) : Math.round(res.eggs)} eggs</div>`
+      + `<div class="count">${res.order.length} step${res.order.length===1?'':'s'} · ${status}</div></div>`;
+  }
+  return `<div class="wish" data-wish="${esc(w.id)}">
+    <div class="wish-head">
+      <div>
+        <div><b>${esc(w.species)}</b> ${els}${base?'':' <span class="count" style="color:var(--danger)">unknown species</span>'}</div>
+        <div style="margin-top:4px">${pills}</div>
+      </div>
+      ${right}
+      <div class="btnrow" style="margin:0">
+        <button type="button" class="sm" data-solve="${esc(w.id)}"${busy?' disabled':''}>${res?'Solve again':'Solve'}</button>
+        <button type="button" class="sm danger" data-delwish="${esc(w.id)}">Delete</button>
+      </div>
+    </div>
+    ${stale?'<div class="hint" style="color:var(--warn)">&#9888; Roster or owner filter changed since this ran — Solve again.</div>':''}
+    ${res && !busy ? wishBody(res) : ''}
+  </div>`;
+}
+
+function renderWishlist(){
+  const list = state.wishlist || [];
+  $('wishEmpty').style.display = list.length ? 'none' : 'block';
+  $('wishCount').textContent = list.length ? `— ${list.length} wish${list.length===1?'':'es'}` : '';
+  const box = $('wishList');
+  box.innerHTML = list.map(wishCard).join('');
+  box.querySelectorAll('[data-solve]').forEach(b=>
+    b.addEventListener('click', ()=>runWishSolve(b.dataset.solve)));
+  box.querySelectorAll('[data-delwish]').forEach(b=>
+    b.addEventListener('click', ()=>{
+      state.wishlist = state.wishlist.filter(w=>w.id!==b.dataset.delwish);
+      wishResults.delete(b.dataset.delwish);
+      save(); renderWishlist();
+    }));
+}
+
+// The search is seconds long, so it runs in slices off the event loop: the generator
+// hands control back often enough that the spinner keeps turning. It must never be
+// reachable from render() -- only from this button.
+function runWishSolve(id){
+  const w = (state.wishlist||[]).find(x=>x.id===id);
+  if(!w || wishBusy.has(id)) return;
+  const pals = ownerFiltered(state.pals);            // owner chips scope the parents
+  const it = wishSolveIter(pals, w, {cleanKey:wishCleanKey()});
+  wishBusy.set(id, {});
+  renderWishlist();
+  const pump = ()=>{
+    let r;
+    try{
+      const t = wishNow();
+      do { r = it.next(); } while(!r.done && wishNow()-t < 100);
+    }catch(e){
+      console.error('wishlist search failed', e);
+      wishResults.set(id, {stamp:wishStamp(w), res:{target:w.species,
+        split:wishSplit(w.passives), blocked:'Search failed: '+(e && e.message || e)}});
+      wishBusy.delete(id); renderWishlist();
+      return;
+    }
+    if(!r.done){
+      wishBusy.set(id, r.value);
+      const card = $('wishList').querySelector(`[data-wish="${w.id}"] .count`);
+      if(card && r.value) card.textContent = 'searching'
+        + (r.value.eggs!==undefined ? ` — best so far ${Math.round(r.value.eggs)} eggs` : '')
+        + ` · round ${r.value.rounds}`;
+      setTimeout(pump, 0);
+      return;
+    }
+    wishResults.set(id, {stamp:wishStamp(w), res:r.value});
+    wishBusy.delete(id);
+    renderWishlist();
+  };
+  setTimeout(pump, 0);
+}
+
+$('wishAdd').addEventListener('click', ()=>{
+  const species = $('wishSpecies').value.trim();
+  const passives = ['wishP0','wishP1','wishP2','wishP3'].map(i=>$(i).value.trim()).filter(Boolean);
+  const err = [];
+  if(!PALS_DB[species]) err.push(species ? `"${species}" is not a Pal.` : 'Pick a species.');
+  if(!passives.length) err.push('Name at least one passive.');
+  for(const n of passives) if(!PASSIVES_DB[n]) err.push(`"${n}" is not a passive.`);
+  if(new Set(passives).size !== passives.length) err.push('The same passive twice.');
+  $('wishErr').textContent = err.join(' ');
+  if(err.length) return;
+  const w = normalizeWish({species, passives});
+  if(!w) return;
+  state.wishlist.push(w);
+  save();
+  $('wishSpecies').value = '';
+  ['wishP0','wishP1','wishP2','wishP3'].forEach(i=>{ $(i).value = ''; });
+  renderWishlist();
+});
+
+/* ---- View switching ----
+   The ranked table runs to thousands of rows, so anything placed below it is
+   effectively unreachable. The two modes are separate views behind a sticky
+   switcher instead, with the shared controls (target level, assumption chips,
+   owner filter) mirrored into both so neither view is a dead end. */
+function renderView(){
+  const v = (state.view==='breed' || state.view==='wishlist') ? state.view : 'roster';
+  $('viewRoster').style.display   = v==='roster'   ? '' : 'none';
+  $('viewBreed').style.display    = v==='breed'    ? '' : 'none';
+  $('viewWishlist').style.display = v==='wishlist' ? '' : 'none';
+  $('viewSeg').querySelectorAll('button').forEach(b=>b.classList.toggle('on', b.dataset.view===v));
+  const n = ownerFiltered(state.pals).length;
+  const scope = activeOwners.size ? ` (${[...activeOwners].map(o=>o||'unassigned').join(', ')})` : '';
+  $('viewHint').textContent = (v==='roster')
+    ? `— ${n} Pal${n===1?'':'s'}${scope}`
+    : `— searching ${n} Pal${n===1?'':'s'}${scope}`;
+}
+$('viewSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+  state.view = b.dataset.view;
+  save(); renderView();
+  // Jump back to the top: switching views while scrolled deep into the ranked table
+  // would otherwise land you in the middle of nowhere.
+  window.scrollTo({top:0, behavior:'auto'});
+}));
+
 /* ============================================================
    Wire-up
    ============================================================ */
-$('targetLevel').addEventListener('input',()=>{
-  const v = Math.max(1,Math.min(80,Number($('targetLevel').value)||80));
-  state.targetLevel=v; save(); render();
-});
+// Two inputs, one piece of state -- keep them in step.
+function setTargetLevel(raw){
+  const v = Math.max(1,Math.min(80,Number(raw)||80));
+  state.targetLevel=v;
+  $('targetLevel').value=v; $('breedTargetLevel').value=v;
+  save(); render();
+}
+$('targetLevel').addEventListener('change',()=>setTargetLevel($('targetLevel').value));
+$('breedTargetLevel').addEventListener('change',()=>setTargetLevel($('breedTargetLevel').value));
 $('textFilter').addEventListener('input', renderTable);
 
-function render(){ renderChips(); renderAssumeChips(); renderOwnerChips(); renderTable(); renderParty(); }
+function render(){ renderChips(); renderAssumeChips(); renderOwnerChips(); renderTable(); renderParty();
+  renderBreedPanel(); renderWishlist(); renderView(); }
 
 function init(){
   fillDatalists();
   load();
   $('targetLevel').value = state.targetLevel;
+  $('breedTargetLevel').value = state.targetLevel;
+  renderBreedChips();
+  $('breedDepthSeg').querySelectorAll('button').forEach(b=>
+    b.classList.toggle('on', Number(b.dataset.depth)===state.breed.depth));
   render();
 }
 init();

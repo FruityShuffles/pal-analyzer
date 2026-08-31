@@ -73,10 +73,18 @@ Augmentation tags were verified directly against this `Level.sav` on 2026-07-19:
 | `Rank_Attack` | `ByteProperty` | `soulAtk` | Soul rank 0–20; absent means 0. |
 | `Rank_Defence` | `ByteProperty` | `soulDef` | Soul rank 0–20. Note British **Defence**, unlike American `Talent_Defense` for the IV. |
 | `FriendshipPoint` | `IntProperty` | `trust` | Cumulative Trust points; output rank is derived from the thresholds below. |
+| `Gender` | `EnumProperty` | `gender` | `EPalGenderType::Male` / `::Female` → `"Male"` / `"Female"`, anything else `""`. Added 2026-07-26 for breeding; the existing `EnumProperty` branch already read it, so no new parsing was needed. |
 
 Trust ranks 1–10 begin at cumulative points 6,000 / 13,000 / 21,000 / 30,000 /
 40,000 / 55,000 / 80,000 / 110,000 / 150,000 / 200,000. The raw point value is
 not stored in import JSON; only the derived 0–10 rank is emitted.
+
+`ingest_review.md` prints a `Gender: N Male / N Female / N unknown` line. Every Pal in
+this save resolved (1,111 M / 1,219 F, 0 unknown), so a sudden all-unknown reading means
+the tag moved in a patch — breeding pair feasibility degrades silently without it
+(`docs/BREEDING.md` §2). **After re-running ingestion, re-import as REPLACE, not MERGE**:
+a roster imported before this change carries no gender, and merging would leave a full
+duplicate set of genderless Pals.
 
 ## Base Pals → guild attribution
 

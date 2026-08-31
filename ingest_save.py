@@ -36,6 +36,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TARGET_LEVEL = 80  # matches the app's default target level (v1.0 cap)
+GENDERS = {"EPalGenderType::Male": "Male", "EPalGenderType::Female": "Female"}
 TRUST_THRESHOLDS = [6000, 13000, 21000, 30000, 40000, 55000, 80000, 110000, 150000, 200000]
 
 
@@ -210,6 +211,9 @@ def parse_records(buf):
             "rank_def": field(span, "Rank_Defence"),
             "friendship_pts": field(span, "FriendshipPoint"),
             "is_rare": bool(field(span, "IsRarePal")),
+            # EnumProperty "EPalGenderType::Male" / "::Female". Breeding needs one of
+            # each, so this is load-bearing for docs/BREEDING.md's pair feasibility.
+            "gender": field(span, "Gender"),
             "passive_ids": field(span, "PassiveSkillList") or [],
             "owner": guid_hex(field(span, "OwnerPlayerUId")),
             "container": container_id(span),
@@ -395,6 +399,7 @@ def main():
     rosters = {lab: [] for lab in owner_order}
     sp_seen, pv_seen = {}, {}   # id -> count (owned Pals only)
     counted = base_counted = skipped_human = 0
+    gender_seen = {"Male": 0, "Female": 0, "unknown": 0}
     for r in records:
         if r["is_player"]:
             continue
@@ -431,8 +436,10 @@ def main():
             "soulDef": max(0, min(20, r["rank_def"] or 0)),
             "trust": trust_rank(r["friendship_pts"]),
             "passives": [p for p in passives if p],
+            "gender": GENDERS.get(r["gender"], ""),
             "owner": label,
         })
+        gender_seen[GENDERS.get(r["gender"], "unknown")] += 1
 
     os.makedirs(args.out, exist_ok=True)
     all_pals = []
@@ -453,15 +460,19 @@ def main():
     print(f"  {'ALL':16} {len(all_pals):4} Pals -> out/pals-all.json")
 
     write_review(args.out, sp_seen, pv_seen, id_maps, app_pals, app_pass, pass_effect,
-                 counted, base_counted, skipped_human)
+                 counted, base_counted, skipped_human, gender_seen)
     print(f"\nReview report -> out/ingest_review.md")
 
 
 def write_review(out_dir, sp_seen, pv_seen, id_maps, app_pals, app_pass, pass_effect,
-                 counted, base_counted, skipped_human):
+                 counted, base_counted, skipped_human, gender_seen):
     L = ["# Save ingestion review\n",
          f"Parsed **{counted}** owned Pals ({counted - base_counted} player-owned, "
          f"{base_counted} assigned to guild bases; skipped {skipped_human} humans/NPCs).\n",
+         # A sudden all-unknown reading here means the Gender tag moved in a patch;
+         # breeding pair feasibility silently degrades without it (docs/BREEDING.md).
+         f"Gender: **{gender_seen['Male']}** Male / **{gender_seen['Female']}** Female / "
+         f"**{gender_seen['unknown']}** unknown.\n",
          "Everything below is present in the save but **missing from the app's reference "
          "data** (`data/pals.json` / `data/passives.json`). Combat-relevant passives are "
          "listed first — those silently score as 0. The fix is to re-run the game-data "

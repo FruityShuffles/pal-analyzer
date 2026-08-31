@@ -11,7 +11,9 @@ Only this second step lives in the repo's stdlib-only Python world; the first ne
 UE asset parser and is a rare, manual data-refresh step.
 
 Reads (from --export):
-    DT_PalMonsterParameter.json   species stats, elements, Trust friendship coefficients
+    DT_PalMonsterParameter.json   species stats, elements, Trust friendship coefficients,
+                                  breeding rank/priority/gender ratio
+    DT_PalCombiUnique.json        unique parent-pair -> child breeding overrides
     DT_PassiveSkill_Main.json     passive effect types/values/targets, rank
     DT_PalNameText_en.json        text ID -> English species name
     DT_SkillNameText_en.json      text ID -> English passive name
@@ -61,6 +63,12 @@ STAT_EFFECTS = {
     EFFECT + "Defense": "defense_pct",
     EFFECT + "MaxHP": "hp_pct",
 }
+# "ElementBoost_<Element>" raises damage dealt by attacks of that element. The element
+# lives in the effect-type name, not in the row's TargetElementType (which is None on
+# every displayable row), so a passive can boost two elements at once -- Lunker is
+# Water +20 / Ice +20 / Defense +20. ElementResist_* is deliberately NOT collected: it
+# keys off the *incoming* attack's element, which a Pal's own record cannot predict.
+ELEMENT_BOOST = EFFECT + "ElementBoost_"
 # ToTrainer effects buff the *player*, not the Pal, so they must not feed the Pal's
 # combat score (e.g. Vanguard is "+10% Player Attack"). "None" is the game's default
 # and behaves as self (e.g. Lucky's Defense leg).
@@ -168,6 +176,7 @@ def build_pals(export_dir):
     # a tribe is the one whose key *is* the tribe id -- this is the game's own grouping,
     # and it reproduces the wiki pipeline's palVariant='Normal' filter.
     pals = {}
+    tribe_names = {}
     skipped = []
     for key, row in rows.items():
         if not row.get("IsPal"):
@@ -179,6 +188,7 @@ def build_pals(export_dir):
         if not name:
             skipped.append(key)  # unreleased/cut content with no English name
             continue
+        tribe_names[key] = name
         pals[name] = {
             "hp_stat": row["Hp"],
             "attack_stat": row["ShotAttack"],
@@ -188,10 +198,70 @@ def build_pals(export_dir):
             "friendship_hp": row.get("Friendship_HP", 0.0),
             "friendship_attack": row.get("Friendship_ShotAttack", 0.0),
             "friendship_defense": row.get("Friendship_Defense", 0.0),
+            # Breeding (docs/BREEDING.md). combi_rank is the game's hidden "breed power";
+            # the child of a pair is the candidate whose rank is nearest
+            # floor((rankA+rankB+1)/2), ties going to the higher combi_priority.
+            # ignore_combi species are never produced by that rule (legendaries, raid
+            # bosses, event Pals) but may still be used as parents.
+            "combi_rank": row.get("CombiRank", 0),
+            "combi_priority": row.get("CombiDuplicatePriority", 0),
+            "ignore_combi": bool(row.get("IgnoreCombi", False)),
+            "male_probability": row.get("MaleProbability", 50),
+            "variant": bool((row.get("ZukanIndexSuffix") or "").strip()),
         }
     print(f"  {len(pals)} species "
           f"({len(skipped)} tribe rows skipped: no English name -- unreleased content)")
-    return dict(sorted(pals.items()))
+    return dict(sorted(pals.items())), tribe_names
+
+
+# Rows use EPalGenderType::None when the combo works with either arrangement. Only the
+# Katress x Wixen pair pins genders (it is the game's one gender-dependent outcome).
+GENDERS = {"EPalGenderType::Male": "Male", "EPalGenderType::Female": "Female"}
+
+
+def build_breeding(export_dir, tribe_names, pals):
+    """DT_PalCombiUnique -> the list of unique parent-pair -> child overrides.
+
+    ChildCharacterID is a bare row key (e.g. "LazyDragon_Electric"), while the parents
+    are EPalTribeID enums; both resolve through the same tribe -> display-name map.
+    """
+    rows = load(export_dir, "DT_PalCombiUnique.json")["Rows"]
+    # Tribe enums and DataTable row keys disagree on capitalisation for at least one Pal
+    # (EPalTribeID::Blueplatypus vs. row key BluePlatypus = Fuack), the same mismatch
+    # build_pals() already absorbs with a case-insensitive compare. Match it here.
+    by_lower = {k.lower(): v for k, v in tribe_names.items()}
+    resolve = lambda raw: by_lower.get(raw.split("::")[-1].lower())
+
+    combos, unmapped = [], []
+    for key, row in rows.items():
+        a = resolve(row.get("ParentTribeA", ""))
+        b = resolve(row.get("ParentTribeB", ""))
+        child = resolve(row.get("ChildCharacterID", ""))
+        if not (a and b and child):
+            unmapped.append(key)
+            continue
+        combos.append({
+            "a": a, "ga": GENDERS.get(row.get("ParentGenderA"), ""),
+            "b": b, "gb": GENDERS.get(row.get("ParentGenderB"), ""),
+            "child": child,
+        })
+    combos.sort(key=lambda c: (c["a"], c["b"], c["ga"], c["child"]))
+    if unmapped:
+        # Expected: rows for tribes build_pals() skipped because they have no English
+        # name yet (unreleased content). Anything else means the tribe map has drifted.
+        print(f"  {len(unmapped)} combo rows skipped -- they name a species with no "
+              f"English name (unreleased content, same set build_pals skipped)")
+
+    # A species that is the child of a unique combo can ONLY be produced by that combo --
+    # it is struck from the generic nearest-rank candidate pool. Report the resulting
+    # pool size, since a sudden change there means the breeding data moved.
+    combo_children = {c["child"] for c in combos}
+    pool = [n for n, p in pals.items() if not p["ignore_combi"] and n not in combo_children]
+    pinned = sum(1 for c in combos if c["ga"] or c["gb"])
+    print(f"  {len(combos)} unique combos ({pinned} gender-pinned), "
+          f"{len(combo_children)} combo-only children")
+    print(f"  {len(pool)} species in the generic nearest-rank child pool")
+    return combos
 
 
 def format_value(value):
@@ -259,17 +329,30 @@ def build_passives(export_dir):
         if not name:
             continue
 
+        # add_pal / lottery_weight gate what the app's passive planner is allowed to
+        # propose buying: AddPal is the game's own "legal on an ordinary Pal" flag, so
+        # Legend, Lucky, Lunker and Whopper stay keepable but unbuyable despite low ranks.
         record = {"attack_pct": 0.0, "defense_pct": 0.0, "hp_pct": 0.0,
-                  "rank": row.get("Rank", 0), "description": ""}
+                  "rank": row.get("Rank", 0),
+                  "add_pal": bool(row.get("AddPal", False)),
+                  "lottery_weight": row.get("LotteryWeight", 0),
+                  "element_boosts": {},
+                  "description": ""}
         dropped = False
         for i in (1, 2, 3, 4):
-            field = STAT_EFFECTS.get(row.get(f"EffectType{i}"))
-            if not field:
-                continue  # Work Speed, element boosts, status effects: picker metadata only
+            effect = row.get(f"EffectType{i}", "")
+            field = STAT_EFFECTS.get(effect)
+            if not field and not effect.startswith(ELEMENT_BOOST):
+                continue  # Work Speed, element resist, status effects: picker metadata only
             if row.get(f"TargetType{i}") not in SELF_TARGETS:
                 dropped = True
                 continue
-            record[field] += float(row.get(f"EffectValue{i}", 0.0))
+            value = float(row.get(f"EffectValue{i}", 0.0))
+            if field:
+                record[field] += value
+            else:
+                element = ELEMENT_NAMES.get(effect[len(ELEMENT_BOOST):], effect[len(ELEMENT_BOOST):])
+                record["element_boosts"][element] = record["element_boosts"].get(element, 0.0) + value
         if dropped:
             trainer_only.append(name)
 
@@ -325,22 +408,28 @@ def main():
     print(f"Source: {source}\n")
 
     print("Species:")
-    pals = build_pals(args.export)
+    pals, tribe_names = build_pals(args.export)
     print("Passives:")
     passives = build_passives(args.export)
+    print("Breeding:")
+    breeding = build_breeding(args.export, tribe_names, pals)
 
     pals_path = os.path.join(args.out, "pals.json")
     passives_path = os.path.join(args.out, "passives.json")
+    breeding_path = os.path.join(args.out, "breeding.json")
     diff_summary("pals.json", read_existing(pals_path, "pals"), pals)
     diff_summary("passives.json", read_existing(passives_path, "passives"), passives)
 
-    for path, key, payload in ((pals_path, "pals", pals), (passives_path, "passives", passives)):
+    for path, key, payload in ((pals_path, "pals", pals),
+                               (passives_path, "passives", passives),
+                               (breeding_path, "breeding", {"unique": breeding})):
         with open(path, "w", encoding="utf-8") as f:
             json.dump({"_attribution": ATTRIBUTION, "_source": source, key: payload},
                       f, indent=2, ensure_ascii=False)
 
     print(f"\nWrote {len(pals)} species -> {pals_path}")
     print(f"Wrote {len(passives)} passives -> {passives_path}")
+    print(f"Wrote {len(breeding)} unique breeding combos -> {breeding_path}")
 
     # Spot-checks: the same anchors build_data.py printed, plus one SPECIES_OVERRIDES
     # entry that should now resolve from the primary data (docs/GAMEDATA_EXTRACTION.md).
@@ -360,6 +449,28 @@ def main():
         print(f"  {name}: {got} elements={p['elements']} "
               f"[{'OK' if good else 'MISMATCH'}, expected {expect}]")
     print(f"  Aggressive passive: {passives.get('Aggressive')}")
+
+    # Breeding anchors: a known unique combo, the one gender-pinned pair, and the
+    # CombiRank of a Pal whose value is easy to re-check against paldb.cc.
+    by_pair = {}
+    for c in breeding:
+        by_pair.setdefault((c["a"], c["b"], c["ga"]), c["child"])
+    # Relaxaurus x Sparkit is widely miscited as producing Orserk; the table says
+    # Relaxaurus Lux. Orserk has no cross-species recipe at all -- it is self-only.
+    for a, b, g, expect in (("Relaxaurus", "Sparkit", "", "Relaxaurus Lux"),
+                            ("Katress", "Wixen", "Male", "Wixen Noct"),
+                            ("Katress", "Wixen", "Female", "Katress Ignis")):
+        got = by_pair.get((a, b, g))
+        good = got == expect
+        ok = ok and good
+        label = f"{a}{' (' + g + ')' if g else ''} x {b}"
+        print(f"  {label} -> {got} [{'OK' if good else 'MISMATCH'}, expected {expect}]")
+    for name, expect in (("Lamball", 3050), ("Anubis", 480)):
+        got = pals.get(name, {}).get("combi_rank")
+        good = got == expect
+        ok = ok and good
+        print(f"  {name} combi_rank: {got} [{'OK' if good else 'MISMATCH'}, expected {expect}]")
+
     if not ok:
         sys.exit("spot checks failed -- the export or the field mapping is wrong")
 

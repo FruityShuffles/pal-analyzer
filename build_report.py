@@ -6,11 +6,14 @@ Per-species Trust friendship stats from data/id_maps.json are merged into any sp
 record that doesn't already carry them (import_gamedata.py sources them from the game
 files directly); source files remain separate for attribution.
 
-The template contains two placeholder tokens:
+The template contains three placeholder tokens:
     const PALS_DB = /*__PALS_JSON__*/ {};
     const PASSIVES_DB = /*__PASSIVES_JSON__*/ {};
+    const BREEDING_DB = /*__BREEDING_JSON__*/ {};
 This replaces the `{}` after each token with the real data (the species/passives
-inner objects), so the resulting HTML runs fully offline with no network calls.
+inner objects, and the breeding table's {"unique": [...]} wrapper -- kept as an
+object so it matches the same `/*TOKEN*/ {}` marker shape as the other two), so the
+resulting HTML runs fully offline with no network calls.
 
 Run: python build_report.py   (after build_data.py and build_id_maps.py have produced the JSON)
 """
@@ -40,6 +43,7 @@ def inject(html, token, payload):
 def main():
     pals = load_inner(os.path.join(HERE, "data", "pals.json"), "pals")
     passives = load_inner(os.path.join(HERE, "data", "passives.json"), "passives")
+    breeding = load_inner(os.path.join(HERE, "data", "breeding.json"), "breeding")
     with open(os.path.join(HERE, "data", "id_maps.json"), encoding="utf-8") as f:
         id_maps = json.load(f)
     friendship = id_maps.get("friendship")
@@ -66,9 +70,10 @@ def main():
 
     html = inject(html, "__PALS_JSON__", pals)
     html = inject(html, "__PASSIVES_JSON__", passives)
+    html = inject(html, "__BREEDING_JSON__", breeding)
 
     # safety: no stray unresolved markers, no accidental </script> break-out
-    for tok in ("__PALS_JSON__", "__PASSIVES_JSON__"):
+    for tok in ("__PALS_JSON__", "__PASSIVES_JSON__", "__BREEDING_JSON__"):
         if f"/*{tok}*/ {{}}" in html:
             sys.exit(f"ERROR: token {tok} left unresolved")
 
@@ -76,7 +81,8 @@ def main():
         f.write(html)
 
     size = os.path.getsize(OUT)
-    print(f"Baked {len(pals)} species + {len(passives)} passives")
+    print(f"Baked {len(pals)} species + {len(passives)} passives "
+          f"+ {len(breeding.get('unique', []))} unique breeding combos")
     print(f"Wrote {OUT}  ({size/1024:.0f} KB, self-contained, no network)")
 
 

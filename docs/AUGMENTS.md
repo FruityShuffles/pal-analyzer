@@ -1,6 +1,6 @@
 # Pal Augmentation Systems — Reference
 
-Reference for the four augmentation systems **beyond** level/IV/passives: **Condensing**, **Pal Enhancement (souls)**, **Trust**, and **Awakening**. Researched 2026-07-19 via web research (patch notes, palworld.wiki.gg, save-editor source code); facts are cited inline and anything unconfirmed is flagged. **Condensing, combat Soul ranks, and Trust were implemented on 2026-07-19**; the live scoring specification is in `docs/FORMULAS.md`. Awakening and Work Speed remain intentionally excluded. This document remains the ground truth for costs, thresholds, save fields, and research context.
+Reference for the augmentation systems **beyond** level and IVs: **Condensing**, **Pal Enhancement (souls)**, **Trust**, **passive skill purchase** (§5, added 2026-07-25), and **Awakening**. Researched 2026-07-19 via web research (patch notes, palworld.wiki.gg, save-editor source code); facts are cited inline and anything unconfirmed is flagged. **Condensing, combat Soul ranks, and Trust were implemented on 2026-07-19**; the live scoring specification is in `docs/FORMULAS.md`. Awakening and Work Speed remain intentionally excluded. This document remains the ground truth for costs, thresholds, save fields, and research context.
 
 **Version context:** current game version is **v1.0.1** (2026-07-15). v1.0 (2026-07-10, the 1.0 release out of early access) changed condensation costs and added Awakening. Trust shipped in **v0.6.0 "Tides of Terraria"** (2025-06-25). Soul cap was doubled in **v0.4.11 "Feybreak"** (2024-12-23). v1.0 also raised the level cap to **80** (was 65 in 0.6.x, 55 before that) — relevant to the app's target-level default of 55. The community wiki still lags v1.0 in places (see the freshness note in CLAUDE.md); where the wiki disagreed with official patch notes, the patch notes win below.
 
@@ -17,9 +17,9 @@ Defense = floor( floor( 50  +       (Defense_Stat + friendship_defense * TrustRa
 ```
 
 - The three multiplier classes (passives, souls, condenser) are **multiplicative with each other**; passives remain **additive within** their class. No extra floors between the multipliers.
-- **HP gains an outer multiplier stage.** The current implemented formula has no effective outer multiplier on HP (no HP passives exist), but soul and condenser bonuses DO apply to HP — including the `500 + 5*L` part.
+- **HP gains an outer multiplier stage.** Soul and condenser bonuses apply to HP — including the `500 + 5*L` part. Max-HP passives are rare but real (God of Destruction −50%, World Tree Seedbed −20%), so `HP_Passive%` is not always 0; the earlier note here saying no HP passives exist described the superseded wiki data. See `FORMULAS.md` §1.
 - **Trust is different in kind:** it adds a flat per-species amount to the **base stat, before level scaling** (see §4) — modeled above as `friendship_* * TrustRank` added to the species stat. Caveat: the wiki demonstrates the addition on the base stat; whether the game multiplies the friendship term by the level slope exactly as written above is our (natural) reading, not an independently verified rounding-level fact — verify against an in-game Pal when implementing. All defaults (rank 0 / 0 stars) reduce every new term to identity, so the existing Mammorest/Kitsun anchors in `scoring_check.py` remain valid.
-- Awakening (§5) is a further overall multiplier, numbers unconfirmed — out of scope for now.
+- Awakening (§6) is a further overall multiplier, numbers unconfirmed — out of scope for now.
 
 ## 2. Condensing (Pal Essence Condenser)
 
@@ -44,11 +44,23 @@ Defense = floor( floor( 50  +       (Defense_Stat + friendship_defense * TrustRa
 - **Gain rates:** in party ≈100 pts/hr real time (Pal need not be on-field); at base ≈1 pt/hr (negligible); petting +10; Little Kinship Peach +2,000; **Kinship Peach +20,000** (~30,000 gold at Bounty Shop 1, 100% from Hard expedition/enemy-camp treasure boxes; internal ID `AffectionFruit_01`). The ≈100/hr figure is the wiki's approximation, not datamined. [game8 Trust](https://game8.co/games/Palworld/archives/531753), [paldb Kinship_Peach](https://paldb.cc/en/Kinship_Peach)
 - **Cost to max: 200,000 pts ≈ 10 Kinship Peaches (~300k gold) or ~2,000 party-hours.** Calibration: **cheap-to-moderate** via peaches; absurd via time alone.
 
-## 5. Awakening (v1.0 — flagged, numbers unconfirmed)
+## 5. Passive skill purchase (the 4 passive slots)
+
+Unlike the systems above, this one is **not a rank to raise** — it's a set of 4 slots whose contents can be bought. A Pal has **4 passive slots**; a purchase either fills an empty slot or replaces an existing passive, at the same price either way. This is what the app's passive planner models (`FORMULAS.md` §4).
+
+- **Two price tiers.** Ordinary passives cost **~50,000 gold each**. Top-tier passives need a much costlier one-time consumable instead of gold. Both figures are the **player's own report from the live game**, not datamined — the 50k constant is `PASSIVE_GOLD` in `pal_analyzer_template.html`, and the consumable has no gold price at all (the planner's `PREMIUM_GOLD_EQUIV` is a stated assumption purely so one sortable denominator exists). Correct either constant if the in-game numbers differ.
+- **The tier split is `DT_PassiveSkill_Main.Rank`**, imported verbatim as `rank` in `data/passives.json`: **1–3** = ordinary/gold, **4** = top tier/consumable, **5** = World Tree exclusives, **−1 to −3** = the red-arrow negative traits. This matches the observed split exactly — Musclehead is rank 2, Ferocious and Burly Body rank 3, Demon God and Legend rank 4.
+- **Eligibility is `AddPal`, not rank.** `DT_PassiveSkill_Main.AddPal` is the game's own "legal on an ordinary Pal" flag, imported as `add_pal`. It is load-bearing and independent of rank: **Lunker** (+20 Def, rank 4), **Whopper** (+5 Def, rank 3) and **Otherworldly Cells** (+10 Atk, rank 1) are all `AddPal:false` — boss/alpha-only. **Legend** (rank 4) is in no pool at all and **Lucky** (rank 4) is `AddRarePal` (shiny-only). All of these can be *kept* on a Pal that already has them but can never be *bought*, so a rank-only filter would offer purchases that don't exist.
+- **Full buyable combat pool** (`add_pal && 1 ≤ rank ≤ 3`, nonzero combat stat): Musclehead (+30 Atk), Ferocious (+20 Atk), Burly Body (+20 Def), Heavyweight (+20 Def), Hooligan (+15 Atk), Serenity (+10 Atk), Brave (+10 Atk), Hard Skin (+10 Def), plus the mixed-sign Sadist (+15/−15), Masochist (−15/+15) and Aggressive (+10/−10). The top tier (`add_pal && rank == 4`) is exactly two: **Demon God** (+30 Atk/+5 Def) and **Diamond Body** (+30 Def).
+- **Buyable element boosts.** There is also one rank-1 `add_pal` element-damage passive per element, each **+10%**: Pyromaniac (Fire), Hydromaniac (Water), Capacitor (Electric), Fragrant Foliage (Grass), Power of Gaia (Ground), Coldblooded (Ice), Veil of Darkness (Dark), Blood of the Dragon (Dragon), Spirit of Zen (Neutral). The planner only ever offers a Pal the boost for an element it actually has. The strong element boosts are **not** buyable: the rank-3 "Emperor/Lord" singles (+30%) and the rank-4 duals — Eternal Flame, Invader, Savior, Siren of the Void (+30% to two elements) — plus Lunker and Whopper are all `add_pal:false`.
+- `LotteryWeight` is also imported (`lottery_weight`) for reference. It governs the *roll* odds on wild/bred Pals, not the shop, so nothing scores off it — but it cleanly separates the common rank-3 passives (weight 100) from the rare rank-4 ones (weight 5).
+- **Cost calibration: cheap.** Filling all 4 slots on a Pal is 200k gold and takes it to **×1.281 combat score** from blank. Gold is the least scarce of the resources in this document, which is why the planner's headline output is `Gain/100k` rather than raw score.
+
+## 6. Awakening (v1.0 — flagged, numbers unconfirmed)
 
 One-time permanent per-Pal boost of **~8% to overall stats** (community-measured 7–10%; no official figure). Costs Awakening Gems combined from elemental Radiant Gems farmed in the World Tree endgame zone (unlock ≈ all Tower Bosses + Panthalus questline, ~level 80). Displayed on the Pal status screen as a stat layer distinct from Souls. Exact bonus, gem quantities, and formula placement all **unconfirmed** as of 2026-07-19 — the system is days old. Revisit once the wiki/dataminers settle; until then it is intentionally excluded from scoring. [nexttier guide](https://nexttier.pro/guide/palworld-awakening), [sportskeeda](https://www.sportskeeda.com/mmo/how-awaken-pals-palworld-awakening-system-explained)
 
-## 6. Save-file representation (Level.sav character records)
+## 7. Save-file representation (Level.sav character records)
 
 All fields live in the same `SaveParameter` block `ingest_save.py` already parses; each is one `field()` call. Encodings confirmed from save-editor source ([KrisCris/Palworld-Pal-Editor](https://github.com/KrisCris/Palworld-Pal-Editor) `pal_entity.py`, corroborated by palworld-save-pal and PalworldSaveTools):
 
@@ -61,7 +73,7 @@ All fields live in the same `SaveParameter` block `ingest_save.py` already parse
 | `Rank_CraftSpeed` | Int | Soul rank, Work Speed | combat-irrelevant |
 | `FriendshipPoint` | Int | Trust, cumulative points | Derive rank by thresholding against §4 table. Confirmed in palworld-save-pal source (`psp-core/src/domain/pal.rs`). |
 
-## 7. Known discrepancies (do not re-litigate without new evidence)
+## 8. Known discrepancies (do not re-litigate without new evidence)
 
 - **Condense fodder split:** official changelog 4/8/12/24 (48) vs wiki page 4/8/16/24 (52) vs old 116 table — go with official 48.
 - **Defense base 50 vs 100:** the wiki Pal_Stats prose typo (see `FORMULAS.md`) is independent of everything here; nothing in this research contradicts 50.

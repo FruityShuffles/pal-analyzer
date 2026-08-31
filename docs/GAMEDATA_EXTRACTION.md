@@ -88,16 +88,27 @@ without re-deriving anything:
 | `ElementType1` / `ElementType2` | `elements` (1-2 tags) | remap names, see below |
 | `DT_PassiveSkill_Main` attack effect % | `attack_pct` | |
 | `DT_PassiveSkill_Main` defense effect % | `defense_pct` | |
-| (none — no max-HP passive exists) | `hp_pct` | always `0.0`, schema symmetry only |
-| `DT_PassiveSkill_Main` rank | `rank` | picker metadata |
+| `DT_PassiveSkill_Main` max-HP effect % | `hp_pct` | rare but real — God of Destruction (−50%), World Tree Seedbed (−20%). The old "no max-HP passive exists" note here described the *wiki* data; see `FORMULAS.md` §1. |
+| `DT_PassiveSkill_Main` `Rank` | `rank` | 1–3 ordinary, 4 top tier, 5 World Tree; negatives are the red-arrow traits. Gates the passive planner's tiers. |
+| `DT_PassiveSkill_Main` `AddPal` | `add_pal` | the game's "legal on an ordinary Pal" flag — what actually decides whether the planner may buy it |
+| `DT_PassiveSkill_Main` `LotteryWeight` | `lottery_weight` | roll weight; carried for reference, not currently scored |
+| `DT_PassiveSkill_Main` `ElementBoost_<Element>` effect % | `element_boosts` | `{element: pct}`; element comes from the effect-type NAME (`TargetElementType` is `None` on every displayable row), so one passive can boost two elements. `ElementResist_*` is excluded — it keys off the incoming attack. |
+| `DT_PalMonsterParameter` `CombiRank` | `combi_rank` | breeding rank, 10–3080 (`9999` = unreleased sentinel). Added 2026-07-26; see `docs/BREEDING.md`. |
+| `DT_PalMonsterParameter` `CombiDuplicatePriority` | `combi_priority` | breeding tiebreak; `combi_rank × 100` except on 9 `ZukanIndexSuffix == "B"` variants |
+| `DT_PalMonsterParameter` `IgnoreCombi` | `ignore_combi` | never produced by the rank rule (legendaries/raid/event); still legal as a parent |
+| `DT_PalMonsterParameter` `MaleProbability` | `male_probability` | percent male; 255 species are 50, the extremes are 10 and 90. No genderless Pals exist. |
+| `DT_PalMonsterParameter` `ZukanIndexSuffix` | `variant` | non-empty = regional "B" form; last-resort breeding tiebreak |
+| `DT_PalCombiUnique` rows | `data/breeding.json` | 253 unique parent-pair overrides. A **new export target added 2026-07-26** — one line in `Program.cs`'s `Targets`; the asset path was confirmed with `--find CombiUnique`. |
 | resolved `Game.locres` text | `description` | picker metadata |
 
 **Element name remap** (per `CLAUDE.md`): `Electricity→Electric, Earth→Ground,
 Leaf→Grass, Normal→Neutral`.
 
-**Scoring caveat** (see `docs/FORMULAS.md`): only `stat=="Attack"` / `"Defense"` percent
-passives feed the combat score; `HP_PassiveBonus%` is always 0 because **no max-HP passive
-exists** in the game data. Keep every other passive as picker metadata but do not let it
+**Scoring caveat** (see `docs/FORMULAS.md`) — *revised 2026-07-25, the original text here
+was wrong on both counts*: `ShotAttack`, `Defense` **and** `MaxHP` self-targeted percent
+effects feed the stat formula (max-HP passives do exist — God of Destruction, World Tree
+Seedbed), and `ElementBoost_*` effects feed the score as a separate damage multiplier
+(§2 of `FORMULAS.md`). Keep every other effect type as picker metadata but do not let it
 affect scoring. Filter species to the `Normal` variant (drop Boss/Alpha), matching the
 current `palVariant='Normal'` filter.
 

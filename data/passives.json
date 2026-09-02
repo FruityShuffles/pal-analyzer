@@ -10,7 +10,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% decrease in incoming Neutral damage."
+      "description": "10% decrease in incoming Neutral damage.",
+      "effect_summary": "Neutral Damage Reduction +10%.",
+      "effects": [
+        {
+          "type": "ElementResist_Normal",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Neutral Damage Reduction"
+        }
+      ]
     },
     "Ace Swimmer": {
       "attack_pct": 0.0,
@@ -20,7 +30,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "40% increase movement speed on water."
+      "description": "40% increase movement speed on water.",
+      "effect_summary": "Swim Speed +40%.",
+      "effects": [
+        {
+          "type": "SwimSpeed",
+          "value": 40.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Swim Speed"
+        }
+      ]
     },
     "Aggressive": {
       "attack_pct": 10.0,
@@ -30,7 +50,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Attack +10%. Defense -10%."
+      "description": "Attack +10%. Defense -10%.",
+      "effect_summary": "Attack +10%. Defense -10%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "Defense",
+          "value": -10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        }
+      ]
     },
     "Artisan": {
       "attack_pct": 0.0,
@@ -40,7 +77,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Work Speed +50%."
+      "description": "Work Speed +50%.",
+      "effect_summary": "Work Speed +50%.",
+      "effects": [
+        {
+          "type": "CraftSpeed",
+          "value": 50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        }
+      ]
     },
     "Babysitter": {
       "attack_pct": 0.0,
@@ -50,7 +97,24 @@
       "add_pal": false,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "While at a base, increases egg production speed by +30% and incubation speed by +30% for Pals assigned to a Breeding Farm."
+      "description": "While at a base, increases egg production speed by +30% and incubation speed by +30% for Pals assigned to a Breeding Farm.",
+      "effect_summary": "Egg Incubation Speed (assigned structure) +30%. Egg Production Speed (assigned structure) +30%.",
+      "effects": [
+        {
+          "type": "PalEggHatchingSpeed",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "structure",
+          "label": "Egg Incubation Speed"
+        },
+        {
+          "type": "BreedSpeed_InBaseCamp",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "structure",
+          "label": "Egg Production Speed"
+        }
+      ]
     },
     "Blood of the Dragon": {
       "attack_pct": 0.0,
@@ -62,7 +126,17 @@
       "element_boosts": {
         "Dragon": 10.0
       },
-      "description": "10% increase in Dragon attack damage."
+      "description": "10% increase in Dragon attack damage.",
+      "effect_summary": "Dragon Attack Damage +10%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Dragon",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Dragon Attack Damage"
+        }
+      ]
     },
     "Botanical Barrier": {
       "attack_pct": 0.0,
@@ -72,7 +146,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% decrease in incoming Grass damage."
+      "description": "10% decrease in incoming Grass damage.",
+      "effect_summary": "Grass Damage Reduction +10%.",
+      "effects": [
+        {
+          "type": "ElementResist_Leaf",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Grass Damage Reduction"
+        }
+      ]
     },
     "Bottomless Stomach": {
       "attack_pct": 0.0,
@@ -82,7 +166,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Hunger decreases +15.0% faster."
+      "description": "Hunger decreases +15.0% faster.",
+      "effect_summary": "Hunger Depletion +15%.",
+      "effects": [
+        {
+          "type": "FullStomatch_Decrease",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Hunger Depletion"
+        }
+      ]
     },
     "Brave": {
       "attack_pct": 10.0,
@@ -92,7 +186,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Attack +10%."
+      "description": "Attack +10%.",
+      "effect_summary": "Attack +10%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        }
+      ]
     },
     "Brittle": {
       "attack_pct": 0.0,
@@ -102,7 +206,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Defense -20%."
+      "description": "Defense -20%.",
+      "effect_summary": "Defense -20%.",
+      "effects": [
+        {
+          "type": "Defense",
+          "value": -20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        }
+      ]
     },
     "Burly Body": {
       "attack_pct": 0.0,
@@ -112,7 +226,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Defense +20%. Immune to Flinch."
+      "description": "Defense +20%. Immune to Flinch.",
+      "effect_summary": "Defense +20%. Immune to flinching.",
+      "effects": [
+        {
+          "type": "Defense",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        },
+        {
+          "type": "LeanBackInvalid_ForPassiveSkill",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal",
+          "label": "Immune to flinching"
+        }
+      ]
     },
     "Capacitor": {
       "attack_pct": 0.0,
@@ -124,7 +255,17 @@
       "element_boosts": {
         "Electric": 10.0
       },
-      "description": "10% increase in Lightning attack damage."
+      "description": "10% increase in Lightning attack damage.",
+      "effect_summary": "Electric Attack Damage +10%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Electricity",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Electric Attack Damage"
+        }
+      ]
     },
     "Celestial Emperor": {
       "attack_pct": 0.0,
@@ -136,7 +277,17 @@
       "element_boosts": {
         "Neutral": 30.0
       },
-      "description": "30% increase in Neutral attack damage."
+      "description": "30% increase in Neutral attack damage.",
+      "effect_summary": "Neutral Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Normal",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Neutral Attack Damage"
+        }
+      ]
     },
     "Cheery": {
       "attack_pct": 0.0,
@@ -146,7 +297,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% decrease in incoming Dark damage."
+      "description": "10% decrease in incoming Dark damage.",
+      "effect_summary": "Dark Damage Reduction +10%.",
+      "effects": [
+        {
+          "type": "ElementResist_Dark",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Dark Damage Reduction"
+        }
+      ]
     },
     "Clumsy": {
       "attack_pct": 0.0,
@@ -156,7 +317,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Work Speed -10%."
+      "description": "Work Speed -10%.",
+      "effect_summary": "Work Speed -10%.",
+      "effects": [
+        {
+          "type": "CraftSpeed",
+          "value": -10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        }
+      ]
     },
     "Coldblooded": {
       "attack_pct": 0.0,
@@ -168,7 +339,17 @@
       "element_boosts": {
         "Ice": 10.0
       },
-      "description": "10% increase in Ice attack damage."
+      "description": "10% increase in Ice attack damage.",
+      "effect_summary": "Ice Attack Damage +10%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Ice",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Ice Attack Damage"
+        }
+      ]
     },
     "Conceited": {
       "attack_pct": 0.0,
@@ -178,7 +359,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Work Speed +10%. Defense -10%."
+      "description": "Work Speed +10%. Defense -10%.",
+      "effect_summary": "Work Speed +10%. Defense -10%.",
+      "effects": [
+        {
+          "type": "CraftSpeed",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        },
+        {
+          "type": "Defense",
+          "value": -10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        }
+      ]
     },
     "Coward": {
       "attack_pct": -10.0,
@@ -188,7 +386,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Attack -10%."
+      "description": "Attack -10%.",
+      "effect_summary": "Attack -10%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": -10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        }
+      ]
     },
     "Dainty Eater": {
       "attack_pct": 0.0,
@@ -198,7 +406,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Hunger decreases +10.0% slower."
+      "description": "Hunger decreases +10.0% slower.",
+      "effect_summary": "Hunger Depletion -10%.",
+      "effects": [
+        {
+          "type": "FullStomatch_Decrease",
+          "value": -10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Hunger Depletion"
+        }
+      ]
     },
     "Demon God": {
       "attack_pct": 30.0,
@@ -208,7 +426,24 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Attack +30%. Defense +5%."
+      "description": "Attack +30%. Defense +5%.",
+      "effect_summary": "Attack +30%. Defense +5%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "Defense",
+          "value": 5.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        }
+      ]
     },
     "Demon’s Hand": {
       "attack_pct": 0.0,
@@ -218,7 +453,31 @@
       "add_pal": false,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Work Speed +90%. SAN dreceases +15.0% faster. World Tree harvestables won't vanish when approached."
+      "description": "Work Speed +90%. SAN dreceases +15.0% faster. World Tree harvestables won't vanish when approached.",
+      "effect_summary": "Work Speed +90%. SAN Depletion +15%. World Tree resources don't vanish when approached.",
+      "effects": [
+        {
+          "type": "CraftSpeed",
+          "value": 90.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        },
+        {
+          "type": "Sanity_Decrease",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "SAN Depletion"
+        },
+        {
+          "type": "WorldTreeDecayImmunity",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal_and_player",
+          "label": "World Tree resources don't vanish when approached"
+        }
+      ]
     },
     "Destructive": {
       "attack_pct": 0.0,
@@ -228,7 +487,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "SAN drops +15.0% faster."
+      "description": "SAN drops +15.0% faster.",
+      "effect_summary": "SAN Depletion +15%.",
+      "effects": [
+        {
+          "type": "Sanity_Decrease",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "SAN Depletion"
+        }
+      ]
     },
     "Diamond Body": {
       "attack_pct": 0.0,
@@ -238,7 +507,31 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Defense +30%. Immune to Flinch. Immune to Knockback."
+      "description": "Defense +30%. Immune to Flinch. Immune to Knockback.",
+      "effect_summary": "Defense +30%. Immune to flinching. Immune to knockback.",
+      "effects": [
+        {
+          "type": "Defense",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        },
+        {
+          "type": "LeanBackInvalid_ForPassiveSkill",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal",
+          "label": "Immune to flinching"
+        },
+        {
+          "type": "KnockbackInvalid_ForPassiveSkill",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal",
+          "label": "Immune to knockback"
+        }
+      ]
     },
     "Diet Lover": {
       "attack_pct": 0.0,
@@ -248,7 +541,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Hunger decreases +15.0% slower."
+      "description": "Hunger decreases +15.0% slower.",
+      "effect_summary": "Hunger Depletion -15%.",
+      "effects": [
+        {
+          "type": "FullStomatch_Decrease",
+          "value": -15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Hunger Depletion"
+        }
+      ]
     },
     "Dimensional Leap": {
       "attack_pct": 0.0,
@@ -258,7 +561,31 @@
       "add_pal": false,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Movement Speed +50%. Increases Hunger depletion rate by +15.0%. World Tree resources will not vanish when approached."
+      "description": "Movement Speed +50%. Increases Hunger depletion rate by +15.0%. World Tree resources will not vanish when approached.",
+      "effect_summary": "Movement Speed +50%. Hunger Depletion +15%. World Tree resources don't vanish when approached.",
+      "effects": [
+        {
+          "type": "MoveSpeed",
+          "value": 50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Movement Speed"
+        },
+        {
+          "type": "FullStomatch_Decrease",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Hunger Depletion"
+        },
+        {
+          "type": "WorldTreeDecayImmunity",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal_and_player",
+          "label": "World Tree resources don't vanish when approached"
+        }
+      ]
     },
     "Divine Dragon": {
       "attack_pct": 0.0,
@@ -270,7 +597,17 @@
       "element_boosts": {
         "Dragon": 30.0
       },
-      "description": "30% increase in Dragon attack damage."
+      "description": "30% increase in Dragon attack damage.",
+      "effect_summary": "Dragon Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Dragon",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Dragon Attack Damage"
+        }
+      ]
     },
     "Downtrodden": {
       "attack_pct": 0.0,
@@ -280,7 +617,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Defense -10%."
+      "description": "Defense -10%.",
+      "effect_summary": "Defense -10%.",
+      "effects": [
+        {
+          "type": "Defense",
+          "value": -10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        }
+      ]
     },
     "Dragonkiller": {
       "attack_pct": 0.0,
@@ -290,7 +637,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% decrease in incoming Dragon damage."
+      "description": "10% decrease in incoming Dragon damage.",
+      "effect_summary": "Dragon Damage Reduction +10%.",
+      "effects": [
+        {
+          "type": "ElementResist_Dragon",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Dragon Damage Reduction"
+        }
+      ]
     },
     "Earth Emperor": {
       "attack_pct": 0.0,
@@ -302,7 +659,17 @@
       "element_boosts": {
         "Ground": 30.0
       },
-      "description": "30% increase in Earth attack damage."
+      "description": "30% increase in Earth attack damage.",
+      "effect_summary": "Ground Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Earth",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Ground Attack Damage"
+        }
+      ]
     },
     "Earthquake Resistant": {
       "attack_pct": 0.0,
@@ -312,7 +679,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% decrease in incoming Earth damage."
+      "description": "10% decrease in incoming Earth damage.",
+      "effect_summary": "Ground Damage Reduction +10%.",
+      "effects": [
+        {
+          "type": "ElementResist_Earth",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Ground Damage Reduction"
+        }
+      ]
     },
     "Easygoing": {
       "attack_pct": 0.0,
@@ -322,7 +699,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Active skill cooldown extension -15%."
+      "description": "Active skill cooldown extension -15%.",
+      "effect_summary": "Active Skill Cooldown Reduction -15%.",
+      "effects": [
+        {
+          "type": "ActiveSkillCoolTime_Decrease",
+          "value": -15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Active Skill Cooldown Reduction"
+        }
+      ]
     },
     "Eternal Engine": {
       "attack_pct": 0.0,
@@ -332,7 +719,17 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Max stamina +75%. *This effect is only valid for rideable pals."
+      "description": "Max stamina +75%. *This effect is only valid for rideable pals.",
+      "effect_summary": "Max Stamina +75%.",
+      "effects": [
+        {
+          "type": "PalSP_Increase",
+          "value": 75.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Max Stamina"
+        }
+      ]
     },
     "Eternal Flame": {
       "attack_pct": 0.0,
@@ -345,7 +742,24 @@
         "Fire": 30.0,
         "Electric": 30.0
       },
-      "description": "30% increase to Fire attack damage. 30% increase to Lightning attack damage."
+      "description": "30% increase to Fire attack damage. 30% increase to Lightning attack damage.",
+      "effect_summary": "Fire Attack Damage +30%. Electric Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Fire",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Fire Attack Damage"
+        },
+        {
+          "type": "ElementBoost_Electricity",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Electric Attack Damage"
+        }
+      ]
     },
     "Farmhand": {
       "attack_pct": 0.0,
@@ -355,7 +769,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Farming's Work Suitability +1."
+      "description": "Farming's Work Suitability +1.",
+      "effect_summary": "Farming Work Suitability +1.",
+      "effects": [
+        {
+          "type": "WorkSuitabilityAddRank_MonsterFarm",
+          "value": 1.0,
+          "unit": "flat",
+          "scope": "pal",
+          "label": "Farming Work Suitability"
+        }
+      ]
     },
     "Ferocious": {
       "attack_pct": 20.0,
@@ -365,7 +789,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Attack +20%."
+      "description": "Attack +20%.",
+      "effect_summary": "Attack +20%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        }
+      ]
     },
     "Fine Furs": {
       "attack_pct": 0.0,
@@ -375,7 +809,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Increases the value of items when sold by +3%."
+      "description": "Increases the value of items when sold by +3%.",
+      "effect_summary": "Item Sale Price +3%. Shop Buy Price -3%.",
+      "effects": [
+        {
+          "type": "ShopSellPrice_Money_Increase",
+          "value": 3.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Item Sale Price"
+        },
+        {
+          "type": "ShopBuyPrice_Money_Increase",
+          "value": -3.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Shop Buy Price"
+        }
+      ]
     },
     "Fit as a Fiddle": {
       "attack_pct": 0.0,
@@ -385,7 +836,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Max stamina +25%. *This effect is only valid for rideable pals."
+      "description": "Max stamina +25%. *This effect is only valid for rideable pals.",
+      "effect_summary": "Max Stamina +25%.",
+      "effects": [
+        {
+          "type": "PalSP_Increase",
+          "value": 25.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Max Stamina"
+        }
+      ]
     },
     "Flame Emperor": {
       "attack_pct": 0.0,
@@ -397,7 +858,17 @@
       "element_boosts": {
         "Fire": 30.0
       },
-      "description": "30% increase in Fire attack damage."
+      "description": "30% increase in Fire attack damage.",
+      "effect_summary": "Fire Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Fire",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Fire Attack Damage"
+        }
+      ]
     },
     "Fragrant Foliage": {
       "attack_pct": 0.0,
@@ -409,7 +880,17 @@
       "element_boosts": {
         "Grass": 10.0
       },
-      "description": "10% increase in Grass attack damage."
+      "description": "10% increase in Grass attack damage.",
+      "effect_summary": "Grass Attack Damage +10%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Leaf",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Grass Attack Damage"
+        }
+      ]
     },
     "Glutton": {
       "attack_pct": 0.0,
@@ -419,7 +900,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Hunger decreases +10.0% faster."
+      "description": "Hunger decreases +10.0% faster.",
+      "effect_summary": "Hunger Depletion +10%.",
+      "effects": [
+        {
+          "type": "FullStomatch_Decrease",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Hunger Depletion"
+        }
+      ]
     },
     "God of Destruction": {
       "attack_pct": 40.0,
@@ -429,7 +920,38 @@
       "add_pal": false,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Attack +40%. Defense +20%. Max Health -50%. World Tree resources will not vanish when approached."
+      "description": "Attack +40%. Defense +20%. Max Health -50%. World Tree resources will not vanish when approached.",
+      "effect_summary": "Attack +40%. Defense +20%. Max HP -50%. World Tree resources don't vanish when approached.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 40.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "Defense",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        },
+        {
+          "type": "MaxHP",
+          "value": -50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Max HP"
+        },
+        {
+          "type": "WorldTreeDecayImmunity",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal_and_player",
+          "label": "World Tree resources don't vanish when approached"
+        }
+      ]
     },
     "Hard Skin": {
       "attack_pct": 0.0,
@@ -439,7 +961,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Defense +10%."
+      "description": "Defense +10%.",
+      "effect_summary": "Defense +10%.",
+      "effects": [
+        {
+          "type": "Defense",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        }
+      ]
     },
     "Healing Coach": {
       "attack_pct": 0.0,
@@ -449,7 +981,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Player Auto Health Regeneration Rate +5%."
+      "description": "Player Auto Health Regeneration Rate +5%.",
+      "effect_summary": "Player HP Regeneration +5%.",
+      "effects": [
+        {
+          "type": "AutoHPRegeneRate",
+          "value": 5.0,
+          "unit": "percent",
+          "scope": "player",
+          "label": "HP Regeneration"
+        }
+      ]
     },
     "Heart of the Immovable King": {
       "attack_pct": 0.0,
@@ -459,7 +1001,17 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "SAN drops +20.0% slower."
+      "description": "SAN drops +20.0% slower.",
+      "effect_summary": "SAN Depletion -20%.",
+      "effects": [
+        {
+          "type": "Sanity_Decrease",
+          "value": -20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "SAN Depletion"
+        }
+      ]
     },
     "Heated Body": {
       "attack_pct": 0.0,
@@ -469,7 +1021,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% decrease in incoming Ice damage."
+      "description": "10% decrease in incoming Ice damage.",
+      "effect_summary": "Ice Damage Reduction +10%.",
+      "effects": [
+        {
+          "type": "ElementResist_Ice",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Ice Damage Reduction"
+        }
+      ]
     },
     "Heavily Armored": {
       "attack_pct": 0.0,
@@ -479,7 +1041,17 @@
       "add_pal": false,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Immune to Explosion Damage."
+      "description": "Immune to Explosion Damage.",
+      "effect_summary": "Explosion Resistance +100%.",
+      "effects": [
+        {
+          "type": "ExplosionResist",
+          "value": 100.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Explosion Resistance"
+        }
+      ]
     },
     "Heavyweight": {
       "attack_pct": 0.0,
@@ -489,7 +1061,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Defense +20%. Immune to Knockback."
+      "description": "Defense +20%. Immune to Knockback.",
+      "effect_summary": "Defense +20%. Immune to knockback.",
+      "effects": [
+        {
+          "type": "Defense",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        },
+        {
+          "type": "KnockbackInvalid_ForPassiveSkill",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal",
+          "label": "Immune to knockback"
+        }
+      ]
     },
     "Hermit Sage": {
       "attack_pct": 0.0,
@@ -499,7 +1088,31 @@
       "add_pal": false,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "SAN depletion rate -50.0%. Work Speed -20%. World Tree resources will not vanish when approached."
+      "description": "SAN depletion rate -50.0%. Work Speed -20%. World Tree resources will not vanish when approached.",
+      "effect_summary": "SAN Depletion -50%. Work Speed -20%. World Tree resources don't vanish when approached.",
+      "effects": [
+        {
+          "type": "Sanity_Decrease",
+          "value": -50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "SAN Depletion"
+        },
+        {
+          "type": "CraftSpeed",
+          "value": -20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        },
+        {
+          "type": "WorldTreeDecayImmunity",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal_and_player",
+          "label": "World Tree resources don't vanish when approached"
+        }
+      ]
     },
     "Hooligan": {
       "attack_pct": 15.0,
@@ -509,7 +1122,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Attack +15%. Work Speed -10%."
+      "description": "Attack +15%. Work Speed -10%.",
+      "effect_summary": "Attack +15%. Work Speed -10%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "CraftSpeed",
+          "value": -10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        }
+      ]
     },
     "Hydromaniac": {
       "attack_pct": 0.0,
@@ -521,7 +1151,17 @@
       "element_boosts": {
         "Water": 10.0
       },
-      "description": "10% increase in Water attack damage."
+      "description": "10% increase in Water attack damage.",
+      "effect_summary": "Water Attack Damage +10%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Water",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Water Attack Damage"
+        }
+      ]
     },
     "Ice Emperor": {
       "attack_pct": 0.0,
@@ -533,7 +1173,17 @@
       "element_boosts": {
         "Ice": 30.0
       },
-      "description": "30% increase in Ice attack damage."
+      "description": "30% increase in Ice attack damage.",
+      "effect_summary": "Ice Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Ice",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Ice Attack Damage"
+        }
+      ]
     },
     "Idiosyncratic": {
       "attack_pct": 0.0,
@@ -543,7 +1193,38 @@
       "add_pal": false,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Pal and Player Auto Health Regeneration Rate +50%. Defense +25%. Immune to Poison Damage. Immune to Burn Damage."
+      "description": "Pal and Player Auto Health Regeneration Rate +50%. Defense +25%. Immune to Poison Damage. Immune to Burn Damage.",
+      "effect_summary": "HP Regeneration (Pal and player) +50%. Burn Resistance +100%. Poison Resistance +100%. Defense +25%.",
+      "effects": [
+        {
+          "type": "AutoHPRegeneRate",
+          "value": 50.0,
+          "unit": "percent",
+          "scope": "pal_and_player",
+          "label": "HP Regeneration"
+        },
+        {
+          "type": "ResistAdditionalEffect_Burn",
+          "value": 100.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Burn Resistance"
+        },
+        {
+          "type": "ResistAdditionalEffect_Poison",
+          "value": 100.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Poison Resistance"
+        },
+        {
+          "type": "Defense",
+          "value": 25.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        }
+      ]
     },
     "Immortality": {
       "attack_pct": 15.0,
@@ -553,7 +1234,31 @@
       "add_pal": false,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Life Steal +5%. Pal Auto Health Regeneration Rate +100%. Attack +15%."
+      "description": "Life Steal +5%. Pal Auto Health Regeneration Rate +100%. Attack +15%.",
+      "effect_summary": "Life Steal +5%. HP Regeneration +100%. Attack +15%.",
+      "effects": [
+        {
+          "type": "LifeSteal",
+          "value": 5.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Life Steal"
+        },
+        {
+          "type": "AutoHPRegeneRate",
+          "value": 100.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "HP Regeneration"
+        },
+        {
+          "type": "ShotAttack",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        }
+      ]
     },
     "Impatient": {
       "attack_pct": 0.0,
@@ -563,7 +1268,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Active skill cooldown reduction 15%."
+      "description": "Active skill cooldown reduction 15%.",
+      "effect_summary": "Active Skill Cooldown Reduction +15%.",
+      "effects": [
+        {
+          "type": "ActiveSkillCoolTime_Decrease",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Active Skill Cooldown Reduction"
+        }
+      ]
     },
     "Infinite Stamina": {
       "attack_pct": 0.0,
@@ -573,7 +1288,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Max stamina +50%. *This effect is only valid for rideable pals."
+      "description": "Max stamina +50%. *This effect is only valid for rideable pals.",
+      "effect_summary": "Max Stamina +50%.",
+      "effects": [
+        {
+          "type": "PalSP_Increase",
+          "value": 50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Max Stamina"
+        }
+      ]
     },
     "Insomnia": {
       "attack_pct": 0.0,
@@ -583,7 +1308,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Does not sleep and continues to work even at night."
+      "description": "Does not sleep and continues to work even at night.",
+      "effect_summary": "Works through the night without sleeping.",
+      "effects": [
+        {
+          "type": "Nocturnal",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal",
+          "label": "Works through the night without sleeping"
+        }
+      ]
     },
     "Insulated Body": {
       "attack_pct": 0.0,
@@ -593,7 +1328,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% decrease in incoming Lightning damage."
+      "description": "10% decrease in incoming Lightning damage.",
+      "effect_summary": "Electric Damage Reduction +10%.",
+      "effects": [
+        {
+          "type": "ElementResist_Electricity",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Electric Damage Reduction"
+        }
+      ]
     },
     "Invader": {
       "attack_pct": 0.0,
@@ -606,7 +1351,24 @@
         "Dark": 30.0,
         "Dragon": 30.0
       },
-      "description": "30% increase in Dark attack damage. 30% increase in Dragon attack damage."
+      "description": "30% increase in Dark attack damage. 30% increase in Dragon attack damage.",
+      "effect_summary": "Dark Attack Damage +30%. Dragon Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Dark",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Dark Attack Damage"
+        },
+        {
+          "type": "ElementBoost_Dragon",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Dragon Attack Damage"
+        }
+      ]
     },
     "King of the Waves": {
       "attack_pct": 0.0,
@@ -616,7 +1378,17 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "50% increase movement speed on water."
+      "description": "50% increase movement speed on water.",
+      "effect_summary": "Swim Speed +50%.",
+      "effects": [
+        {
+          "type": "SwimSpeed",
+          "value": 50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Swim Speed"
+        }
+      ]
     },
     "Lavish Hospitality": {
       "attack_pct": 0.0,
@@ -626,7 +1398,17 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Your Dropped Items + 100%."
+      "description": "Your Dropped Items + 100%.",
+      "effect_summary": "Item Drops When Defeated +100%.",
+      "effects": [
+        {
+          "type": "SelfDeathAddItemDrop",
+          "value": 100.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Item Drops When Defeated"
+        }
+      ]
     },
     "Legend": {
       "attack_pct": 20.0,
@@ -636,7 +1418,31 @@
       "add_pal": false,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Attack +20%. Defense +20%. Movement Speed increases 20%."
+      "description": "Attack +20%. Defense +20%. Movement Speed increases 20%.",
+      "effect_summary": "Attack +20%. Defense +20%. Movement Speed +20%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "Defense",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        },
+        {
+          "type": "MoveSpeed",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Movement Speed"
+        }
+      ]
     },
     "Lightfooted": {
       "attack_pct": 0.0,
@@ -646,7 +1452,17 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Mounted Jump Count +1."
+      "description": "Mounted Jump Count +1.",
+      "effect_summary": "Mount Jump Count +1.",
+      "effects": [
+        {
+          "type": "RideJumpCount_Increase",
+          "value": 1.0,
+          "unit": "flat",
+          "scope": "pal",
+          "label": "Mount Jump Count"
+        }
+      ]
     },
     "Logging Foreman": {
       "attack_pct": 0.0,
@@ -656,7 +1472,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "25% increase in Player Logging Efficiency."
+      "description": "25% increase in Player Logging Efficiency.",
+      "effect_summary": "Player Logging Efficiency +25%.",
+      "effects": [
+        {
+          "type": "Logging",
+          "value": 25.0,
+          "unit": "percent",
+          "scope": "player",
+          "label": "Logging Efficiency"
+        }
+      ]
     },
     "Lord of Lightning": {
       "attack_pct": 0.0,
@@ -668,7 +1494,17 @@
       "element_boosts": {
         "Electric": 30.0
       },
-      "description": "30% increase in Lightning attack damage."
+      "description": "30% increase in Lightning attack damage.",
+      "effect_summary": "Electric Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Electricity",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Electric Attack Damage"
+        }
+      ]
     },
     "Lord of the Sea": {
       "attack_pct": 0.0,
@@ -680,7 +1516,17 @@
       "element_boosts": {
         "Water": 30.0
       },
-      "description": "30% increase in Water attack damage."
+      "description": "30% increase in Water attack damage.",
+      "effect_summary": "Water Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Water",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Water Attack Damage"
+        }
+      ]
     },
     "Lord of the Underworld": {
       "attack_pct": 0.0,
@@ -692,7 +1538,17 @@
       "element_boosts": {
         "Dark": 30.0
       },
-      "description": "30% increase in Dark attack damage."
+      "description": "30% increase in Dark attack damage.",
+      "effect_summary": "Dark Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Dark",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Dark Attack Damage"
+        }
+      ]
     },
     "Lucky": {
       "attack_pct": 15.0,
@@ -702,7 +1558,31 @@
       "add_pal": false,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Attack +15%. Defense +15%. Work Speed +20%."
+      "description": "Attack +15%. Defense +15%. Work Speed +20%.",
+      "effect_summary": "Attack +15%. Defense +15%. Work Speed +20%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "Defense",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        },
+        {
+          "type": "CraftSpeed",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        }
+      ]
     },
     "Lunker": {
       "attack_pct": 0.0,
@@ -715,7 +1595,31 @@
         "Water": 20.0,
         "Ice": 20.0
       },
-      "description": "20% increase to Water attack damage. 20% increase to Ice attack damage. 20% increase to defense."
+      "description": "20% increase to Water attack damage. 20% increase to Ice attack damage. 20% increase to defense.",
+      "effect_summary": "Water Attack Damage +20%. Ice Attack Damage +20%. Defense +20%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Water",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Water Attack Damage"
+        },
+        {
+          "type": "ElementBoost_Ice",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Ice Attack Damage"
+        },
+        {
+          "type": "Defense",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        }
+      ]
     },
     "Masochist": {
       "attack_pct": -15.0,
@@ -725,7 +1629,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Defense +15%. Attack -15%."
+      "description": "Defense +15%. Attack -15%.",
+      "effect_summary": "Defense +15%. Attack -15%.",
+      "effects": [
+        {
+          "type": "Defense",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        },
+        {
+          "type": "ShotAttack",
+          "value": -15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        }
+      ]
     },
     "Mastery of Fasting": {
       "attack_pct": 0.0,
@@ -735,7 +1656,17 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Hunger decreases +20.0% slower."
+      "description": "Hunger decreases +20.0% slower.",
+      "effect_summary": "Hunger Depletion -20%.",
+      "effects": [
+        {
+          "type": "FullStomatch_Decrease",
+          "value": -20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Hunger Depletion"
+        }
+      ]
     },
     "Mercy Hit": {
       "attack_pct": 0.0,
@@ -745,7 +1676,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Pacifist. Will not reduce the target's Health below 1."
+      "description": "Pacifist. Will not reduce the target's Health below 1.",
+      "effect_summary": "Won't reduce a target's HP below 1.",
+      "effects": [
+        {
+          "type": "NonKilling",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal",
+          "label": "Won't reduce a target's HP below 1"
+        }
+      ]
     },
     "Mine Foreman": {
       "attack_pct": 0.0,
@@ -755,7 +1696,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "25% increase in Player Mining Efficiency."
+      "description": "25% increase in Player Mining Efficiency.",
+      "effect_summary": "Player Mining Efficiency +25%.",
+      "effects": [
+        {
+          "type": "Mining",
+          "value": 25.0,
+          "unit": "percent",
+          "scope": "player",
+          "label": "Mining Efficiency"
+        }
+      ]
     },
     "Motivational Leader": {
       "attack_pct": 0.0,
@@ -765,7 +1716,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "25% increase in Player Work Speed."
+      "description": "25% increase in Player Work Speed.",
+      "effect_summary": "Player Work Speed +25%.",
+      "effects": [
+        {
+          "type": "CraftSpeed",
+          "value": 25.0,
+          "unit": "percent",
+          "scope": "player",
+          "label": "Work Speed"
+        }
+      ]
     },
     "Musclehead": {
       "attack_pct": 30.0,
@@ -775,7 +1736,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Attack +30%. Work Speed -50%."
+      "description": "Attack +30%. Work Speed -50%.",
+      "effect_summary": "Attack +30%. Work Speed -50%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "CraftSpeed",
+          "value": -50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        }
+      ]
     },
     "Night Owl": {
       "attack_pct": 0.0,
@@ -785,7 +1763,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Tends to nap through the day, due to being nocturnal."
+      "description": "Tends to nap through the day, due to being nocturnal.",
+      "effect_summary": "Naps during the day.",
+      "effects": [
+        {
+          "type": "NightOwl",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal",
+          "label": "Naps during the day"
+        }
+      ]
     },
     "Nimble": {
       "attack_pct": 0.0,
@@ -795,7 +1783,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% increase to movement speed."
+      "description": "10% increase to movement speed.",
+      "effect_summary": "Movement Speed +10%.",
+      "effects": [
+        {
+          "type": "MoveSpeed",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Movement Speed"
+        }
+      ]
     },
     "Noble": {
       "attack_pct": 0.0,
@@ -805,7 +1803,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Increases the value of items when sold by +5%."
+      "description": "Increases the value of items when sold by +5%.",
+      "effect_summary": "Item Sale Price +5%. Shop Buy Price -5%.",
+      "effects": [
+        {
+          "type": "ShopSellPrice_Money_Increase",
+          "value": 5.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Item Sale Price"
+        },
+        {
+          "type": "ShopBuyPrice_Money_Increase",
+          "value": -5.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Shop Buy Price"
+        }
+      ]
     },
     "Otherworldly Cells": {
       "attack_pct": 10.0,
@@ -817,7 +1832,31 @@
       "element_boosts": {
         "Electric": 15.0
       },
-      "description": "Attack +10%. Fire damage reduction 15%. Lightning damage reduction 15%."
+      "description": "Attack +10%. Fire damage reduction 15%. Lightning damage reduction 15%.",
+      "effect_summary": "Attack +10%. Fire Damage Reduction +15%. Electric Attack Damage +15%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "ElementResist_Fire",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Fire Damage Reduction"
+        },
+        {
+          "type": "ElementBoost_Electricity",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Electric Attack Damage"
+        }
+      ]
     },
     "Pacifist": {
       "attack_pct": -20.0,
@@ -827,7 +1866,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Attack -20%."
+      "description": "Attack -20%.",
+      "effect_summary": "Attack -20%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": -20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        }
+      ]
     },
     "Philanthropist": {
       "attack_pct": 0.0,
@@ -837,7 +1886,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "When assigned to a Breeding Farm, breeding speed is increased by 100%."
+      "description": "When assigned to a Breeding Farm, breeding speed is increased by 100%.",
+      "effect_summary": "Breeding Speed +100%.",
+      "effects": [
+        {
+          "type": "BreedSpeed",
+          "value": 100.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Breeding Speed"
+        }
+      ]
     },
     "Positive Thinker": {
       "attack_pct": 0.0,
@@ -847,7 +1906,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "SAN drops +10.0% slower."
+      "description": "SAN drops +10.0% slower.",
+      "effect_summary": "SAN Depletion -10%.",
+      "effects": [
+        {
+          "type": "Sanity_Decrease",
+          "value": -10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "SAN Depletion"
+        }
+      ]
     },
     "Power of Gaia": {
       "attack_pct": 0.0,
@@ -859,7 +1928,17 @@
       "element_boosts": {
         "Ground": 10.0
       },
-      "description": "10% increase in Earth attack damage."
+      "description": "10% increase in Earth attack damage.",
+      "effect_summary": "Ground Attack Damage +10%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Earth",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Ground Attack Damage"
+        }
+      ]
     },
     "Pyromaniac": {
       "attack_pct": 0.0,
@@ -871,7 +1950,17 @@
       "element_boosts": {
         "Fire": 10.0
       },
-      "description": "10% increase in Fire attack damage."
+      "description": "10% increase in Fire attack damage.",
+      "effect_summary": "Fire Attack Damage +10%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Fire",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Fire Attack Damage"
+        }
+      ]
     },
     "Ranch Master": {
       "attack_pct": 0.0,
@@ -881,7 +1970,17 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Farming's Work Suitability +2."
+      "description": "Farming's Work Suitability +2.",
+      "effect_summary": "Farming Work Suitability +2.",
+      "effects": [
+        {
+          "type": "WorkSuitabilityAddRank_MonsterFarm",
+          "value": 2.0,
+          "unit": "flat",
+          "scope": "pal",
+          "label": "Farming Work Suitability"
+        }
+      ]
     },
     "Reload Master": {
       "attack_pct": 0.0,
@@ -891,7 +1990,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Player Reload Speed +4%."
+      "description": "Player Reload Speed +4%.",
+      "effect_summary": "Player Reload Speed +4%.",
+      "effects": [
+        {
+          "type": "ReloadSpeedUp",
+          "value": 4.0,
+          "unit": "percent",
+          "scope": "player",
+          "label": "Reload Speed"
+        }
+      ]
     },
     "Remarkable Craftsmanship": {
       "attack_pct": 0.0,
@@ -901,7 +2010,17 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Work Speed +75%."
+      "description": "Work Speed +75%.",
+      "effect_summary": "Work Speed +75%.",
+      "effects": [
+        {
+          "type": "CraftSpeed",
+          "value": 75.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        }
+      ]
     },
     "Runner": {
       "attack_pct": 0.0,
@@ -911,7 +2030,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "20% increase to movement speed."
+      "description": "20% increase to movement speed.",
+      "effect_summary": "Movement Speed +20%.",
+      "effects": [
+        {
+          "type": "MoveSpeed",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Movement Speed"
+        }
+      ]
     },
     "Sadist": {
       "attack_pct": 15.0,
@@ -921,7 +2050,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Attack +15%. Defense -15%."
+      "description": "Attack +15%. Defense -15%.",
+      "effect_summary": "Attack +15%. Defense -15%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "Defense",
+          "value": -15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        }
+      ]
     },
     "Sanctified Meat Shield": {
       "attack_pct": -30.0,
@@ -931,7 +2077,31 @@
       "add_pal": false,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Defense +50%. Attack -30%. World Tree resources will not vanish when approached."
+      "description": "Defense +50%. Attack -30%. World Tree resources will not vanish when approached.",
+      "effect_summary": "Defense +50%. Attack -30%. World Tree resources don't vanish when approached.",
+      "effects": [
+        {
+          "type": "Defense",
+          "value": 50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        },
+        {
+          "type": "ShotAttack",
+          "value": -30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "WorldTreeDecayImmunity",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal_and_player",
+          "label": "World Tree resources don't vanish when approached"
+        }
+      ]
     },
     "Savior": {
       "attack_pct": 0.0,
@@ -944,7 +2114,24 @@
         "Neutral": 30.0,
         "Grass": 30.0
       },
-      "description": "30% increase in Neutral attack damage. 30% increase in Grass attack damage."
+      "description": "30% increase in Neutral attack damage. 30% increase in Grass attack damage.",
+      "effect_summary": "Neutral Attack Damage +30%. Grass Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Normal",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Neutral Attack Damage"
+        },
+        {
+          "type": "ElementBoost_Leaf",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Grass Attack Damage"
+        }
+      ]
     },
     "Serenity": {
       "attack_pct": 10.0,
@@ -954,7 +2141,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Active skill cooldown reduction 30%. Attack +10%."
+      "description": "Active skill cooldown reduction 30%. Attack +10%.",
+      "effect_summary": "Active Skill Cooldown Reduction +30%. Attack +10%.",
+      "effects": [
+        {
+          "type": "ActiveSkillCoolTime_Decrease",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Active Skill Cooldown Reduction"
+        },
+        {
+          "type": "ShotAttack",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        }
+      ]
     },
     "Serious": {
       "attack_pct": 0.0,
@@ -964,7 +2168,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Work Speed +20%."
+      "description": "Work Speed +20%.",
+      "effect_summary": "Work Speed +20%.",
+      "effects": [
+        {
+          "type": "CraftSpeed",
+          "value": 20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        }
+      ]
     },
     "Service-Minded": {
       "attack_pct": 0.0,
@@ -974,7 +2188,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Your Dropped Items + 50%."
+      "description": "Your Dropped Items + 50%.",
+      "effect_summary": "Item Drops When Defeated +50%.",
+      "effects": [
+        {
+          "type": "SelfDeathAddItemDrop",
+          "value": 50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Item Drops When Defeated"
+        }
+      ]
     },
     "Shabby": {
       "attack_pct": 0.0,
@@ -984,7 +2208,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Decrease the value of items when sold by -10%."
+      "description": "Decrease the value of items when sold by -10%.",
+      "effect_summary": "Item Sale Price -10%. Shop Buy Price +10%.",
+      "effects": [
+        {
+          "type": "ShopSellPrice_Money_Increase",
+          "value": -10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Item Sale Price"
+        },
+        {
+          "type": "ShopBuyPrice_Money_Increase",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Shop Buy Price"
+        }
+      ]
     },
     "Sickly": {
       "attack_pct": 0.0,
@@ -994,7 +2235,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Max Stamina -25%. *This effect is only valid for rideable pals."
+      "description": "Max Stamina -25%. *This effect is only valid for rideable pals.",
+      "effect_summary": "Max Stamina -25%.",
+      "effects": [
+        {
+          "type": "PalSP_Increase",
+          "value": -25.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Max Stamina"
+        }
+      ]
     },
     "Siren of the Void": {
       "attack_pct": 0.0,
@@ -1007,7 +2258,24 @@
         "Dark": 30.0,
         "Ice": 30.0
       },
-      "description": "30% increase in Dark attack damage. 30% increase in Ice attack damage."
+      "description": "30% increase in Dark attack damage. 30% increase in Ice attack damage.",
+      "effect_summary": "Dark Attack Damage +30%. Ice Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Dark",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Dark Attack Damage"
+        },
+        {
+          "type": "ElementBoost_Ice",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Ice Attack Damage"
+        }
+      ]
     },
     "Skymarcher": {
       "attack_pct": 0.0,
@@ -1017,7 +2285,17 @@
       "add_pal": false,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Mounted Jump Count +2."
+      "description": "Mounted Jump Count +2.",
+      "effect_summary": "Mount Jump Count +2.",
+      "effects": [
+        {
+          "type": "RideJumpCount_Increase",
+          "value": 2.0,
+          "unit": "flat",
+          "scope": "pal",
+          "label": "Mount Jump Count"
+        }
+      ]
     },
     "Slacker": {
       "attack_pct": 0.0,
@@ -1027,7 +2305,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Work Speed -30%."
+      "description": "Work Speed -30%.",
+      "effect_summary": "Work Speed -30%.",
+      "effects": [
+        {
+          "type": "CraftSpeed",
+          "value": -30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        }
+      ]
     },
     "Sleek Stroke": {
       "attack_pct": 0.0,
@@ -1037,7 +2325,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "30% increase movement speed on water."
+      "description": "30% increase movement speed on water.",
+      "effect_summary": "Swim Speed +30%.",
+      "effects": [
+        {
+          "type": "SwimSpeed",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Swim Speed"
+        }
+      ]
     },
     "Spirit Emperor": {
       "attack_pct": 0.0,
@@ -1049,7 +2347,17 @@
       "element_boosts": {
         "Grass": 30.0
       },
-      "description": "30% increase in Grass attack damage."
+      "description": "30% increase in Grass attack damage.",
+      "effect_summary": "Grass Attack Damage +30%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Leaf",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Grass Attack Damage"
+        }
+      ]
     },
     "Spirit of Zen": {
       "attack_pct": 0.0,
@@ -1061,7 +2369,17 @@
       "element_boosts": {
         "Neutral": 10.0
       },
-      "description": "10% increase in Neutral attack damage."
+      "description": "10% increase in Neutral attack damage.",
+      "effect_summary": "Neutral Attack Damage +10%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Normal",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Neutral Attack Damage"
+        }
+      ]
     },
     "Stronghold Strategist": {
       "attack_pct": 0.0,
@@ -1071,7 +2389,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% increase in Player Defense."
+      "description": "10% increase in Player Defense.",
+      "effect_summary": "Player Defense +10%.",
+      "effects": [
+        {
+          "type": "Defense",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "player",
+          "label": "Defense"
+        }
+      ]
     },
     "Suntan Lover": {
       "attack_pct": 0.0,
@@ -1081,7 +2409,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% decrease in incoming Fire damage."
+      "description": "10% decrease in incoming Fire damage.",
+      "effect_summary": "Fire Damage Reduction +10%.",
+      "effects": [
+        {
+          "type": "ElementResist_Fire",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Fire Damage Reduction"
+        }
+      ]
     },
     "Swift": {
       "attack_pct": 0.0,
@@ -1091,7 +2429,17 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "30% increase to movement speed."
+      "description": "30% increase to movement speed.",
+      "effect_summary": "Movement Speed +30%.",
+      "effects": [
+        {
+          "type": "MoveSpeed",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Movement Speed"
+        }
+      ]
     },
     "Twin-Edged Holy Blade": {
       "attack_pct": 50.0,
@@ -1101,7 +2449,31 @@
       "add_pal": false,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Attack +50%. Defense -30%. World Tree resources will not vanish when approached."
+      "description": "Attack +50%. Defense -30%. World Tree resources will not vanish when approached.",
+      "effect_summary": "Attack +50%. Defense -30%. World Tree resources don't vanish when approached.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        },
+        {
+          "type": "Defense",
+          "value": -30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        },
+        {
+          "type": "WorldTreeDecayImmunity",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal_and_player",
+          "label": "World Tree resources don't vanish when approached"
+        }
+      ]
     },
     "Unstable": {
       "attack_pct": 0.0,
@@ -1111,7 +2483,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "SAN drops +10.0% faster."
+      "description": "SAN drops +10.0% faster.",
+      "effect_summary": "SAN Depletion +10%.",
+      "effects": [
+        {
+          "type": "Sanity_Decrease",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "SAN Depletion"
+        }
+      ]
     },
     "Vampiric": {
       "attack_pct": 0.0,
@@ -1121,7 +2503,24 @@
       "add_pal": true,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Absorbs a portion of the damage dealt to restore Health. Does not sleep at night and continues to work."
+      "description": "Absorbs a portion of the damage dealt to restore Health. Does not sleep at night and continues to work.",
+      "effect_summary": "Works through the night without sleeping. Life Steal +5%.",
+      "effects": [
+        {
+          "type": "Nocturnal",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal",
+          "label": "Works through the night without sleeping"
+        },
+        {
+          "type": "LifeSteal",
+          "value": 5.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Life Steal"
+        }
+      ]
     },
     "Vanguard": {
       "attack_pct": 0.0,
@@ -1131,7 +2530,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% increase in Player Attack."
+      "description": "10% increase in Player Attack.",
+      "effect_summary": "Player Attack +10%.",
+      "effects": [
+        {
+          "type": "ShotAttack",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "player",
+          "label": "Attack"
+        }
+      ]
     },
     "Veil of Darkness": {
       "attack_pct": 0.0,
@@ -1143,7 +2552,17 @@
       "element_boosts": {
         "Dark": 10.0
       },
-      "description": "10% increase in Dark attack damage."
+      "description": "10% increase in Dark attack damage.",
+      "effect_summary": "Dark Attack Damage +10%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Dark",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Dark Attack Damage"
+        }
+      ]
     },
     "Waterproof": {
       "attack_pct": 0.0,
@@ -1153,7 +2572,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "10% decrease in incoming Water damage."
+      "description": "10% decrease in incoming Water damage.",
+      "effect_summary": "Water Damage Reduction +10%.",
+      "effects": [
+        {
+          "type": "ElementResist_Water",
+          "value": 10.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Water Damage Reduction"
+        }
+      ]
     },
     "Wellness Watcher": {
       "attack_pct": 0.0,
@@ -1163,7 +2592,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Player Stamina Consumption -5.0%."
+      "description": "Player Stamina Consumption -5.0%.",
+      "effect_summary": "Player Stamina Drain -5%.",
+      "effects": [
+        {
+          "type": "PlayerSP_DecreaseRate",
+          "value": -5.0,
+          "unit": "percent",
+          "scope": "player",
+          "label": "Stamina Drain"
+        }
+      ]
     },
     "Whopper": {
       "attack_pct": 0.0,
@@ -1176,7 +2615,31 @@
         "Water": 5.0,
         "Ice": 5.0
       },
-      "description": "5% increase to Water attack damage. 5% increase to Ice attack damage. 5% increase to defense."
+      "description": "5% increase to Water attack damage. 5% increase to Ice attack damage. 5% increase to defense.",
+      "effect_summary": "Water Attack Damage +5%. Ice Attack Damage +5%. Defense +5%.",
+      "effects": [
+        {
+          "type": "ElementBoost_Water",
+          "value": 5.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Water Attack Damage"
+        },
+        {
+          "type": "ElementBoost_Ice",
+          "value": 5.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Ice Attack Damage"
+        },
+        {
+          "type": "Defense",
+          "value": 5.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Defense"
+        }
+      ]
     },
     "Work Slave": {
       "attack_pct": -30.0,
@@ -1186,7 +2649,24 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "Work Speed +30%. Attack -30%."
+      "description": "Work Speed +30%. Attack -30%.",
+      "effect_summary": "Work Speed +30%. Attack -30%.",
+      "effects": [
+        {
+          "type": "CraftSpeed",
+          "value": 30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Work Speed"
+        },
+        {
+          "type": "ShotAttack",
+          "value": -30.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Attack"
+        }
+      ]
     },
     "Workaholic": {
       "attack_pct": 0.0,
@@ -1196,7 +2676,17 @@
       "add_pal": true,
       "lottery_weight": 100,
       "element_boosts": {},
-      "description": "SAN drops +15.0% slower."
+      "description": "SAN drops +15.0% slower.",
+      "effect_summary": "SAN Depletion -15%.",
+      "effects": [
+        {
+          "type": "Sanity_Decrease",
+          "value": -15.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "SAN Depletion"
+        }
+      ]
     },
     "World Tree Seedbed": {
       "attack_pct": 0.0,
@@ -1206,7 +2696,31 @@
       "add_pal": false,
       "lottery_weight": 5,
       "element_boosts": {},
-      "description": "Decrease Hunger depletion rate by +50.0%. HP -20%. World Tree resources will not vanish when approached."
+      "description": "Decrease Hunger depletion rate by +50.0%. HP -20%. World Tree resources will not vanish when approached.",
+      "effect_summary": "Hunger Depletion -50%. Max HP -20%. World Tree resources don't vanish when approached.",
+      "effects": [
+        {
+          "type": "FullStomatch_Decrease",
+          "value": -50.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Hunger Depletion"
+        },
+        {
+          "type": "MaxHP",
+          "value": -20.0,
+          "unit": "percent",
+          "scope": "pal",
+          "label": "Max HP"
+        },
+        {
+          "type": "WorldTreeDecayImmunity",
+          "value": 0.0,
+          "unit": "flag",
+          "scope": "pal_and_player",
+          "label": "World Tree resources don't vanish when approached"
+        }
+      ]
     }
   }
 }

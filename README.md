@@ -29,7 +29,12 @@ Three views, one roster:
 
 Augments modelled: Condensing, combat Soul ranks, Trust, and the passive planner (which
 passives to buy into a Pal's four slots). Awakening and Work Speed are deliberately out of
-scope, as is active-skill and type-advantage damage math.
+**scoring** scope, as is active-skill and type-advantage damage math.
+
+Passives themselves are described in full, though: every passive carries its complete
+effect list straight from the game's DataTables, so the picker and the hover tooltips show
+what a passive *actually* does — Musclehead reads "Attack +30%. Work Speed -50%.", not just
+the half that scores. Nothing scored changed; see [`DATA_SOURCES.md`](docs/DATA_SOURCES.md).
 
 ## Getting your Pals in
 

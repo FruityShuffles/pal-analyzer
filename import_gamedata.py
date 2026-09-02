@@ -15,6 +15,8 @@ Reads (from --export):
                                   breeding rank/priority/gender ratio
     DT_PalCombiUnique.json        unique parent-pair -> child breeding overrides
     DT_PassiveSkill_Main.json     passive effect types/values/targets, rank
+    DT_PassiveSkillEffectCondition.json
+                                  which effect values are flat counts vs. percentages
     DT_PalNameText_en.json        text ID -> English species name
     DT_SkillNameText_en.json      text ID -> English passive name
     DT_SkillDescText_en.json      text ID -> English passive description
@@ -56,36 +58,49 @@ ELEMENT_NAMES = {
 }
 
 EFFECT = "EPalPassiveSkillEffectType::"
+TARGET = "EPalPassiveSkillEffectTargetType::"
 # The displayed "Attack" stat is ShotAttack; no displayable Pal passive touches
 # MeleeAttack. MaxHP passives DO exist (the World Tree set) -- see docs/FORMULAS.md.
 STAT_EFFECTS = {
-    EFFECT + "ShotAttack": "attack_pct",
-    EFFECT + "Defense": "defense_pct",
-    EFFECT + "MaxHP": "hp_pct",
+    "ShotAttack": "attack_pct",
+    "Defense": "defense_pct",
+    "MaxHP": "hp_pct",
 }
 # "ElementBoost_<Element>" raises damage dealt by attacks of that element. The element
 # lives in the effect-type name, not in the row's TargetElementType (which is None on
 # every displayable row), so a passive can boost two elements at once -- Lunker is
-# Water +20 / Ice +20 / Defense +20. ElementResist_* is deliberately NOT collected: it
+# Water +20 / Ice +20 / Defense +20. ElementResist_* is deliberately NOT scored: it
 # keys off the *incoming* attack's element, which a Pal's own record cannot predict.
-ELEMENT_BOOST = EFFECT + "ElementBoost_"
-# ToTrainer effects buff the *player*, not the Pal, so they must not feed the Pal's
-# combat score (e.g. Vanguard is "+10% Player Attack"). "None" is the game's default
-# and behaves as self (e.g. Lucky's Defense leg).
-SELF_TARGETS = {
-    "EPalPassiveSkillEffectTargetType::ToSelf",
-    "EPalPassiveSkillEffectTargetType::None",
-}
+# It is still recorded in `effects`, because it is a real effect of the passive.
+ELEMENT_BOOST = "ElementBoost_"
 
-# Text-table values that mean "no English string here".
-PLACEHOLDER_NAMES = {"", "-", "en_text", "Unidentified Pal"}
+# Who an effect leg lands on. "None" is the game's default and behaves as self (e.g.
+# Lucky's Defense leg). Only legs landing on the Pal may feed its combat score --
+# ToTrainer ones buff the *player* (Vanguard is "+10% Player Attack"), and
+# ToBuildObject ones buff the structure the Pal is assigned to (Babysitter's farm).
+TARGET_SCOPES = {
+    TARGET + "ToSelf": "pal",
+    TARGET + "None": "pal",
+    TARGET + "ToSelfAndTrainer": "pal_and_player",
+    TARGET + "ToTrainer": "player",
+    TARGET + "ToBuildObject": "structure",
+}
+PAL_SCOPES = {"pal", "pal_and_player"}
+# How summarise() qualifies a leg that does not land on the Pal alone.
+SCOPE_PREFIX = {"player": "Player "}
+SCOPE_SUFFIX = {"pal_and_player": " (Pal and player)", "structure": " (assigned structure)"}
+
+# Text-table values that mean "no English string here". Compared case- and
+# separator-insensitively: the tables carry the untranslated marker as "en Text".
+PLACEHOLDER_NAMES = {"", "-", "en text", "unidentified pal"}
 
 DISPLAYABLE = "EPalPassiveCategory::SortDisplayable"
 
-# Only ~45 of the 115 displayable passives ship a description string; the game builds the
-# rest of the tooltips from the effect rows. These labels let us do the same. Anything not
-# listed falls back to a humanised enum name, which is fine -- descriptions are picker
-# metadata and never feed the score.
+# 94 of the 115 displayable passives ship an authored English description; the game
+# composes the other 21 tooltips from the effect rows at runtime, and so do we. These
+# labels also build `effect_summary`, which every passive carries -- so a label missing
+# here is a real gap, and effect_label() returns None to have it reported rather than
+# silently rendered as a CamelCase-split enum name.
 EFFECT_LABELS = {
     "ShotAttack": "Attack",
     "MeleeAttack": "Melee Attack",
@@ -95,31 +110,45 @@ EFFECT_LABELS = {
     "MoveSpeed": "Movement Speed",
     "SwimSpeed": "Swim Speed",
     "AutoHPRegeneRate": "HP Regeneration",
-    "ActiveSkillCoolTime_Decrease": "Active Skill Cooldown",
-    "PalSP_Increase": "Pal SP",
+    "ActiveSkillCoolTime_Decrease": "Active Skill Cooldown Reduction",
+    "PalSP_Increase": "Max Stamina",
+    "PlayerSP_DecreaseRate": "Stamina Drain",
     "LifeSteal": "Life Steal",
     "ExplosionResist": "Explosion Resistance",
     "ReloadSpeedUp": "Reload Speed",
-    "PalEggHatchingSpeed": "Egg Hatching Speed",
+    "PalEggHatchingSpeed": "Egg Incubation Speed",
     "BreedSpeed": "Breeding Speed",
-    "BreedSpeed_InBaseCamp": "Breeding Speed (base camp)",
-    "PlayerSP_DecreaseRate": "Player Stamina Drain",
+    "BreedSpeed_InBaseCamp": "Egg Production Speed",
     "SelfDeathAddItemDrop": "Item Drops When Defeated",
     "ShopBuyPrice_Money_Increase": "Shop Buy Price",
-    "ShopSellPrice_Money_Increase": "Shop Sell Price",
+    "ShopSellPrice_Money_Increase": "Item Sale Price",
+    "Sanity_Decrease": "SAN Depletion",
+    "FullStomatch_Decrease": "Hunger Depletion",
+    "Mining": "Mining Efficiency",
+    "Logging": "Logging Efficiency",
+    "RideJumpCount_Increase": "Mount Jump Count",
 }
-# Effects whose value is a count/flag rather than a percentage.
-NON_PERCENT_EFFECTS = {
-    "Nocturnal", "NonKilling", "NightOwl", "AirDash", "CurveType", "Homing", "Explosive",
-    "JumpCount_Increase", "RideJumpCount_Increase", "LowGravity",
+# Effects the game stores with no magnitude at all (EffectValue 0.0): booleans whose
+# whole meaning is the label, so they render as a phrase rather than "X +0%". A
+# zero-valued effect type that is not here is reported, not guessed at.
+FLAG_LABELS = {
+    "WorldTreeDecayImmunity": "World Tree resources don't vanish when approached",
+    "Nocturnal": "Works through the night without sleeping",
+    "NightOwl": "Naps during the day",
+    "NonKilling": "Won't reduce a target's HP below 1",
+    "LeanBackInvalid_ForPassiveSkill": "Immune to flinching",
+    "KnockbackInvalid_ForPassiveSkill": "Immune to knockback",
 }
 # Prefix -> label template, for the families that are one enum per element/status.
+# WorkSuitabilityAddRank_* resolves its tail through the game's own UI strings
+# (COMMON_WORK_SUITABILITY_MonsterFarm is "Farming", not "Monster Farm").
+WORK_SUITABILITY_PREFIX = "WorkSuitabilityAddRank_"
 EFFECT_PREFIXES = (
-    ("ElementBoost_", "{} Attack Damage"),
-    ("ElementResist_", "{} Damage Taken"),
+    (ELEMENT_BOOST, "{} Attack Damage"),
+    ("ElementResist_", "{} Damage Reduction"),
     ("ResistAdditionalEffect_", "{} Resistance"),
     ("AdditionalEffect_", "Inflicts {}"),
-    ("WorkSuitabilityAddRank_", "{} Work Suitability"),
+    (WORK_SUITABILITY_PREFIX, "{} Work Suitability"),
 )
 
 
@@ -142,12 +171,17 @@ def text_map(export_dir, name):
     return out
 
 
+def is_placeholder(value):
+    """True for the text tables' "no English string here" markers ("en Text", "-")."""
+    return (value or "").strip().lower().replace("_", " ") in PLACEHOLDER_NAMES
+
+
 def lookup(texts, *ids):
     for text_id in ids:
         if not text_id or text_id == "None":
             continue
         value = texts.get(text_id.lower())
-        if value and value not in PLACEHOLDER_NAMES:
+        if value and not is_placeholder(value):
             return value
     return None
 
@@ -288,27 +322,77 @@ def humanise(enum_name):
     return re.sub(r"\s+", " ", words).strip()
 
 
-def effect_label(enum_name):
+def fixed_value_effects(export_dir):
+    """Effect types whose value is a flat count rather than a percentage.
+
+    The game ships this itself: DT_PassiveSkillEffectCondition's bIsFixedValue. Types
+    absent from that table are percentages, which is the overwhelming majority.
+    """
+    rows = load(export_dir, "DT_PassiveSkillEffectCondition.json")["Rows"]
+    return {key for key, row in rows.items() if row.get("bIsFixedValue")}
+
+
+def effect_label(enum_name, ui_text):
+    """Human label for an effect type, or None if we have no wording for it."""
     if enum_name in EFFECT_LABELS:
         return EFFECT_LABELS[enum_name]
     for prefix, template in EFFECT_PREFIXES:
-        if enum_name.startswith(prefix):
-            tail = enum_name[len(prefix):]
-            return template.format(ELEMENT_NAMES.get(tail, humanise(tail)))
-    return humanise(enum_name)
+        if not enum_name.startswith(prefix):
+            continue
+        tail = enum_name[len(prefix):]
+        if prefix == WORK_SUITABILITY_PREFIX:
+            shown = ui_text.get(f"COMMON_WORK_SUITABILITY_{tail}".lower())
+            if is_placeholder(shown):
+                return None
+        else:
+            shown = ELEMENT_NAMES.get(tail, humanise(tail))
+        return template.format(shown)
+    return None
 
 
-def describe(row):
-    """Rebuild a passive's tooltip from its effect rows, the way the game's UI does."""
-    parts = []
+def effect_rows(row, fixed, ui_text, unlabeled):
+    """Every effect leg of a passive, unfiltered -- the record's `effects` list.
+
+    Nothing is dropped here: the numeric combat fields and the description are both
+    built from this one walk, which is where the old code's two walks diverged.
+    """
+    out = []
     for i in (1, 2, 3, 4):
-        enum_name = row.get(f"EffectType{i}", "").split("::")[-1]
-        if enum_name in ("", "no"):
+        name = row.get(f"EffectType{i}", "").split("::")[-1]
+        if name in ("", "no"):
             continue
         value = float(row.get(f"EffectValue{i}", 0.0))
-        unit = "" if enum_name in NON_PERCENT_EFFECTS else "%"
-        sign = "+" if value >= 0 else ""
-        parts.append(f"{effect_label(enum_name)} {sign}{format_value(value)}{unit}")
+        raw_target = row.get(f"TargetType{i}", "")
+        scope = TARGET_SCOPES.get(raw_target)
+        if scope is None:
+            unlabeled.add(f"target {raw_target.split('::')[-1]}")
+            scope = "pal"
+        if value == 0.0:
+            # The game stores no magnitude for boolean effects; the label is the effect.
+            unit, label = "flag", FLAG_LABELS.get(name)
+        else:
+            unit = "flat" if name in fixed else "percent"
+            label = effect_label(name, ui_text)
+        if label is None:
+            unlabeled.add(name)
+            label = humanise(name)
+        out.append({"type": name, "value": value, "unit": unit,
+                    "scope": scope, "label": label})
+    return out
+
+
+def summarise(effects):
+    """Rebuild a passive's tooltip from its effect legs, the way the game's UI does."""
+    parts = []
+    for effect in effects:
+        label = effect["label"]
+        if effect["unit"] == "flag":
+            parts.append(label)
+            continue
+        label = SCOPE_PREFIX.get(effect["scope"], "") + label + SCOPE_SUFFIX.get(effect["scope"], "")
+        sign = "+" if effect["value"] >= 0 else ""
+        unit = "%" if effect["unit"] == "percent" else ""
+        parts.append(f"{label} {sign}{format_value(effect['value'])}{unit}")
     return ". ".join(parts) + ("." if parts else "")
 
 
@@ -317,9 +401,11 @@ def build_passives(export_dir):
     names = text_map(export_dir, "DT_SkillNameText_en.json")
     descs = text_map(export_dir, "DT_SkillDescText_en.json")
     ui_text = text_map(export_dir, "DT_UI_Common_Text_en.json")
+    fixed = fixed_value_effects(export_dir)
 
     passives = {}
     trainer_only = []
+    unlabeled = set()
     for key, row in rows.items():
         # SortDisplayable is the game's own flag for "a passive the UI shows on a Pal";
         # the other ~1790 rows are test/internal/equipment-only entries.
@@ -329,6 +415,8 @@ def build_passives(export_dir):
         if not name:
             continue
 
+        effects = effect_rows(row, fixed, ui_text, unlabeled)
+
         # add_pal / lottery_weight gate what the app's passive planner is allowed to
         # propose buying: AddPal is the game's own "legal on an ordinary Pal" flag, so
         # Legend, Lucky, Lunker and Whopper stay keepable but unbuyable despite low ranks.
@@ -337,40 +425,54 @@ def build_passives(export_dir):
                   "add_pal": bool(row.get("AddPal", False)),
                   "lottery_weight": row.get("LotteryWeight", 0),
                   "element_boosts": {},
-                  "description": ""}
+                  "description": "",
+                  "effect_summary": "",
+                  "effects": effects}
         dropped = False
-        for i in (1, 2, 3, 4):
-            effect = row.get(f"EffectType{i}", "")
-            field = STAT_EFFECTS.get(effect)
-            if not field and not effect.startswith(ELEMENT_BOOST):
-                continue  # Work Speed, element resist, status effects: picker metadata only
-            if row.get(f"TargetType{i}") not in SELF_TARGETS:
+        for effect in effects:
+            field = STAT_EFFECTS.get(effect["type"])
+            boost = effect["type"].startswith(ELEMENT_BOOST)
+            if not field and not boost:
+                continue  # every other effect type is carried by `effects`, not scored
+            if effect["scope"] not in PAL_SCOPES:
                 dropped = True
                 continue
-            value = float(row.get(f"EffectValue{i}", 0.0))
             if field:
-                record[field] += value
+                record[field] += effect["value"]
             else:
-                element = ELEMENT_NAMES.get(effect[len(ELEMENT_BOOST):], effect[len(ELEMENT_BOOST):])
-                record["element_boosts"][element] = record["element_boosts"].get(element, 0.0) + value
+                tail = effect["type"][len(ELEMENT_BOOST):]
+                element = ELEMENT_NAMES.get(tail, tail)
+                record["element_boosts"][element] = (
+                    record["element_boosts"].get(element, 0.0) + effect["value"])
         if dropped:
             trainer_only.append(name)
 
+        # effect_summary is always complete and always derived from the effect rows.
+        # description keeps the game's own authored prose where it exists, because that
+        # carries conditions the rows don't encode ("when assigned to a Breeding Farm",
+        # "*only valid for rideable pals") -- and, occasionally, contradicts them:
+        # Otherworldly Cells says "Lightning damage reduction" over an ElementBoost row.
+        record["effect_summary"] = summarise(effects)
         desc = lookup(descs, row.get("OverrideDescMsgID"), "PASSIVE_" + key)
         if desc:
             # Authored descriptions carry {EffectValue1}-style placeholders.
             desc = re.sub(r"\{EffectValue([1-4])\}",
                           lambda m: format_value(row.get(f"EffectValue{m.group(1)}", 0.0)), desc)
-            desc = clean_rich_text(desc, ui_text)
+            desc = clean_rich_text(desc, ui_text).strip()
         else:
-            desc = describe(row)
-        record["description"] = desc.strip()
+            desc = record["effect_summary"]
+        record["description"] = desc
         passives[name] = record
 
     if trainer_only:
         print(f"  {len(trainer_only)} passive(s) had player-targeted (ToTrainer) stat "
               f"effects excluded from the Pal's score: {', '.join(sorted(trainer_only))}")
-    print(f"  {len(passives)} displayable passives")
+    if unlabeled:
+        print(f"  ! {len(unlabeled)} effect type(s) with no label -- add them to "
+              f"EFFECT_LABELS/FLAG_LABELS in import_gamedata.py: "
+              f"{', '.join(sorted(unlabeled))}")
+    legs = sum(len(p["effects"]) for p in passives.values())
+    print(f"  {len(passives)} displayable passives, {legs} effect legs")
     return dict(sorted(passives.items()))
 
 

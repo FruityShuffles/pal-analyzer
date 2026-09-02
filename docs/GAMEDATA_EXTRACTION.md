@@ -99,7 +99,9 @@ without re-deriving anything:
 | `DT_PalMonsterParameter` `MaleProbability` | `male_probability` | percent male; 255 species are 50, the extremes are 10 and 90. No genderless Pals exist. |
 | `DT_PalMonsterParameter` `ZukanIndexSuffix` | `variant` | non-empty = regional "B" form; last-resort breeding tiebreak |
 | `DT_PalCombiUnique` rows | `data/breeding.json` | 253 unique parent-pair overrides. A **new export target added 2026-07-26** — one line in `Program.cs`'s `Targets`; the asset path was confirmed with `--find CombiUnique`. |
-| resolved `Game.locres` text | `description` | picker metadata |
+| `DT_SkillDescText_en` text (via `OverrideDescMsgID`) | `description` | the game's own authored English tooltip, for the 94 of 115 that ship one; `{EffectValueN}` placeholders substituted, `<uiCommon>` splices resolved, UE rich-text stripped. The other 21 fall back to `effect_summary`. |
+| all four `EffectType`/`EffectValue`/`TargetType` legs | `effects` | **added 2026-09-01.** Every leg, nothing filtered: `{type, value, unit, scope, label}`. 51 distinct effect types across 167 legs. This is where Work Speed, work suitability, SAN, hunger and the flinch/knockback immunities live — the record used to discard them. |
+| derived from `effects` | `effect_summary` | always-complete rebuilt tooltip. The authored `description` can *omit* a leg (Noble's buy-price half) or *contradict* one (Otherworldly Cells calls an `ElementBoost_Electricity` row a resistance), so both are kept and the app shows both. |
 
 **Element name remap** (per `CLAUDE.md`): `Electricity→Electric, Earth→Ground,
 Leaf→Grass, Normal→Neutral`.
@@ -108,8 +110,8 @@ Leaf→Grass, Normal→Neutral`.
 was wrong on both counts*: `ShotAttack`, `Defense` **and** `MaxHP` self-targeted percent
 effects feed the stat formula (max-HP passives do exist — God of Destruction, World Tree
 Seedbed), and `ElementBoost_*` effects feed the score as a separate damage multiplier
-(§2 of `FORMULAS.md`). Keep every other effect type as picker metadata but do not let it
-affect scoring. Filter species to the `Normal` variant (drop Boss/Alpha), matching the
+(§2 of `FORMULAS.md`). Every other effect type is recorded in `effects` — it is data, not
+picker metadata (revised 2026-09-01) — but must not affect scoring. Filter species to the `Normal` variant (drop Boss/Alpha), matching the
 current `palVariant='Normal'` filter.
 
 ## Recommended implementation path

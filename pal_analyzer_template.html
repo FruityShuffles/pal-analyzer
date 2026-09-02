@@ -1081,16 +1081,29 @@ function fillDatalists(){
   document.getElementById('passiveList').innerHTML =
     passiveNames.map(n=>{
       const p = PASSIVES_DB[n]; const tag = passiveTag(p);
-      return `<option value="${esc(n)}">${tag}</option>`;
+      return `<option value="${esc(n)}">${esc(tag)}</option>`;
     }).join('');
 }
+// The picker label is the passive's *whole* effect list, not just the part that scores.
+// effect_summary is derived from the game's effect rows and so is always complete;
+// Musclehead reads "Attack +30%. Work Speed -50%.", which is what a base-work planner
+// needs to see. Falling back to the combat numbers only would hide the second half.
 function passiveTag(p){
   if(!p) return '';
-  const parts=[];
-  if(p.attack_pct) parts.push(`Atk ${p.attack_pct>0?'+':''}${p.attack_pct}%`);
-  if(p.defense_pct) parts.push(`Def ${p.defense_pct>0?'+':''}${p.defense_pct}%`);
-  for(const el in (p.element_boosts||{})) parts.push(`${el} dmg +${p.element_boosts[el]}%`);
-  return parts.join(', ') || (p.description ? stripHtml(p.description) : 'non-combat');
+  return stripHtml(p.effect_summary || p.description || '') || 'no listed effect';
+}
+// Tooltip text: the derived summary first, then the game's own prose when it differs.
+// The prose carries conditions the effect rows don't encode ("when assigned to a
+// Breeding Farm", "only valid for rideable pals") and occasionally contradicts them
+// (Otherworldly Cells calls an ElementBoost row a resistance), so neither one alone
+// tells the truth. See docs/DATA_SOURCES.md.
+function passiveText(name){
+  const p = PASSIVES_DB[name]||{};
+  const summary = stripHtml(p.effect_summary||'');
+  const desc = stripHtml(p.description||'');
+  if(!summary) return desc;
+  if(!desc || desc === summary) return summary;
+  return summary + '\n' + desc;
 }
 function stripHtml(s){ return String(s).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim(); }
 function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
@@ -1107,7 +1120,7 @@ function passiveTone(name, elements){
   return '';
 }
 function pill(name, tone){
-  return `<span class="pill ${tone}" title="${esc(stripHtml((PASSIVES_DB[name]||{}).description||''))}">${esc(name)}</span>`;
+  return `<span class="pill ${tone}" title="${esc(passiveText(name))}">${esc(name)}</span>`;
 }
 function passivePills(entry, elements){
   return entry.passives.map(p=>pill(p, passiveTone(p, elements))).join('')

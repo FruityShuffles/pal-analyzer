@@ -18,6 +18,43 @@ the hand-maintained `SPECIES_OVERRIDES` / `PASSIVE_OVERRIDES` patches unnecessar
 Cross-checked against `oMaN-Rod/palworld-save-pal`'s independent datamine: **407 species
 rows agreed exactly** on base stats, Trust friendship coefficients, and element types.
 
+### Passive effects: the whole effect list (since 2026-09-01)
+
+A passive record used to keep only what the combat score reads — `attack_pct`,
+`defense_pct`, `hp_pct`, `element_boosts` — and discarded the other 39 of the 51 effect
+types the game defines, keeping them only as English prose. It now carries **every** leg:
+
+- **`effects`** — `[{type, value, unit, scope, label}]`, one entry per populated
+  `EffectType1..4` slot, nothing filtered. 167 legs across the 115 displayable passives.
+  `unit` is `percent`, `flat` or `flag`; `scope` is `pal`, `pal_and_player`, `player`
+  (a `ToTrainer` leg that buffs the *player*, e.g. Vanguard) or `structure` (a
+  `ToBuildObject` leg, e.g. Babysitter's Breeding Farm).
+- **`effect_summary`** — a complete tooltip rebuilt from `effects`.
+- **`description`** — unchanged: the game's own authored English where it exists.
+
+Both text fields are kept because **neither is reliable alone**. The authored copy can
+omit a leg (Noble/Fine Furs/Shabby each hide a `ShopBuyPrice_Money_Increase` half) and in
+one case contradicts the data outright — Otherworldly Cells reads "Lightning damage
+reduction 15%" over an `ElementBoost_Electricity +15` row, i.e. the game's text calls a
+damage *boost* a *resistance*. Conversely the prose carries conditions the effect rows do
+not encode ("when assigned to a Breeding Farm", "only valid for rideable Pals").
+
+Two supporting inputs:
+
+- **`DT_PassiveSkillEffectCondition`** (a new consumed export, though it was already being
+  dumped) — `bIsFixedValue` is the game's own answer to "is this value a flat count or a
+  percentage", replacing a hand-guessed list. `bIsHighestOnly` marks non-stacking effects
+  and is not yet used.
+- **`DT_UI_Common_Text_en`** now also resolves `WorkSuitabilityAddRank_*` tails, so the
+  labels read "Farming" rather than the internal "Monster Farm".
+
+`import_gamedata.py` reports any effect type it has no label for instead of silently
+rendering a CamelCase-split enum name; that report must be empty.
+
+**Scoring is unaffected.** Only `ShotAttack`/`Defense`/`MaxHP` and `ElementBoost_*` legs
+landing on the Pal feed the stat formula, exactly as before — the widened extraction was
+verified to leave all 115 passives' numeric fields byte-identical.
+
 ### Breeding data (added 2026-07-26)
 
 Same pak, same extractor. Two additions:

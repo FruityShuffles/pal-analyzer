@@ -117,6 +117,14 @@ stdlib-readable form, so `data/build_id_maps.py` sources the bridge from the
 Attack/Defense effect for combat-relevance flagging, and display-name-keyed friendship
 stats used by Trust scoring).
 
+A save ID does not always match a map key exactly, so `map_species()` walks three
+candidates, each case-insensitively: the ID as-is; the ID with a `BOSS_` prefix stripped
+(a caught alpha resolves to its base species); and that with a trailing `_otomo` dropped
+-- a boss's summoned companion has its own stat row but the same tribe and display name
+as the base Pal, so `BOSS_KingWhale_otomo` resolves to Panthalus. Only two `_otomo` rows
+exist game-wide, and the tribe filter in `import_gamedata.py` deliberately keeps no
+variant rows, so this is a mapping alias rather than missing reference data.
+
 `ingest_save.py` maps each ID, then reconciles the display name against the wiki
 `pals.json` / `passives.json` keys. Anything unmatched goes into `ingest_review.md`:
 

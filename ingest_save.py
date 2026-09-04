@@ -335,8 +335,12 @@ def parse_guilds(buf, player_names):
 def map_species(sid, id_maps):
     sp = id_maps["species"]
     lower = {k.lower(): v for k, v in sp.items()}
-    # exact, then BOSS_-stripped base (caught alpha -> base species), each case-insensitive
-    for cand in (sid, sid[5:] if sid[:5].upper() == "BOSS_" else None):
+    base = sid[5:] if sid[:5].upper() == "BOSS_" else None
+    # exact, then BOSS_-stripped base (caught alpha -> base species), then that with a
+    # trailing _otomo dropped -- a boss's summoned companion, which has its own stat row
+    # but the same tribe and display name as the base Pal. Each is case-insensitive.
+    otomo = base[:-6] if base and base[-6:].lower() == "_otomo" else None
+    for cand in (sid, base, otomo):
         if not cand:
             continue
         if cand in sp:

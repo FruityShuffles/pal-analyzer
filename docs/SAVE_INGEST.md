@@ -13,7 +13,7 @@ Level.sav                 # world save (the Pal roster lives here)
 out/pals-all.json         # PRIMARY import: all players' Pals + base-assigned Pals,
                           # each entry tagged "owner" (player nickname or guild name)
 out/pals-<Player>.json    # one file per player  ({version,targetLevel,player,pals:[…]})
-out/ingest_review.md      # species/passives in the save missing from the wiki data
+out/ingest_review.md      # species/passives in the save missing from the reference data
 ```
 
 Each output Pal entry includes `condense`, `soulHp`, `soulAtk`, `soulDef`, and
@@ -111,35 +111,54 @@ only, not in the per-player files.
 
 The save stores internal code IDs (`Sheepball`, `Kitsunebi`, `PAL_ALLAttack_up2`); the
 app's reference data is keyed by display name (`Lamball`, `Foxparks`, `Ferocious`).
-Neither the wiki Cargo API nor the shipped game files expose the code names in a
-stdlib-readable form, so `data/build_id_maps.py` sources the bridge from the
-**palworld-save-pal** project into `data/id_maps.json` (species, passive, per-passive
-Attack/Defense effect for combat-relevance flagging, and display-name-keyed friendship
-stats used by Trust scoring).
+`data/build_id_maps.py` sources that bridge from the **palworld-save-pal** project into
+`data/id_maps.json` (species, passive, per-passive Attack/Defense effect for
+combat-relevance flagging, and display-name-keyed friendship stats used by Trust
+scoring). Keep its attribution wherever `id_maps.json` is used.
+
+The original rationale here — that nothing else exposed the code names in a
+stdlib-readable form — stopped being true with the 2026-07-25 game-file import: the
+export is itself keyed by code ID and carries English names through
+`OverrideNameTextID` → `DT_PalNameText_en`. `id_maps.json` stays because ingestion and
+Trust still read it, and note the two vocabularies disagree on case (the save says
+`Sheepball`, the export `PAL_NAME_SheepBall`). Folding the bridge into
+`import_gamedata.py` is possible; it has not been done.
 
 A save ID does not always match a map key exactly, so `map_species()` walks three
 candidates, each case-insensitively: the ID as-is; the ID with a `BOSS_` prefix stripped
 (a caught alpha resolves to its base species); and that with a trailing `_otomo` dropped
--- a boss's summoned companion has its own stat row but the same tribe and display name
+— a boss's summoned companion has its own stat row but the same tribe and display name
 as the base Pal, so `BOSS_KingWhale_otomo` resolves to Panthalus. Only two `_otomo` rows
 exist game-wide, and the tribe filter in `import_gamedata.py` deliberately keeps no
 variant rows, so this is a mapping alias rather than missing reference data.
 
-`ingest_save.py` maps each ID, then reconciles the display name against the wiki
-`pals.json` / `passives.json` keys. Anything unmatched goes into `ingest_review.md`:
+`ingest_save.py` maps each ID, then reconciles the display name against the
+`data/pals.json` / `data/passives.json` keys. Anything unmatched goes into
+`ingest_review.md`, combat-relevant passives first — those silently score 0.
 
-- **Combat-relevant passive, missing** → add to `PASSIVE_OVERRIDES` in `build_data.py`.
-- **Species missing** → usually a new-DLC Pal absent from the wiki pull. Refreshing
-  `build_data.py` alone won't fix it (the wiki lags DLC by weeks-to-months); add an
-  entry to `SPECIES_OVERRIDES` in `build_data.py` instead. Source exact stats from the
-  palworld-save-pal repo's `data/json/pals.json` (`raw.githubusercontent.com/oMaN-Rod/
-  palworld-save-pal/main/data/json/pals.json`) — each entry's `scaling: {hp, attack,
-  defense}` and `element_types` are the real datamined values, not a wiki guess. Element
-  names need remapping to the wiki's vocabulary: `Electricity→Electric, Earth→Ground,
-  Leaf→Grass, Normal→Neutral` (Dark/Dragon/Fire/Ice/Water match already). Unknown
-  species import but score 0 until added. After editing overrides, rerun
-  `build_data.py` → `build_report.py` → `ingest_save.py`.
+**Before treating a flagged ID as missing data, check whether it is a variant alias.**
+`import_gamedata.py` keeps one row per tribe on purpose, dropping `BOSS_`/`GYM_`/
+`PREDATOR_`/`RAID_` forms, so those resolve through the `map_species()` candidate chain
+above rather than through new reference rows. `BOSS_KingWhale_otomo` was fixed that way,
+by extending the chain — not by adding a species.
 
-As of 2026-07-25: all owned species and all combat-relevant passives resolve cleanly
-(17 DLC species were added to `SPECIES_OVERRIDES` that day); the only remaining
-`ingest_review.md` entries are non-combat passives, which are expected and harmless.
+**For genuinely missing data the fix is to re-run the game-data extraction, not to
+hand-write an override.** Since the 2026-07-25 game-file import, `data/pals.json` and
+`data/passives.json` come from the game's own DataTables, so a non-empty report usually
+just means the export predates a game patch:
+
+1. Re-dump `Pal-Windows.pak` with `tools/gamedata/PalDataExport` — `tools/gamedata/README.md`
+   has the exact invocation and its prerequisites (a matching `.usmap`, an Oodle DLL, a
+   side-installed .NET 10). Never write to the game install.
+2. `python import_gamedata.py` → `data/pals.json` + `passives.json` + `breeding.json`.
+3. `python build_report.py` → bake the reference data into `pal_analyzer.html`.
+4. `python ingest_save.py` → re-ingest and confirm the report is empty.
+
+The `SPECIES_OVERRIDES` / `PASSIVE_OVERRIDES` dicts in `data/build_data.py` are the
+**superseded wiki path and should not be edited.** The game-file import made both
+unnecessary — it added 20 species and 19 passives the wiki never documented and
+corrected 10 species' base stats. `build_data.py` is kept only as a fallback for a
+machine with no Palworld install; see `docs/DATA_SOURCES.md`.
+
+As of 2026-09-03, on a 2,807-Pal three-player save, `ingest_review.md` is empty on both
+counts: every owned species and every passive present in the save resolves.

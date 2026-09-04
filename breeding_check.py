@@ -56,6 +56,21 @@ def build_index(pals, unique):
     return combos, combo_children, sorted(pool)
 
 
+def can_breed(name, pals):
+    """Whether a species may be used as a PARENT at all.
+
+    A third exclusion, independent of the two in build_index() and the only one on the
+    parent side. ignore_combi bars a species from being a rank-rule child but leaves it
+    a legal parent; these four (Astralym, Boltmane, Dragostrophe, Panthalus) fit in no
+    breeding pen and so are neither. The flag is derived at import time from having no
+    work suitability -- the game has no explicit "cannot breed" field, so this is an
+    inference; see docs/DATA_SOURCES.md. Deliberately NOT folded into child_species():
+    that stays a pure mirror of the game's rule, locked against palcalc.
+    """
+    p = pals.get(name)
+    return bool(p) and p.get("can_breed", True)
+
+
 def child_species(a, b, pals, combos, pool, gender_a="", gender_b=""):
     """The child of parents a x b. Genders only matter for gender-pinned combos."""
     if a == b:
@@ -352,6 +367,18 @@ def main():
     # ...but legendaries must still work as parents, via the same-species rule.
     check("Frostallion x Frostallion", child_species("Frostallion", "Frostallion",
                                                      pals, combos, pool), "Frostallion")
+
+    # -- parent exclusions --------------------------------------------------
+    # Independent of the child pool above: these four cannot be penned at all. If this
+    # list moves, a game patch changed the underlying work-suitability data and every
+    # breeding answer the app gives moved with it.
+    check("species that cannot be bred at all",
+          sorted(n for n in pals if not can_breed(n, pals)),
+          ["Astralym", "Boltmane", "Dragostrophe", "Panthalus"])
+    check("a legendary is still a legal parent", can_breed("Frostallion", pals), True)
+    # child_species() must be untouched by the parent gate -- it stays the locked mirror.
+    check("Panthalus x Panthalus still resolves by the raw rule",
+          child_species("Panthalus", "Panthalus", pals, combos, pool), "Panthalus")
 
     # Every pool rank is unique, which is what makes the priority tiebreak a total order.
     ranks = [p[1] for p in pool]

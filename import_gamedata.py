@@ -242,9 +242,21 @@ def build_pals(export_dir):
             "ignore_combi": bool(row.get("IgnoreCombi", False)),
             "male_probability": row.get("MaleProbability", 50),
             "variant": bool((row.get("ZukanIndexSuffix") or "").strip()),
+            # Not a game flag -- no Pal row says "cannot breed". A Pal with zero work
+            # suitability can never be assigned to a base, and the breeding pen is a base
+            # structure; that is the mechanism. Distinct from ignore_combi, which only
+            # bars a species from being a rank-rule CHILD. See docs/DATA_SOURCES.md.
+            "can_breed": any(v for k, v in row.items()
+                             if k.startswith("WorkSuitability_")),
         }
+    no_breed = sorted(n for n, p in pals.items() if not p["can_breed"])
     print(f"  {len(pals)} species "
           f"({len(skipped)} tribe rows skipped: no English name -- unreleased content)")
+    # Loud on purpose: a patch that adds or removes one of these silently changes every
+    # breeding answer the app gives. Expected as of the 2026-07-16 build:
+    # Astralym, Boltmane, Dragostrophe, Panthalus.
+    print(f"  {len(no_breed)} species cannot be bred at all (no work suitability): "
+          + ", ".join(no_breed))
     return dict(sorted(pals.items())), tribe_names
 
 

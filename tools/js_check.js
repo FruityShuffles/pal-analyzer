@@ -80,7 +80,7 @@ const epilogue = `
 ;globalThis.__t = {
   get state(){ return state; }, set state(v){ state = v; },
   get activeOwners(){ return activeOwners; },
-  PALS_DB, PASSIVES_DB, BREEDING_DB, CHILD_POOL, UNBUYABLE, BREED_COLUMNS,
+  PALS_DB, PASSIVES_DB, BREEDING_DB, CHILD_POOL, UNBUYABLE, BREED_COLUMNS, canParent,
   CHASE_BAR, CHASE_POOL, CRAFT_POOL, PREMIUM_POOL,
   get breedCache(){ return breedCache; }, set breedCache(v){ breedCache = v; },
   nodeSpecies, nodeId, POPCNT, ACCEPT, WISH_BUDGET_MS, wishResults, wishBusy,
@@ -501,6 +501,60 @@ function validateWishPlan(res, roster, label) {
   check('rank 4 and unbuyable passives are bred', s.bred.join(','), 'Legend,Demon God');
   check('an unknown passive is reported, not silently dropped',
         ctx.wishSplit(['Not A Passive']).unknown.length, 1);
+}
+
+// --- species that fit in no breeding pen are never parents --------------------
+// A third exclusion, independent of the two the CHILD_POOL applies and the only one on
+// the parent side: ignore_combi bars Frostallion from being a rank-rule child but leaves
+// it a legal parent, while Astralym/Boltmane/Dragostrophe/Panthalus cannot be penned at
+// all. Derived from can_breed in data/pals.json; see docs/BREEDING.md section 1.
+{
+  const canParent = ctx.__t.canParent;
+  const penless = Object.keys(ctx.__t.PALS_DB).filter(n => !canParent(n)).sort();
+  check('the penless species are exactly the four known ones', penless.join(','),
+        'Astralym,Boltmane,Dragostrophe,Panthalus');
+  check('a legendary is still a legal parent', canParent('Frostallion'), true);
+  // The raw rule stays a locked mirror of the game -- the gate lives above it, not in it.
+  check('childSpecies itself is untouched by the parent gate',
+        ctx.childSpecies('Panthalus', 'Panthalus', '', ''), 'Panthalus');
+
+  // A penless Pal loaded with the best passives in the game must still never surface as
+  // a parent, however attractive the pairing looks.
+  const penRoster = [
+    mk({ id: 'p1', species: 'Panthalus', passives: ['Legend', 'Demon God'], gender: 'Male', level: 50 }),
+    mk({ id: 'p2', species: 'Jormuntide', passives: ['Legend'], gender: 'Female', level: 50 }),
+    mk({ id: 'p3', species: 'Jormuntide', passives: ['Lunker'], gender: 'Male', level: 50 }),
+  ];
+  const pr = ctx.searchBreeding(penRoster, { depth: 2 });
+  const usedPenless = pr.rows.filter(r => r.pair &&
+    (!canParent(r.pair.a.species) || !canParent(r.pair.b.species)));
+  check('no suggestion uses a penless Pal as a parent', usedPenless.length, 0);
+  const namedPenless = pr.rows.filter(r => !canParent(r.species));
+  check('no suggestion produces a penless child either', namedPenless.length, 0);
+
+  // Wishing for one is a harder no than the self-only case: not even rule 1 is open, so
+  // the message must say so rather than talk about two different species.
+  const t0 = Date.now();
+  // Lunker is carried (by p3) and the Panthalus lacks it, so this clears the
+  // nobody-carries-it check above and lands on the pen rule.
+  const rw = ctx.wishSolve(penRoster, { species: 'Panthalus', passives: ['Lunker'] }, {});
+  const dt = Date.now() - t0;
+  check('a penless target blocks the wish', !!rw.blocked, true);
+  if (rw.blocked && !/breeding pen/.test(rw.blocked))
+    fail('the penless block does not explain why: ' + rw.blocked);
+  if (dt > 2000) fail(`penless block took ${dt} ms; it must be instant`);
+
+  // ...and a penless Pal in the roster is not a usable partner for anyone else's wish.
+  const rw2 = ctx.wishSolve(penRoster, { species: 'Jormuntide', passives: ['Legend', 'Lunker'] }, {});
+  if (rw2 && rw2.order) {
+    for (const step of rw2.order) {
+      const parents = [step.a, step.b].filter(Boolean);
+      for (const q of parents) {
+        const sp = typeof q === 'string' ? q : (q.species || ctx.__t.nodeSpecies(q));
+        if (sp && !canParent(sp)) fail(`wish plan uses penless parent ${sp}`);
+      }
+    }
+  }
 }
 
 // --- wishlist: blocked wishes explain themselves ------------------------------

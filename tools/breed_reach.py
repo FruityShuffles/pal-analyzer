@@ -78,6 +78,15 @@ def clean_pool(roster_path, owners=None):
             if (want is None or e.get("owner") in want) and not e.get("passives")}
 
 
+def penned(names, pals):
+    """Drop species that cannot be put in a breeding pen at all.
+
+    Separate from `ignore_combi` (never a rank-rule child, but a legal parent): these
+    four are neither parent nor child. See BC.can_breed / docs/DATA_SOURCES.md.
+    """
+    return {n for n in names if BC.can_breed(n, pals)}
+
+
 # ---------------------------------------------------------------------------
 # Search
 # ---------------------------------------------------------------------------
@@ -416,7 +425,9 @@ def write_report(path, rows, plans, pool, seeds, unreachable_top, partners, args
     if unreachable_top:
         w("\n## Out of reach forever\n")
         w("These outscore everything above but are `ignore_combi` -- they are never "
-          "produced by breeding, at any cost.\n")
+          "produced by breeding, at any cost. Astralym, Boltmane, Dragostrophe and "
+          "Panthalus are stricter still: they fit in no breeding pen, so they cannot "
+          "even be used as a parent.\n")
         w("| species | score | elements |")
         w("| --- | ---: | --- |")
         for species, sc, els in unreachable_top:
@@ -502,7 +513,10 @@ def main():
     for s in args.seeds:
         if s not in pals:
             ap.error("unknown seed species: %s" % s)
-    pool = {s for s in clean_pool(args.roster, args.owners) if s in pals}
+        if not BC.can_breed(s, pals):
+            ap.error("%s cannot be placed in a breeding pen, so it cannot seed anything"
+                     % s)
+    pool = penned({s for s in clean_pool(args.roster, args.owners) if s in pals}, pals)
     seeds = set(args.seeds)
 
     t0 = time.time()
@@ -546,7 +560,7 @@ def main():
             # "obtain the thing you were trying to breed". An upper bound, not advice.
             candidates = {r["species"] for r in rows} - pool - seeds
         else:
-            candidates = clean_pool(args.roster) - pool - seeds
+            candidates = penned(clean_pool(args.roster), pals) - pool - seeds
         print("sweeping %d partner candidates (%s)..." % (len(candidates), args.partner_candidates))
         found = partner_value(breeder, seeds, pool, targets, base_cost, args.keep, candidates)
         for saved, best, improved, cand in found[:20]:

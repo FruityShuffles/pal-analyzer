@@ -706,6 +706,15 @@ const CHILD_POOL = Object.keys(PALS_DB)
             prio:PALS_DB[n].combi_priority||0, variant:!!PALS_DB[n].variant}))
   .sort((x,y)=>x.rank-y.rank);
 
+// A THIRD exclusion, and the only one that lands on the PARENT side. ignore_combi bars a
+// species from being a rank-rule child but leaves it a perfectly legal parent; these four
+// (Astralym, Boltmane, Dragostrophe, Panthalus) cannot be placed in a breeding pen at all,
+// so they are neither parent nor child. The flag is derived at import time from the fact
+// that they have no work suitability and so cannot be assigned to a base -- the game has
+// no explicit "cannot breed" field. See docs/BREEDING.md section 1. `!== false` keeps an
+// older pals.json without the field working.
+const canParent = (n)=>!!PALS_DB[n] && PALS_DB[n].can_breed !== false;
+
 // Ties go to the HIGHER combi_priority, then the non-variant Pal, then the name so
 // the answer never depends on object iteration order. Ranks are multiples of 10, so
 // a target ending in 5 sits exactly between two candidates -- ties are common, not
@@ -943,6 +952,16 @@ function genderChance(species, gender){
     'self-test: combo-only children are excluded from the child pool');
   console.assert(childSpecies('Frostallion','Frostallion')==='Frostallion',
     'self-test: a legendary is still a legal parent');
+  // ignore_combi and can_breed are independent: Frostallion is barred as a child only,
+  // Panthalus fits in no breeding pen at all.
+  console.assert(canParent('Frostallion')===true,
+    'self-test: a legendary can still be a parent');
+  console.assert(canParent('Panthalus')===false && canParent('Astralym')===false,
+    'self-test: penless species cannot be parents');
+  console.assert(buildArchetypes(
+    [normalizeEntry({id:'w1',species:'Panthalus',passives:['Legend'],gender:'Male'})],
+    CHASE_POOL).length===0,
+    'self-test: a penless species makes no breeding archetype');
   console.assert(Math.abs(inheritProb(2,2)-0.60)<1e-12, 'self-test: inheritProb(2,2)');
   console.assert(Math.abs(inheritProb(8,1)-0.25)<1e-12, 'self-test: inheritProb(8,1)');
   console.assert(Math.abs(inheritProb(1,1)-1.00)<1e-12, 'self-test: inheritProb(1,1)');
@@ -1428,6 +1447,7 @@ function buildArchetypes(pals, pool){
   for(const e of pals){
     const base = PALS_DB[e.species];
     if(!base) continue;                       // unmapped species can't be bred
+    if(!canParent(e.species)) continue;       // nor can one that fits in no breeding pen
     const unb = (e.passives||[]).filter(p=>pool.has(p)).sort();
     const key = e.species+'|'+(e.gender||'?')+'|'+unb.join(',');
     let g = groups.get(key);
@@ -1858,6 +1878,9 @@ function wishKids(ia, ib){
   const p = ia*WISH_NSP + ib;
   if(WISH_KID_A[p]===-2){
     const a = WISH_SPECIES[ia], b = WISH_SPECIES[ib];
+    // The one chokepoint the whole solver goes through, so gating unbreedable parents
+    // here also covers the partner pool and wishCrossReachable().
+    if(!canParent(a) || !canParent(b)){ WISH_KID_A[p] = -1; WISH_KID_B[p] = -1; return p; }
     const c1 = childSpecies(a, b, 'Male', 'Female');
     const c2 = childSpecies(a, b, 'Female', 'Male');
     const i1 = (c1 && WISH_SP_IDX.has(c1)) ? WISH_SP_IDX.get(c1) : -1;
@@ -1869,8 +1892,8 @@ function wishKids(ia, ib){
 
 // Which species can ever be the child of two DIFFERENT species. Everything else is
 // reachable only through rule 1 (same species breeds true), which means its passives
-// have to be on that species already -- Frostallion, Jetragon and Blazamut Ryu are the
-// ones this bites. Computed once over the 45k species pairs and cached, because
+// have to be on that species already -- 28 species, all ignore_combi, incl. Frostallion,
+// Jetragon and Blazamut Ryu. Computed once over the 45k species pairs and cached, because
 // answering it up front turns a 10-second dead end into an instant explanation.
 let crossReachCache = null;
 function wishCrossReachable(){
@@ -1960,6 +1983,7 @@ function cleanPartners(pals, cacheKey){
   const owned = new Map();                  // species index -> genders you actually have
   for(const e of pals){
     if((e.passives||[]).length) continue;
+    if(!canParent(e.species)) continue;       // never seed a partner you cannot pen
     const i = WISH_SP_IDX.get(e.species);
     if(i===undefined) continue;
     let g = owned.get(i);
@@ -2079,6 +2103,14 @@ function* wishSolveIter(pals, wish, opts){
     if((mask & FULL)===FULL)
       return done({plan:{steps:new Map(), eggs:0, root:-1}, order:[], eggs:0,
         have:e, status:'converged', rounds:0, pairs:0, passes:0, nodeCount:0});
+  }
+
+  // Cannot be penned at all, so not even rule 1 is open -- a strictly harder no than the
+  // self-only case below, and it deserves its own sentence rather than the vaguer
+  // "never the child of two different species".
+  if(!canParent(target)){
+    return done({blocked:target + ' cannot be placed in a breeding pen, so it cannot be '
+      + 'bred at all — the only way to get one is to catch it.'});
   }
 
   // Self-only species: rule 1 is the only way in, so every wanted passive must already

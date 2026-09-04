@@ -188,7 +188,9 @@ Seeds Cawgnito + Sibelyx, clean pool from a two-player subset (22 species), leve
   generations.
 - **The ceiling is hard.** Astralym, Panthalus, Frostallion (+Noct), Paladius, Necromus,
   Shaolong, Bastigor, Shadowbeak, Jetragon and 8 others outscore everything reachable but
-  are `ignore_combi` — never a breeding child, at any cost.
+  are `ignore_combi` — never a breeding child, at any cost. Astralym and Panthalus (and
+  Boltmane and Dragostrophe) are stricter still: they fit in no breeding pen, so they are
+  not even usable as a *parent*, and `clean_pool()` drops them. See `docs/BREEDING.md` §1.
 - **The Pareto frontier argues against chasing the top.** Warsect at 2 pairs scores 1884;
   Eidrolon Ignis at 17 pairs scores 2009. 6% more score for 8.5× the work.
 - **Best single acquisition:** a clean **Cryolinx** saves 73 pairs across the top 15

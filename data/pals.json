@@ -17,7 +17,8 @@
       "combi_priority": 3000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Amione": {
       "hp_stat": 65,
@@ -33,7 +34,8 @@
       "combi_priority": 252000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Anubis": {
       "hp_stat": 120,
@@ -49,7 +51,8 @@
       "combi_priority": 48000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Arsox": {
       "hp_stat": 85,
@@ -65,7 +68,8 @@
       "combi_priority": 232000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Astegon": {
       "hp_stat": 100,
@@ -82,7 +86,8 @@
       "combi_priority": 49000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Astralym": {
       "hp_stat": 200,
@@ -96,7 +101,8 @@
       "combi_priority": 1000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": false
     },
     "Azurmane": {
       "hp_stat": 130,
@@ -112,7 +118,8 @@
       "combi_priority": 42000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Azurobe": {
       "hp_stat": 110,
@@ -129,7 +136,8 @@
       "combi_priority": 183000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Azurobe Cryst": {
       "hp_stat": 115,
@@ -146,7 +154,8 @@
       "combi_priority": 578,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Bakemi": {
       "hp_stat": 70,
@@ -162,7 +171,8 @@
       "combi_priority": 154000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Bastigor": {
       "hp_stat": 140,
@@ -178,7 +188,8 @@
       "combi_priority": 5000,
       "ignore_combi": true,
       "male_probability": 60,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Beakon": {
       "hp_stat": 105,
@@ -194,7 +205,8 @@
       "combi_priority": 169000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Beakon Cryst": {
       "hp_stat": 105,
@@ -210,7 +222,8 @@
       "combi_priority": 58000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Beegarde": {
       "hp_stat": 80,
@@ -226,7 +239,8 @@
       "combi_priority": 235000,
       "ignore_combi": false,
       "male_probability": 10,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Bellanoir": {
       "hp_stat": 120,
@@ -242,7 +256,8 @@
       "combi_priority": 62000,
       "ignore_combi": true,
       "male_probability": 10,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Bellanoir Libero": {
       "hp_stat": 120,
@@ -258,7 +273,8 @@
       "combi_priority": 13000,
       "ignore_combi": true,
       "male_probability": 10,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Blazamut": {
       "hp_stat": 100,
@@ -274,7 +290,8 @@
       "combi_priority": 41000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Blazamut Ryu": {
       "hp_stat": 105,
@@ -291,7 +308,8 @@
       "combi_priority": 10000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Blazehowl": {
       "hp_stat": 105,
@@ -307,7 +325,8 @@
       "combi_priority": 136000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Blazehowl Noct": {
       "hp_stat": 105,
@@ -324,7 +343,8 @@
       "combi_priority": 127000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Blue Slime": {
       "hp_stat": 70,
@@ -340,7 +360,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Boltmane": {
       "hp_stat": 100,
@@ -356,7 +377,8 @@
       "combi_priority": 999900,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": false
     },
     "Braloha": {
       "hp_stat": 130,
@@ -373,7 +395,8 @@
       "combi_priority": 103000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Bristla": {
       "hp_stat": 80,
@@ -389,7 +412,8 @@
       "combi_priority": 269000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Broncherry": {
       "hp_stat": 120,
@@ -405,7 +429,8 @@
       "combi_priority": 138000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Broncherry Aqua": {
       "hp_stat": 120,
@@ -422,7 +447,8 @@
       "combi_priority": 108000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Bulldosu": {
       "hp_stat": 115,
@@ -438,7 +464,8 @@
       "combi_priority": 119000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Bushi": {
       "hp_stat": 80,
@@ -454,7 +481,8 @@
       "combi_priority": 156000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Bushi Noct": {
       "hp_stat": 80,
@@ -471,7 +499,8 @@
       "combi_priority": 84000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Caprity": {
       "hp_stat": 100,
@@ -487,7 +516,8 @@
       "combi_priority": 261000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Caprity Noct": {
       "hp_stat": 100,
@@ -503,7 +533,8 @@
       "combi_priority": 194000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Carnibora": {
       "hp_stat": 85,
@@ -519,7 +550,8 @@
       "combi_priority": 170000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Cattiva": {
       "hp_stat": 70,
@@ -535,7 +567,8 @@
       "combi_priority": 276000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Cave Bat": {
       "hp_stat": 65,
@@ -551,7 +584,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Cawgnito": {
       "hp_stat": 75,
@@ -567,7 +601,8 @@
       "combi_priority": 237000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Celaray": {
       "hp_stat": 80,
@@ -583,7 +618,8 @@
       "combi_priority": 274000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Celaray Lux": {
       "hp_stat": 80,
@@ -600,7 +636,8 @@
       "combi_priority": 574,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Celesdir": {
       "hp_stat": 120,
@@ -616,7 +653,8 @@
       "combi_priority": 57000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Celesdir Noct": {
       "hp_stat": 120,
@@ -632,7 +670,8 @@
       "combi_priority": 27000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Chikipi": {
       "hp_stat": 60,
@@ -648,7 +687,8 @@
       "combi_priority": 308000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Chillet": {
       "hp_stat": 90,
@@ -665,7 +705,8 @@
       "combi_priority": 233000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Chillet Ignis": {
       "hp_stat": 90,
@@ -682,7 +723,8 @@
       "combi_priority": 195000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Cinnamoth": {
       "hp_stat": 70,
@@ -698,7 +740,8 @@
       "combi_priority": 262000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Clovee": {
       "hp_stat": 80,
@@ -715,7 +758,8 @@
       "combi_priority": 297000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Cremis": {
       "hp_stat": 70,
@@ -731,7 +775,8 @@
       "combi_priority": 289000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Croajiro": {
       "hp_stat": 80,
@@ -747,7 +792,8 @@
       "combi_priority": 260000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Croajiro Noct": {
       "hp_stat": 85,
@@ -764,7 +810,8 @@
       "combi_priority": 186000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Cryolinx": {
       "hp_stat": 100,
@@ -780,7 +827,8 @@
       "combi_priority": 104000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Cryolinx Terra": {
       "hp_stat": 100,
@@ -796,7 +844,8 @@
       "combi_priority": 47000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Daedream": {
       "hp_stat": 70,
@@ -812,7 +861,8 @@
       "combi_priority": 291000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dandilord": {
       "hp_stat": 125,
@@ -829,7 +879,8 @@
       "combi_priority": 6000,
       "ignore_combi": true,
       "male_probability": 60,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dazemu": {
       "hp_stat": 95,
@@ -845,7 +896,8 @@
       "combi_priority": 221000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dazzi": {
       "hp_stat": 70,
@@ -861,7 +913,8 @@
       "combi_priority": 240000,
       "ignore_combi": false,
       "male_probability": 20,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dazzi Noct": {
       "hp_stat": 70,
@@ -878,7 +931,8 @@
       "combi_priority": 191000,
       "ignore_combi": false,
       "male_probability": 20,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Demon Eye": {
       "hp_stat": 105,
@@ -894,7 +948,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Depresso": {
       "hp_stat": 70,
@@ -910,7 +965,8 @@
       "combi_priority": 300000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Digtoise": {
       "hp_stat": 80,
@@ -926,7 +982,8 @@
       "combi_priority": 155000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dinossom": {
       "hp_stat": 110,
@@ -943,7 +1000,8 @@
       "combi_priority": 210000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dinossom Lux": {
       "hp_stat": 110,
@@ -960,7 +1018,8 @@
       "combi_priority": 189000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Direhowl": {
       "hp_stat": 80,
@@ -976,7 +1035,8 @@
       "combi_priority": 268000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dogen": {
       "hp_stat": 90,
@@ -992,7 +1052,8 @@
       "combi_priority": 146000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dragostrophe": {
       "hp_stat": 130,
@@ -1009,7 +1070,8 @@
       "combi_priority": 999900,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": false
     },
     "Dualith": {
       "hp_stat": 110,
@@ -1026,7 +1088,8 @@
       "combi_priority": 51000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dualith Noct": {
       "hp_stat": 110,
@@ -1043,7 +1106,8 @@
       "combi_priority": 25000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Dumud": {
       "hp_stat": 100,
@@ -1060,7 +1124,8 @@
       "combi_priority": 229000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dumud Gild": {
       "hp_stat": 105,
@@ -1077,7 +1142,8 @@
       "combi_priority": 576,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Dupin": {
       "hp_stat": 100,
@@ -1093,7 +1159,8 @@
       "combi_priority": 52000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Dynamoff": {
       "hp_stat": 75,
@@ -1109,7 +1176,8 @@
       "combi_priority": 140000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Eidrolon": {
       "hp_stat": 115,
@@ -1126,7 +1194,8 @@
       "combi_priority": 30000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Eidrolon Ignis": {
       "hp_stat": 115,
@@ -1143,7 +1212,8 @@
       "combi_priority": 14000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Eikthyrdeer": {
       "hp_stat": 95,
@@ -1159,7 +1229,8 @@
       "combi_priority": 271000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Eikthyrdeer Terra": {
       "hp_stat": 95,
@@ -1175,7 +1246,8 @@
       "combi_priority": 258000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Elgrove": {
       "hp_stat": 110,
@@ -1191,7 +1263,8 @@
       "combi_priority": 202000,
       "ignore_combi": false,
       "male_probability": 60,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Elgrove Cryst": {
       "hp_stat": 120,
@@ -1207,7 +1280,8 @@
       "combi_priority": 44000,
       "ignore_combi": false,
       "male_probability": 60,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Elizabee": {
       "hp_stat": 90,
@@ -1223,7 +1297,8 @@
       "combi_priority": 179000,
       "ignore_combi": false,
       "male_probability": 10,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Elphidran": {
       "hp_stat": 110,
@@ -1239,7 +1314,8 @@
       "combi_priority": 228000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Elphidran Aqua": {
       "hp_stat": 115,
@@ -1256,7 +1332,8 @@
       "combi_priority": 164000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Enchanted Sword": {
       "hp_stat": 95,
@@ -1272,7 +1349,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Eye of Cthulhu": {
       "hp_stat": 110,
@@ -1288,7 +1366,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Faleris": {
       "hp_stat": 105,
@@ -1304,7 +1383,8 @@
       "combi_priority": 50000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Faleris Aqua": {
       "hp_stat": 110,
@@ -1320,7 +1400,8 @@
       "combi_priority": 45000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Felbat": {
       "hp_stat": 100,
@@ -1336,7 +1417,8 @@
       "combi_priority": 157000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Fenglope": {
       "hp_stat": 110,
@@ -1352,7 +1434,8 @@
       "combi_priority": 196000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Fenglope Lux": {
       "hp_stat": 110,
@@ -1368,7 +1451,8 @@
       "combi_priority": 90000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Finsider": {
       "hp_stat": 75,
@@ -1384,7 +1468,8 @@
       "combi_priority": 245000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Finsider Ignis": {
       "hp_stat": 75,
@@ -1401,7 +1486,8 @@
       "combi_priority": 581,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Flambelle": {
       "hp_stat": 60,
@@ -1417,7 +1503,8 @@
       "combi_priority": 270000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Flaracle": {
       "hp_stat": 110,
@@ -1433,7 +1520,8 @@
       "combi_priority": 39000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Flopie": {
       "hp_stat": 75,
@@ -1449,7 +1537,8 @@
       "combi_priority": 266000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Foxcicle": {
       "hp_stat": 90,
@@ -1465,7 +1554,8 @@
       "combi_priority": 197000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Foxparks": {
       "hp_stat": 65,
@@ -1481,7 +1571,8 @@
       "combi_priority": 299000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Foxparks Cryst": {
       "hp_stat": 65,
@@ -1497,7 +1588,8 @@
       "combi_priority": 250000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Frostallion": {
       "hp_stat": 140,
@@ -1513,7 +1605,8 @@
       "combi_priority": 15000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Frostallion Noct": {
       "hp_stat": 140,
@@ -1529,7 +1622,8 @@
       "combi_priority": 11000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Frostplume": {
       "hp_stat": 110,
@@ -1545,7 +1639,8 @@
       "combi_priority": 86000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Fuack": {
       "hp_stat": 60,
@@ -1561,7 +1656,8 @@
       "combi_priority": 298000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Fuack Ignis": {
       "hp_stat": 60,
@@ -1578,7 +1674,8 @@
       "combi_priority": 575,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Fuddler": {
       "hp_stat": 65,
@@ -1594,7 +1691,8 @@
       "combi_priority": 279000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Galeclaw": {
       "hp_stat": 75,
@@ -1610,7 +1708,8 @@
       "combi_priority": 257000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Ghangler": {
       "hp_stat": 90,
@@ -1627,7 +1726,8 @@
       "combi_priority": 88000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Ghangler Ignis": {
       "hp_stat": 90,
@@ -1644,7 +1744,8 @@
       "combi_priority": 72000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Gildane": {
       "hp_stat": 120,
@@ -1660,7 +1761,8 @@
       "combi_priority": 73000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Gildra": {
       "hp_stat": 105,
@@ -1677,7 +1779,8 @@
       "combi_priority": 117000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Gloopie": {
       "hp_stat": 70,
@@ -1694,7 +1797,8 @@
       "combi_priority": 253000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Gloopie Primo": {
       "hp_stat": 75,
@@ -1711,7 +1815,8 @@
       "combi_priority": 163000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Gobfin": {
       "hp_stat": 90,
@@ -1727,7 +1832,8 @@
       "combi_priority": 255000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Gobfin Ignis": {
       "hp_stat": 90,
@@ -1743,7 +1849,8 @@
       "combi_priority": 243000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Gorirat": {
       "hp_stat": 90,
@@ -1759,7 +1866,8 @@
       "combi_priority": 214000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Gorirat Terra": {
       "hp_stat": 90,
@@ -1775,7 +1883,8 @@
       "combi_priority": 188000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Green Slime": {
       "hp_stat": 65,
@@ -1791,7 +1900,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Grintale": {
       "hp_stat": 110,
@@ -1807,7 +1917,8 @@
       "combi_priority": 212000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Grizzbolt": {
       "hp_stat": 120,
@@ -1823,7 +1934,8 @@
       "combi_priority": 102000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Gumoss": {
       "hp_stat": 70,
@@ -1840,7 +1952,8 @@
       "combi_priority": 295000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Hangyu": {
       "hp_stat": 80,
@@ -1856,7 +1969,8 @@
       "combi_priority": 278000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Hangyu Cryst": {
       "hp_stat": 80,
@@ -1872,7 +1986,8 @@
       "combi_priority": 251000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Hartalis": {
       "hp_stat": 135,
@@ -1888,7 +2003,8 @@
       "combi_priority": 9000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Helzephyr": {
       "hp_stat": 100,
@@ -1904,7 +2020,8 @@
       "combi_priority": 113000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Helzephyr Lux": {
       "hp_stat": 105,
@@ -1921,7 +2038,8 @@
       "combi_priority": 96000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Herbil": {
       "hp_stat": 80,
@@ -1938,7 +2056,8 @@
       "combi_priority": 263000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Hoocrates": {
       "hp_stat": 70,
@@ -1954,7 +2073,8 @@
       "combi_priority": 294000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Hoodle": {
       "hp_stat": 70,
@@ -1970,7 +2090,8 @@
       "combi_priority": 177000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Icelyn": {
       "hp_stat": 95,
@@ -1986,7 +2107,8 @@
       "combi_priority": 126000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Illuminant Bat": {
       "hp_stat": 80,
@@ -2002,7 +2124,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Illuminant Slime": {
       "hp_stat": 80,
@@ -2018,7 +2141,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Incineram": {
       "hp_stat": 95,
@@ -2035,7 +2159,8 @@
       "combi_priority": 147000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Incineram Noct": {
       "hp_stat": 95,
@@ -2051,7 +2176,8 @@
       "combi_priority": 131000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Jelliette": {
       "hp_stat": 75,
@@ -2067,7 +2193,8 @@
       "combi_priority": 265000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Jellroy": {
       "hp_stat": 90,
@@ -2084,7 +2211,8 @@
       "combi_priority": 259000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Jetragon": {
       "hp_stat": 115,
@@ -2100,7 +2228,8 @@
       "combi_priority": 7000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Jolthog": {
       "hp_stat": 70,
@@ -2116,7 +2245,8 @@
       "combi_priority": 303000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Jolthog Cryst": {
       "hp_stat": 70,
@@ -2132,7 +2262,8 @@
       "combi_priority": 285000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Jormuntide": {
       "hp_stat": 130,
@@ -2149,7 +2280,8 @@
       "combi_priority": 59000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Jormuntide Ignis": {
       "hp_stat": 130,
@@ -2166,7 +2298,8 @@
       "combi_priority": 17000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Katress": {
       "hp_stat": 90,
@@ -2182,7 +2315,8 @@
       "combi_priority": 204000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Katress Ignis": {
       "hp_stat": 95,
@@ -2199,7 +2333,8 @@
       "combi_priority": 180000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Kelpsea": {
       "hp_stat": 70,
@@ -2215,7 +2350,8 @@
       "combi_priority": 281000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Kelpsea Ignis": {
       "hp_stat": 70,
@@ -2231,7 +2367,8 @@
       "combi_priority": 247000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Kikit": {
       "hp_stat": 75,
@@ -2247,7 +2384,8 @@
       "combi_priority": 231000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Killamari": {
       "hp_stat": 60,
@@ -2264,7 +2402,8 @@
       "combi_priority": 277000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Killamari Primo": {
       "hp_stat": 70,
@@ -2281,7 +2420,8 @@
       "combi_priority": 571,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Kingpaca": {
       "hp_stat": 120,
@@ -2297,7 +2437,8 @@
       "combi_priority": 222000,
       "ignore_combi": false,
       "male_probability": 90,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Kingpaca Cryst": {
       "hp_stat": 120,
@@ -2313,7 +2454,8 @@
       "combi_priority": 153000,
       "ignore_combi": false,
       "male_probability": 90,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Kitsun": {
       "hp_stat": 100,
@@ -2329,7 +2471,8 @@
       "combi_priority": 167000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Kitsun Noct": {
       "hp_stat": 100,
@@ -2345,7 +2488,8 @@
       "combi_priority": 80000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Knocklem": {
       "hp_stat": 105,
@@ -2361,7 +2505,8 @@
       "combi_priority": 26000,
       "ignore_combi": false,
       "male_probability": 70,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Knocklem Ignis": {
       "hp_stat": 105,
@@ -2377,7 +2522,8 @@
       "combi_priority": 21000,
       "ignore_combi": false,
       "male_probability": 70,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Lamball": {
       "hp_stat": 70,
@@ -2393,7 +2539,8 @@
       "combi_priority": 305000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Lapiron": {
       "hp_stat": 70,
@@ -2409,7 +2556,8 @@
       "combi_priority": 168000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Lapure": {
       "hp_stat": 105,
@@ -2425,7 +2573,8 @@
       "combi_priority": 81000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Leafan": {
       "hp_stat": 100,
@@ -2441,7 +2590,8 @@
       "combi_priority": 141000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Leezpunk": {
       "hp_stat": 80,
@@ -2457,7 +2607,8 @@
       "combi_priority": 267000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Leezpunk Ignis": {
       "hp_stat": 80,
@@ -2473,7 +2624,8 @@
       "combi_priority": 264000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Lifmunk": {
       "hp_stat": 75,
@@ -2489,7 +2641,8 @@
       "combi_priority": 302000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Loomen": {
       "hp_stat": 90,
@@ -2506,7 +2659,8 @@
       "combi_priority": 89000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Loupmoon": {
       "hp_stat": 80,
@@ -2522,7 +2676,8 @@
       "combi_priority": 211000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Loupmoon Cryst": {
       "hp_stat": 80,
@@ -2538,7 +2693,8 @@
       "combi_priority": 129000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Lovander": {
       "hp_stat": 120,
@@ -2554,7 +2710,8 @@
       "combi_priority": 209000,
       "ignore_combi": false,
       "male_probability": 30,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Lullu": {
       "hp_stat": 90,
@@ -2570,7 +2727,8 @@
       "combi_priority": 199000,
       "ignore_combi": false,
       "male_probability": 30,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Lunaris": {
       "hp_stat": 90,
@@ -2586,7 +2744,8 @@
       "combi_priority": 201000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Lyleen": {
       "hp_stat": 120,
@@ -2602,7 +2761,8 @@
       "combi_priority": 24000,
       "ignore_combi": true,
       "male_probability": 30,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Lyleen Noct": {
       "hp_stat": 115,
@@ -2618,7 +2778,8 @@
       "combi_priority": 22000,
       "ignore_combi": true,
       "male_probability": 30,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Majex": {
       "hp_stat": 110,
@@ -2635,7 +2796,8 @@
       "combi_priority": 101000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Mammorest": {
       "hp_stat": 150,
@@ -2652,7 +2814,8 @@
       "combi_priority": 134000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Mammorest Cryst": {
       "hp_stat": 150,
@@ -2669,7 +2832,8 @@
       "combi_priority": 107000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Maraith": {
       "hp_stat": 75,
@@ -2685,7 +2849,8 @@
       "combi_priority": 171000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Mau": {
       "hp_stat": 70,
@@ -2701,7 +2866,8 @@
       "combi_priority": 304000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Mau Cryst": {
       "hp_stat": 70,
@@ -2717,7 +2883,8 @@
       "combi_priority": 275000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Melpaca": {
       "hp_stat": 90,
@@ -2733,7 +2900,8 @@
       "combi_priority": 272000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Menasting": {
       "hp_stat": 100,
@@ -2750,7 +2918,8 @@
       "combi_priority": 112000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Menasting Terra": {
       "hp_stat": 100,
@@ -2766,7 +2935,8 @@
       "combi_priority": 64000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Mimog": {
       "hp_stat": 60,
@@ -2782,7 +2952,8 @@
       "combi_priority": 174000,
       "ignore_combi": true,
       "male_probability": 80,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Moldron": {
       "hp_stat": 110,
@@ -2799,7 +2970,8 @@
       "combi_priority": 75000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Moldron Cryst": {
       "hp_stat": 110,
@@ -2816,7 +2988,8 @@
       "combi_priority": 38000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Mossanda": {
       "hp_stat": 100,
@@ -2832,7 +3005,8 @@
       "combi_priority": 206000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Mossanda Lux": {
       "hp_stat": 100,
@@ -2848,7 +3022,8 @@
       "combi_priority": 144000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Mozzarina": {
       "hp_stat": 90,
@@ -2864,7 +3039,8 @@
       "combi_priority": 280000,
       "ignore_combi": false,
       "male_probability": 20,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Muffly": {
       "hp_stat": 60,
@@ -2880,7 +3056,8 @@
       "combi_priority": 248000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Munchill": {
       "hp_stat": 75,
@@ -2897,7 +3074,8 @@
       "combi_priority": 213000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Mycora": {
       "hp_stat": 105,
@@ -2913,7 +3091,8 @@
       "combi_priority": 76000,
       "ignore_combi": false,
       "male_probability": 30,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Necromus": {
       "hp_stat": 130,
@@ -2929,7 +3108,8 @@
       "combi_priority": 19000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Needoll": {
       "hp_stat": 75,
@@ -2945,7 +3125,8 @@
       "combi_priority": 242000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Needoll Noct": {
       "hp_stat": 75,
@@ -2962,7 +3143,8 @@
       "combi_priority": 158000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Neptilius": {
       "hp_stat": 105,
@@ -2978,7 +3160,8 @@
       "combi_priority": 16000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Nitemary": {
       "hp_stat": 105,
@@ -2994,7 +3177,8 @@
       "combi_priority": 123000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Nitemary Botan": {
       "hp_stat": 110,
@@ -3010,7 +3194,8 @@
       "combi_priority": 132000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Nitewing": {
       "hp_stat": 100,
@@ -3026,7 +3211,8 @@
       "combi_priority": 256000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Nox": {
       "hp_stat": 75,
@@ -3042,7 +3228,8 @@
       "combi_priority": 292000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Nyafia": {
       "hp_stat": 110,
@@ -3058,7 +3245,8 @@
       "combi_priority": 125000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Omascul": {
       "hp_stat": 95,
@@ -3074,7 +3262,8 @@
       "combi_priority": 114000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Ophydia": {
       "hp_stat": 130,
@@ -3091,7 +3280,8 @@
       "combi_priority": 23000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Orserk": {
       "hp_stat": 120,
@@ -3108,7 +3298,8 @@
       "combi_priority": 12000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Paladius": {
       "hp_stat": 130,
@@ -3124,7 +3315,8 @@
       "combi_priority": 18000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Palumba": {
       "hp_stat": 105,
@@ -3140,7 +3332,8 @@
       "combi_priority": 124000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Panthalus": {
       "hp_stat": 180,
@@ -3156,7 +3349,8 @@
       "combi_priority": 2000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": false
     },
     "Pengullet": {
       "hp_stat": 70,
@@ -3173,7 +3367,8 @@
       "combi_priority": 296000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Pengullet Lux": {
       "hp_stat": 70,
@@ -3190,7 +3385,8 @@
       "combi_priority": 572,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Penking": {
       "hp_stat": 95,
@@ -3207,7 +3403,8 @@
       "combi_priority": 207000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Penking Lux": {
       "hp_stat": 100,
@@ -3224,7 +3421,8 @@
       "combi_priority": 573,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Petallia": {
       "hp_stat": 100,
@@ -3240,7 +3438,8 @@
       "combi_priority": 172000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Petallia Ignis": {
       "hp_stat": 95,
@@ -3257,7 +3456,8 @@
       "combi_priority": 82000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Pierdon": {
       "hp_stat": 100,
@@ -3273,7 +3473,8 @@
       "combi_priority": 111000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Pierdon Cryst": {
       "hp_stat": 100,
@@ -3289,7 +3490,8 @@
       "combi_priority": 46000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Polapup": {
       "hp_stat": 95,
@@ -3306,7 +3508,8 @@
       "combi_priority": 166000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Polapup Terra": {
       "hp_stat": 95,
@@ -3323,7 +3526,8 @@
       "combi_priority": 110000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Prixter": {
       "hp_stat": 90,
@@ -3340,7 +3544,8 @@
       "combi_priority": 151000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Prixter Lux": {
       "hp_stat": 90,
@@ -3357,7 +3562,8 @@
       "combi_priority": 85000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Prunelia": {
       "hp_stat": 105,
@@ -3374,7 +3580,8 @@
       "combi_priority": 139000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Puffolt": {
       "hp_stat": 75,
@@ -3390,7 +3597,8 @@
       "combi_priority": 236000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Pupperai": {
       "hp_stat": 70,
@@ -3406,7 +3614,8 @@
       "combi_priority": 293000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Purple Slime": {
       "hp_stat": 75,
@@ -3422,7 +3631,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Pyrin": {
       "hp_stat": 100,
@@ -3438,7 +3648,8 @@
       "combi_priority": 198000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Pyrin Noct": {
       "hp_stat": 100,
@@ -3455,7 +3666,8 @@
       "combi_priority": 187000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Quivern": {
       "hp_stat": 105,
@@ -3471,7 +3683,8 @@
       "combi_priority": 121000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Quivern Botan": {
       "hp_stat": 105,
@@ -3488,7 +3701,8 @@
       "combi_priority": 130000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Ragnahawk": {
       "hp_stat": 95,
@@ -3504,7 +3718,8 @@
       "combi_priority": 105000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Rainbow Slime": {
       "hp_stat": 105,
@@ -3520,7 +3735,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Rayhound": {
       "hp_stat": 90,
@@ -3536,7 +3752,8 @@
       "combi_priority": 192000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Rayhound Cryst": {
       "hp_stat": 90,
@@ -3552,7 +3769,8 @@
       "combi_priority": 160000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Red Slime": {
       "hp_stat": 70,
@@ -3568,7 +3786,8 @@
       "combi_priority": 310000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Reindrix": {
       "hp_stat": 100,
@@ -3584,7 +3803,8 @@
       "combi_priority": 193000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Relaxaurus": {
       "hp_stat": 120,
@@ -3601,7 +3821,8 @@
       "combi_priority": 109000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Relaxaurus Lux": {
       "hp_stat": 120,
@@ -3618,7 +3839,8 @@
       "combi_priority": 77000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Renjishi": {
       "hp_stat": 105,
@@ -3634,7 +3856,8 @@
       "combi_priority": 29000,
       "ignore_combi": false,
       "male_probability": 60,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Reptyro": {
       "hp_stat": 110,
@@ -3651,7 +3874,8 @@
       "combi_priority": 106000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Reptyro Cryst": {
       "hp_stat": 110,
@@ -3668,7 +3892,8 @@
       "combi_priority": 60000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Ribbuny": {
       "hp_stat": 75,
@@ -3684,7 +3909,8 @@
       "combi_priority": 286000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Ribbuny Botan": {
       "hp_stat": 80,
@@ -3700,7 +3926,8 @@
       "combi_priority": 246000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Robinquill": {
       "hp_stat": 90,
@@ -3716,7 +3943,8 @@
       "combi_priority": 226000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Robinquill Terra": {
       "hp_stat": 90,
@@ -3733,7 +3961,8 @@
       "combi_priority": 205000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Rooby": {
       "hp_stat": 75,
@@ -3749,7 +3978,8 @@
       "combi_priority": 287000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Roujay": {
       "hp_stat": 110,
@@ -3765,7 +3995,8 @@
       "combi_priority": 53000,
       "ignore_combi": false,
       "male_probability": 60,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Rushoar": {
       "hp_stat": 80,
@@ -3781,7 +4012,8 @@
       "combi_priority": 288000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Sekhmet": {
       "hp_stat": 110,
@@ -3797,7 +4029,8 @@
       "combi_priority": 87000,
       "ignore_combi": false,
       "male_probability": 30,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Selyne": {
       "hp_stat": 130,
@@ -3814,7 +4047,8 @@
       "combi_priority": 36000,
       "ignore_combi": true,
       "male_probability": 20,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Shadowbeak": {
       "hp_stat": 120,
@@ -3830,7 +4064,8 @@
       "combi_priority": 55000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Shaolong": {
       "hp_stat": 140,
@@ -3847,7 +4082,8 @@
       "combi_priority": 4000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Shroomer": {
       "hp_stat": 110,
@@ -3863,7 +4099,8 @@
       "combi_priority": 152000,
       "ignore_combi": false,
       "male_probability": 55,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Shroomer Noct": {
       "hp_stat": 110,
@@ -3880,7 +4117,8 @@
       "combi_priority": 145000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Sibelyx": {
       "hp_stat": 110,
@@ -3896,7 +4134,8 @@
       "combi_priority": 181000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Sibelyx Primo": {
       "hp_stat": 115,
@@ -3912,7 +4151,8 @@
       "combi_priority": 65000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Silvance": {
       "hp_stat": 140,
@@ -3928,7 +4168,8 @@
       "combi_priority": 8000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Silvegis": {
       "hp_stat": 120,
@@ -3944,7 +4185,8 @@
       "combi_priority": 56000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Skutlass": {
       "hp_stat": 70,
@@ -3960,7 +4202,8 @@
       "combi_priority": 142000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Skutlass Ignis": {
       "hp_stat": 70,
@@ -3977,7 +4220,8 @@
       "combi_priority": 159000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Slowatt": {
       "hp_stat": 80,
@@ -3993,7 +4237,8 @@
       "combi_priority": 175000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Smokie": {
       "hp_stat": 85,
@@ -4009,7 +4254,8 @@
       "combi_priority": 176000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Smokie Cryst": {
       "hp_stat": 85,
@@ -4026,7 +4272,8 @@
       "combi_priority": 161000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Snock": {
       "hp_stat": 65,
@@ -4042,7 +4289,8 @@
       "combi_priority": 178000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Snock Lux": {
       "hp_stat": 65,
@@ -4059,7 +4307,8 @@
       "combi_priority": 150000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Snugloo": {
       "hp_stat": 80,
@@ -4075,7 +4324,8 @@
       "combi_priority": 239000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Solenne": {
       "hp_stat": 110,
@@ -4092,7 +4342,8 @@
       "combi_priority": 28000,
       "ignore_combi": false,
       "male_probability": 30,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Solmora": {
       "hp_stat": 90,
@@ -4108,7 +4359,8 @@
       "combi_priority": 137000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Solmora Lux": {
       "hp_stat": 90,
@@ -4125,7 +4377,8 @@
       "combi_priority": 100000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Sootseer": {
       "hp_stat": 105,
@@ -4142,7 +4395,8 @@
       "combi_priority": 98000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Souffline": {
       "hp_stat": 70,
@@ -4158,7 +4412,8 @@
       "combi_priority": 200000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Sparkit": {
       "hp_stat": 60,
@@ -4174,7 +4429,8 @@
       "combi_priority": 301000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Splatterina": {
       "hp_stat": 95,
@@ -4190,7 +4446,8 @@
       "combi_priority": 78000,
       "ignore_combi": false,
       "male_probability": 38,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Starryon": {
       "hp_stat": 110,
@@ -4206,7 +4463,8 @@
       "combi_priority": 115000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Starryon Primo": {
       "hp_stat": 110,
@@ -4222,7 +4480,8 @@
       "combi_priority": 43000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Surfent": {
       "hp_stat": 90,
@@ -4238,7 +4497,8 @@
       "combi_priority": 244000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Surfent Terra": {
       "hp_stat": 90,
@@ -4254,7 +4514,8 @@
       "combi_priority": 184000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Suzaku": {
       "hp_stat": 120,
@@ -4270,7 +4531,8 @@
       "combi_priority": 120000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Suzaku Aqua": {
       "hp_stat": 125,
@@ -4286,7 +4548,8 @@
       "combi_priority": 74000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Swee": {
       "hp_stat": 60,
@@ -4302,7 +4565,8 @@
       "combi_priority": 284000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Sweepa": {
       "hp_stat": 100,
@@ -4318,7 +4582,8 @@
       "combi_priority": 215000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Tanzee": {
       "hp_stat": 80,
@@ -4334,7 +4599,8 @@
       "combi_priority": 290000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Tanzee Ignis": {
       "hp_stat": 80,
@@ -4350,7 +4616,8 @@
       "combi_priority": 283000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Tarantriss": {
       "hp_stat": 110,
@@ -4366,7 +4633,8 @@
       "combi_priority": 173000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Teafant": {
       "hp_stat": 70,
@@ -4382,7 +4650,8 @@
       "combi_priority": 307000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Tetroise": {
       "hp_stat": 95,
@@ -4398,7 +4667,8 @@
       "combi_priority": 79000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Tetroise Primo": {
       "hp_stat": 95,
@@ -4414,7 +4684,8 @@
       "combi_priority": 20000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Tocotoco": {
       "hp_stat": 60,
@@ -4430,7 +4701,8 @@
       "combi_priority": 273000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Tombat": {
       "hp_stat": 95,
@@ -4446,7 +4718,8 @@
       "combi_priority": 234000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Tropicaw": {
       "hp_stat": 85,
@@ -4462,7 +4735,8 @@
       "combi_priority": 135000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Turtacle": {
       "hp_stat": 75,
@@ -4478,7 +4752,8 @@
       "combi_priority": 241000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Turtacle Terra": {
       "hp_stat": 85,
@@ -4495,7 +4770,8 @@
       "combi_priority": 577,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Univolt": {
       "hp_stat": 80,
@@ -4511,7 +4787,8 @@
       "combi_priority": 227000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Univolt Cryst": {
       "hp_stat": 80,
@@ -4527,7 +4804,8 @@
       "combi_priority": 54000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Vaelet": {
       "hp_stat": 100,
@@ -4543,7 +4821,8 @@
       "combi_priority": 148000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Valentail": {
       "hp_stat": 75,
@@ -4559,7 +4838,8 @@
       "combi_priority": 190000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Vanwyrm": {
       "hp_stat": 90,
@@ -4576,7 +4856,8 @@
       "combi_priority": 165000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Vanwyrm Cryst": {
       "hp_stat": 90,
@@ -4593,7 +4874,8 @@
       "combi_priority": 143000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Venusa": {
       "hp_stat": 80,
@@ -4609,7 +4891,8 @@
       "combi_priority": 97000,
       "ignore_combi": false,
       "male_probability": 40,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Verdash": {
       "hp_stat": 90,
@@ -4625,7 +4908,8 @@
       "combi_priority": 116000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Vixy": {
       "hp_stat": 70,
@@ -4641,7 +4925,8 @@
       "combi_priority": 306000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Warsect": {
       "hp_stat": 120,
@@ -4658,7 +4943,8 @@
       "combi_priority": 128000,
       "ignore_combi": false,
       "male_probability": 85,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Warsect Terra": {
       "hp_stat": 120,
@@ -4674,7 +4960,8 @@
       "combi_priority": 63000,
       "ignore_combi": false,
       "male_probability": 85,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Whalaska": {
       "hp_stat": 105,
@@ -4691,7 +4978,8 @@
       "combi_priority": 71000,
       "ignore_combi": false,
       "male_probability": 58,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Whalaska Ignis": {
       "hp_stat": 105,
@@ -4708,7 +4996,8 @@
       "combi_priority": 37000,
       "ignore_combi": false,
       "male_probability": 42,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Wispaw": {
       "hp_stat": 85,
@@ -4724,7 +5013,8 @@
       "combi_priority": 225000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Wistella": {
       "hp_stat": 80,
@@ -4740,7 +5030,8 @@
       "combi_priority": 118000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Wixen": {
       "hp_stat": 90,
@@ -4756,7 +5047,8 @@
       "combi_priority": 208000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Wixen Noct": {
       "hp_stat": 90,
@@ -4773,7 +5065,8 @@
       "combi_priority": 149000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Woolipop": {
       "hp_stat": 70,
@@ -4789,7 +5082,8 @@
       "combi_priority": 282000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Woolipop Terra": {
       "hp_stat": 70,
@@ -4805,7 +5099,8 @@
       "combi_priority": 203000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Wumpo": {
       "hp_stat": 140,
@@ -4821,7 +5116,8 @@
       "combi_priority": 83000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Wumpo Botan": {
       "hp_stat": 140,
@@ -4837,7 +5133,8 @@
       "combi_priority": 61000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": true
+      "variant": true,
+      "can_breed": true
     },
     "Xenogard": {
       "hp_stat": 110,
@@ -4853,7 +5150,8 @@
       "combi_priority": 99000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Xenolord": {
       "hp_stat": 130,
@@ -4870,7 +5168,8 @@
       "combi_priority": 40000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Xenovader": {
       "hp_stat": 90,
@@ -4886,7 +5185,8 @@
       "combi_priority": 182000,
       "ignore_combi": true,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     },
     "Yakumo": {
       "hp_stat": 85,
@@ -4902,7 +5202,8 @@
       "combi_priority": 223000,
       "ignore_combi": false,
       "male_probability": 50,
-      "variant": false
+      "variant": false,
+      "can_breed": true
     }
   }
 }

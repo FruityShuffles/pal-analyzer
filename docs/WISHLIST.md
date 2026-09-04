@@ -212,18 +212,24 @@ breeding, but never both sides of one step.
 
 ## 5. When there is no answer, say why
 
-Three checks, all before the search where possible, because a named cause is the whole
+Four checks, all before the search where possible, because a named cause is the whole
 value of a negative answer:
 
 1. **A wanted passive nobody reachable carries**, and it cannot be bought. Definitive, and
    the message names the passive.
-2. **A self-only species.** 39 of the 41 `ignore_combi` Pals do have a unique combo
-   (`Blue Slime × Enchanted Sword → Enchanted Sword`), but a handful — Frostallion,
-   Jetragon, Blazamut Ryu — are never the child of two *different* species, so rule 1 is
-   the only way in and the passives must already be on that species. Checked up front
-   against a cached cross-reachability sweep, which turns a 10-second dead end into an
-   instant explanation.
-3. **No route inside the budget.** Says so, rather than implying impossibility.
+2. **A species that fits in no breeding pen** — Astralym, Boltmane, Dragostrophe,
+   Panthalus. Not even rule 1 is open to these, so the answer is "catch one"; saying
+   *"never the child of two different species"* here would be true but would imply that
+   two of them in a pen is a route, and it is not. See `docs/BREEDING.md` §1. The same
+   fact keeps them out of every parent pool, so they cannot turn up as somebody else's
+   filler either.
+3. **A self-only species.** 39 of the 41 `ignore_combi` Pals do have a unique combo
+   (`Blue Slime × Enchanted Sword → Enchanted Sword`), but 28 species — all `ignore_combi`,
+   Frostallion, Jetragon and Blazamut Ryu among them — are never the child of two
+   *different* species, so rule 1 is the only way in and the passives must already be on
+   that species. Checked up front against a cached cross-reachability sweep, which turns a
+   10-second dead end into an instant explanation.
+4. **No route inside the budget.** Says so, rather than implying impossibility.
 
 A wish you already satisfy returns **0 eggs and names the Pal** — checked before
 everything else, since it is also the only way a self-only species can succeed.

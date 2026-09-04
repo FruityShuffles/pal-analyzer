@@ -74,6 +74,29 @@ Cross-checked against `tylercamp/palcalc`'s independent CUE4Parse datamine: the 
 child-species table agreed on **all 44,552 parent pairs the two game builds share, with
 zero mismatches**. See `docs/BREEDING.md`.
 
+### `can_breed`: the one field that is an inference, not a datamine (added 2026-09-03)
+
+Every other field in `data/pals.json` is a game value copied or renamed. `can_breed` is
+not: **no row in `DT_PalMonsterParameter` says whether a Pal may be put in a breeding
+pen.** What the table does carry is work suitability, and exactly four of the 301 shipped
+species have every `WorkSuitability_*` at zero — **Astralym, Boltmane, Dragostrophe,
+Panthalus**. A Pal with no work suitability can never be assigned to a base, and a
+breeding pen is a base structure, so:
+
+```py
+"can_breed": any(v for k, v in row.items() if k.startswith("WorkSuitability_")),
+```
+
+Panthalus corroborates the reading with other placeholder data — all five speed fields
+pinned to 3000, and `BestWorkSuitability: EmitFlame` pointing at a zero — but the rule is
+still an inference about game behaviour, and it is the only one in this file. Treat a
+change in the four names as a signal to re-check the mechanic, not as routine drift:
+`import_gamedata.py` prints them on every run for exactly that reason, and
+`breeding_check.py` asserts the list.
+
+This is **not** `ignore_combi`, which bars a species from being a rank-rule *child* while
+leaving it a legal parent. `docs/BREEDING.md` §1 has why the two must stay separate.
+
 ### Superseded: the palworld.wiki.gg Cargo API
 
 Everything from here to the licensing note describes the earlier wiki pipeline. It is

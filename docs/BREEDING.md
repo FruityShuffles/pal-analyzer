@@ -38,12 +38,37 @@ Three rules, in order. The first that applies wins.
 
 Two exclusions, each individually load-bearing. The pool is **183 species** out of 301:
 
-- **`ignore_combi` species are never a rank-rule child** — 64 legendaries, raid bosses
+- **`ignore_combi` species are never a rank-rule child** — 41 legendaries, raid bosses
   and event Pals. They remain perfectly legal *parents*; only the child side is
   restricted. Frostallion can be bred (via rule 1) but can never be the answer to rule 3.
 - **A species that is the child of a unique combo can only be produced by that combo**,
   so it is struck from the pool too (116 species). Omitting this filter produced 1,844
   wrong children in testing — it is the single most commonly missed rule.
+
+### A third exclusion, and the only one on the *parent* side
+
+**Astralym, Boltmane, Dragostrophe and Panthalus cannot be put in a breeding pen at all.**
+Everything above restricts what a pair can *produce*; this restricts what you may put in
+the pen in the first place, and it is genuinely independent — conflating it with
+`ignore_combi` would wrongly bar Frostallion and Jetragon from parenthood, and reading
+`ignore_combi` as sufficient leaves an owned Panthalus being offered as a parent, which is
+the bug this rule was added for.
+
+The game has **no explicit "cannot breed" field**. What it has is work suitability, and
+these four are the only shipped species with *none at all* — they can never be assigned to
+a base, and a breeding pen is a base structure. `import_gamedata.py` derives `can_breed`
+from that and prints the four names on every run, so a patch that moves the set is loud
+rather than silent. It is an inference, not a datamined flag; `docs/DATA_SOURCES.md`
+records it as such.
+
+All four happen to be `ignore_combi` *and* not the child of any unique combo, so they were
+already unreachable as children. The rule changes nothing but the parent side.
+
+**It deliberately does not live inside `childSpecies()`.** That function is a pure mirror
+of the game's rule, locked at 0 mismatches against palcalc's 44,552 pairs and against
+`CHILD_FIXTURE`; folding an inference into it would forfeit that. The gate sits one layer
+up, at the four places a parent pool is built: `buildArchetypes()`, `wishKids()`,
+`cleanPartners()` and the wishlist's target check.
 
 ### Ties, and why they matter
 
